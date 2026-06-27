@@ -28,7 +28,7 @@ class AudioLoader:
         self,
         file_path: Path,
         duration: Optional[float] = None,
-    ) -> Optional[Tuple[np.ndarray, int]]:
+    ) -> Optional[Dict[str, Any]]:
         """
         Load audio file and resample to target sample rate.
 
@@ -37,7 +37,7 @@ class AudioLoader:
             duration: Duration in seconds to load (None for full track)
 
         Returns:
-            Tuple of (audio_array, sample_rate) or None if error
+            Dict with audio_array, sample_rate, duration, channels or None if error
         """
         try:
             y, sr = librosa.load(
@@ -46,8 +46,15 @@ class AudioLoader:
                 mono=True,
                 duration=duration
             )
+            audio_duration = len(y) / sr
             logger.debug(f"Loaded {file_path.name}: {sr}Hz, {len(y)} samples")
-            return y, sr
+            return {
+                'audio_array': y,
+                'sample_rate': sr,
+                'duration': audio_duration,
+                'channels': 1,
+                'num_samples': len(y)
+            }
         except Exception as e:
             logger.error(f"Error loading audio from {file_path}: {e}")
             return None
