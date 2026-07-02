@@ -112,7 +112,8 @@ class Orchestrator:
                     errors += 1
                     continue
 
-                y, sr = audio_data
+                y = audio_data['audio_array']
+                sr = audio_data['sample_rate']
                 features = analyze_audio(str(file_path), sr, None)
 
                 if not features:
@@ -171,7 +172,8 @@ class Orchestrator:
                 logger.error(f"Failed to load audio: {file_path}")
                 return None
 
-            y, sr = audio_data
+            y = audio_data['audio_array']
+            sr = audio_data['sample_rate']
 
             # Extract features
             features = analyze_audio(str(file_path), sr, None)
