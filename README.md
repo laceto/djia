@@ -6,6 +6,11 @@ Analytics system for techno DJing to improve mixing quality through data-driven 
 
 DJIA analyzes your audio library to extract features, classify mood, detect structure, and suggest optimal track transitions for DJ sets. It provides both a command-line interface and programmatic API.
 
+> **Working on the code?** Start at `CLAUDE.md` — it is a task router that points you to the right
+> rule file (`coding-rules.md`, `testing-rules.md`, `debugging-rules.md`) and reference docs under
+> `docs/` (`architecture.md`, `schemas.md`, `api-reference.md`, `scripts-reference.md`). Segmentation
+> tuning lives in `PARAMETER_REFERENCE.md`; the LangGraph Track Tuner in `LANGGRAPH_TRACK_TUNER_README.md`.
+
 **Key Features:**
 - Automatic audio feature extraction (BPM, spectral analysis, harmonic content)
 - Mood classification (dark, hypnotic, euphoric, aggressive, industrial, minimal)
@@ -27,14 +32,14 @@ DJIA consists of 5 phases integrated through a master orchestrator:
 **Modules:** `src/ingestion/scanner.py`, `src/ingestion/loader.py`
 
 ### Phase 2: DSP (Digital Signal Processing)
-- Tempo/BPM extraction using onset detection
-- Spectral feature extraction (centroid, rolloff, flux)
-- Harmonic-percussive source separation
-- MFCC (Mel-frequency cepstral coefficients) analysis
-- Chroma feature extraction
-- RMS energy analysis
+Four ordered engines (Groove → Phrasing → Mood → Curation), orchestrated by `extractor.py`:
+- **Groove** — decimal BPM, beat grid, swing (runs first; BPM feeds everything downstream)
+- **Phrasing** — structural segments (intro/build/drop/breakdown/outro) + hot-cue positions
+- **Mood** — musical key (Camelot) + brightness
+- **Curation** — danceability, energy curve, semantic tags
 
-**Modules:** `src/audio_analysis.py`, `src/dsp/`
+**Modules:** `src/dsp/` (`extractor.py`, `groove_engine.py`, `phrasing_engine.py`,
+`mood_engine.py`, `curation_engine.py`, `config.py`). See `docs/architecture.md`.
 
 ### Phase 3: AI (Artificial Intelligence)
 - Deep learning mood classification (dark, hypnotic, euphoric, aggressive, industrial, minimal)
@@ -57,6 +62,11 @@ DJIA consists of 5 phases integrated through a master orchestrator:
 - Smart playlist generation with optimization
 
 **Modules:** `src/ai/transition_mapper.py`, `src/ai/playlist_generator.py`
+
+### Optional: LangGraph Track Tuner
+A self-contained agent (`src/ai/track_tuner_*.py`) that iteratively tunes the phrasing parameters
+per track until segmentation quality is good. Its deps (`langgraph`, `langchain-core`) are **not** in
+`requirements.txt` — install separately. See `LANGGRAPH_TRACK_TUNER_README.md`.
 
 ## Installation
 
@@ -378,12 +388,14 @@ pytest tests/ --cov=src --cov-report=html
 ### Environment Variables
 ```bash
 # .env file (optional)
-OPENAI_API_KEY=sk-...  # For AI features (if implemented)
-DJIA_DB_PATH=data/djia.db  # Custom database location
-DJIA_AUDIO_SAMPLE_RATE=22050  # Sample rate for analysis
+OPENAI_API_KEY=sk-...   # optional, for OpenAI audio embeddings
+DEMUCS_MODEL=htdemucs   # stem separation model (Phase 3)
 ```
+Read via `os.getenv()`. Never commit secrets.
 
 ### Custom Database Path
+The database path is set per call, not via env var — pass `--db` on the CLI or `db_path` to the
+`Orchestrator` / `TrackStore` constructor (default `data/djia.db`):
 ```python
 orchestrator = Orchestrator(db_path="/path/to/database.db")
 ```
@@ -435,28 +447,28 @@ Areas for improvement:
 djia/
 ├── src/
 │   ├── cli.py                 # Command-line interface
-│   ├── orchestrator.py        # Master orchestrator
-│   ├── audio_analysis.py      # Phase 2: DSP features
-│   ├── ingestion/
-│   │   ├── scanner.py         # Phase 1: File scanning
-│   │   └── loader.py          # Phase 1: Audio loading
+│   ├── orchestrator.py        # Master orchestrator (ingestion → DSP → AI → DB)
+│   ├── features/schema.py     # Track dataclass — the data contract
+│   ├── ingestion/             # Phase 1: scanner.py, loader.py
+│   ├── dsp/                   # Phase 2: extractor + groove/phrasing/mood/curation engines, config.py
 │   ├── ai/
-│   │   ├── classifier.py      # Phase 3: Mood classification
-│   │   ├── transition_mapper.py    # Phase 5A: Transition scoring
-│   │   └── playlist_generator.py   # Phase 5B: Playlist generation
-│   ├── database/
-│   │   ├── schema.py          # Phase 4: Schema definition
-│   │   └── store.py           # Phase 4: Database operations
-│   ├── traktor/
-│   │   └── exporter.py        # Phase 4: Traktor export
-│   └── dsp/                   # Phase 2: DSP engines
-├── tests/
-│   ├── conftest.py            # Test fixtures
-│   ├── test_full_pipeline.py  # End-to-end tests
-│   └── test_*.py              # Phase-specific tests
+│   │   ├── classifier.py            # Phase 3: mood classification
+│   │   ├── stem_separator.py        # Phase 3: Demucs stems
+│   │   ├── segmentation.py          # Phase 3: structural detection
+│   │   ├── transition_mapper.py     # Phase 5A: transition scoring
+│   │   ├── playlist_generator.py    # Phase 5B: playlist generation
+│   │   └── track_tuner_*.py         # optional LangGraph Track Tuner
+│   ├── database/              # Phase 4: schema.py, store.py (SQLite)
+│   ├── matching/similarity.py # Phase 4: cosine similarity
+│   ├── traktor/exporter.py    # Phase 4: Traktor NML export
+│   └── main.py, audio_analysis.py, ...  # LEGACY (do not extend)
+├── tests/                     # pytest suite (one file per subsystem)
+├── docs/                      # architecture, schemas, api-reference, scripts-reference, archive/
+├── coding-rules.md, testing-rules.md, debugging-rules.md   # task rule files
+├── PARAMETER_REFERENCE.md     # segmentation tuning reference
 ├── requirements.txt           # Dependencies
 ├── README.md                  # This file
-└── CLAUDE.md                  # Development notes
+└── CLAUDE.md                  # Agent Router (task-first entry point for contributors)
 ```
 
 ## License
