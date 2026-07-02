@@ -107,7 +107,11 @@ def compute_spectral_flux(y: np.ndarray, sr: int, hop_length: int = 512) -> floa
     # Normalize
     magnitude_norm = magnitude / (np.sum(magnitude, axis=0, keepdims=True) + 1e-8)
 
-    # Spectral flux
+    # Spectral flux (requires at least 2 frames)
+    if magnitude_norm.shape[1] < 2:
+        # If too few frames, return 0 (no change)
+        return 0.0
+
     flux = np.sqrt(np.sum(np.diff(magnitude_norm, axis=1)**2, axis=0))
 
     # Normalize

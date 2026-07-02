@@ -8,6 +8,7 @@ from .phrasing_engine import analyze_structure
 from .groove_engine import analyze_groove
 from .mood_engine import analyze_mood
 from .curation_engine import analyze_curation
+from .config import DSPConfig, get_config, custom_config
 
 
 def load_audio(file_path: str, sr: int = 22050, duration: Optional[float] = None) -> tuple[np.ndarray, int]:
@@ -30,7 +31,8 @@ def extract_track_features(
     file_path: str,
     sr: int = 22050,
     duration: Optional[float] = None,
-    hop_length: int = 512
+    hop_length: int = 512,
+    config: Optional[DSPConfig] = None
 ) -> Track:
     """
     Extract complete track DNA using all 4 DSP engines.
@@ -48,10 +50,17 @@ def extract_track_features(
         sr: Sample rate (default 22050)
         duration: Maximum duration to load (optional)
         hop_length: Hop length for DSP analysis
+        config: DSPConfig with tunable parameters.
+                If None, uses "default" preset.
+                Use get_config("minimal"/"house"/"techno") or custom_config() for presets.
 
     Returns:
         Track: Complete feature vector with all DSP results
     """
+    # Use default config if none provided
+    if config is None:
+        config = get_config("default")
+
     # Step 0: Load audio
     y, sr = load_audio(file_path, sr=sr, duration=duration)
 
@@ -63,8 +72,16 @@ def extract_track_features(
     # Step 1: Groove Engine (must be first to get BPM)
     groove = analyze_groove(y, sr, hop_length=hop_length)
 
-    # Step 2: Phrasing Engine (uses BPM from groove)
-    phrasing = analyze_structure(y, sr, bpm=groove.bpm, hop_length=hop_length)
+    # Step 2: Phrasing Engine (uses BPM from groove + config parameters)
+    phrasing = analyze_structure(
+        y, sr,
+        bpm=groove.bpm,
+        hop_length=hop_length,
+        novelty_threshold=config.phrasing.novelty_threshold,
+        min_segment_duration=config.phrasing.min_segment_duration,
+        breakdown_threshold=config.phrasing.breakdown_duration_threshold,
+        include_beats=True  # Add beat ranges to segment labels
+    )
 
     # Step 3: Mood Engine (independent)
     mood = analyze_mood(y, sr)
@@ -96,7 +113,8 @@ def analyze_track(
     file_path: str,
     sr: int = 22050,
     duration: Optional[float] = None,
-    hop_length: int = 512
+    hop_length: int = 512,
+    config: Optional[DSPConfig] = None
 ) -> AnalysisResult:
     """
     Analyze a single track and return wrapped result.
@@ -106,6 +124,7 @@ def analyze_track(
         sr: Sample rate
         duration: Maximum duration to load
         hop_length: Hop length for DSP analysis
+        config: DSPConfig with tunable parameters
 
     Returns:
         AnalysisResult: Wrapped track with status
@@ -115,7 +134,8 @@ def analyze_track(
             file_path=file_path,
             sr=sr,
             duration=duration,
-            hop_length=hop_length
+            hop_length=hop_length,
+            config=config
         )
 
         return AnalysisResult(
