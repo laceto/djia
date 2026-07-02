@@ -8,6 +8,7 @@ from tqdm import tqdm
 from .ingestion.scanner import AudioScanner
 from .ingestion.loader import AudioLoader
 from .audio_analysis import analyze_track as analyze_audio
+from .dsp.mood_engine import analyze_mood as analyze_tonality
 from .ai.classifier import MoodClassifier
 from .database.store import TrackStore
 
@@ -24,6 +25,16 @@ class Orchestrator:
         self.store = TrackStore(db_path)
         self.loader = AudioLoader()
         self.mood_classifier = MoodClassifier()
+
+    def _add_tonality(self, features: Dict[str, Any], y, sr, file_path) -> None:
+        """Detect musical key/Camelot and merge into the features dict (best-effort)."""
+        try:
+            tonality = analyze_tonality(y, sr)
+            features['key'] = tonality.key
+            features['camelot_key'] = tonality.camelot_key
+            features['key_confidence'] = tonality.key_confidence
+        except Exception as e:
+            logger.warning(f"Failed to detect key for {file_path}: {e}")
 
     def analyze_library(
         self,
@@ -121,6 +132,9 @@ class Orchestrator:
                     errors += 1
                     continue
 
+                # Detect musical key (Camelot) and merge into features
+                self._add_tonality(features, y, sr, file_path)
+
                 # Store features
                 self.store.insert_features(track_id, features)
 
@@ -180,6 +194,9 @@ class Orchestrator:
             if not features:
                 logger.error(f"Failed to extract features: {file_path}")
                 return None
+
+            # Detect musical key (Camelot) and merge into features
+            self._add_tonality(features, y, sr, file_path)
 
             # Classify mood
             try:

@@ -43,6 +43,9 @@ CREATE TABLE IF NOT EXISTS features (
     rms_mean REAL,
     rms_std REAL,
     rms_peak REAL,
+    key TEXT,
+    camelot_key TEXT,
+    key_confidence REAL,
     mfcc_vector TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -87,6 +90,15 @@ CREATE INDEX IF NOT EXISTS idx_segments_type ON segments (segment_type);
 """
 
 
+def _add_missing_columns(conn: sqlite3.Connection, table: str, columns: dict) -> None:
+    """Add any columns not already present on `table` (simple forward migration)."""
+    existing = {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
+    for name, coltype in columns.items():
+        if name not in existing:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {name} {coltype}")
+            logger.info(f"Migrated {table}: added column {name}")
+
+
 def init_db(db_path: str = "data/djia.db") -> sqlite3.Connection:
     """
     Initialize database with schema.
@@ -109,6 +121,14 @@ def init_db(db_path: str = "data/djia.db") -> sqlite3.Connection:
             statement = statement.strip()
             if statement:
                 conn.execute(statement)
+
+        # Lightweight migrations: add columns that older DBs are missing.
+        # SQLite has no ADD COLUMN IF NOT EXISTS, so check pragma first.
+        _add_missing_columns(conn, "features", {
+            "key": "TEXT",
+            "camelot_key": "TEXT",
+            "key_confidence": "REAL",
+        })
 
         conn.commit()
         logger.info(f"Database initialized at {db_path}")

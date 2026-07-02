@@ -105,8 +105,8 @@ class TrackStore:
                  spectral_rolloff_mean, spectral_flux_mean, harmonic_ratio,
                  percussive_ratio, mfcc_mean, mfcc_std, mfcc_delta_mean,
                  chroma_variance, chroma_entropy, rms_mean, rms_std, rms_peak,
-                 mfcc_vector)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 key, camelot_key, key_confidence, mfcc_vector)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 track_id,
                 features.get('tempo'),
@@ -124,6 +124,9 @@ class TrackStore:
                 features.get('rms_mean'),
                 features.get('rms_std'),
                 features.get('rms_peak'),
+                features.get('key'),
+                features.get('camelot_key'),
+                features.get('key_confidence'),
                 mfcc_vector,
             ))
 
