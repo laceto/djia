@@ -2,9 +2,8 @@
 
 import argparse
 import sys
-import json
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 from tabulate import tabulate
 
 from .orchestrator import Orchestrator
@@ -198,7 +197,7 @@ def cmd_generate_playlist(args):
     end_track = store.get_track(args.end_id)
 
     if not start_track or not end_track:
-        print(f"Track not found. Check IDs.")
+        print("Track not found. Check IDs.")
         return 1
 
     print(f"Start: {start_track['file_name']}")
@@ -253,10 +252,37 @@ def cmd_generate_playlist(args):
 
     # Summary
     summary = playlist_summary(playlist, all_tracks)
-    print(f"\nSummary:")
+    print("\nSummary:")
     print(f"  BPM Arc: {summary.get('start_bpm', 0):.1f} → {summary.get('end_bpm', 0):.1f}")
     print(f"  Avg Transition: {summary.get('avg_transition_score', 0):.3f}")
 
+    return 0
+
+
+def cmd_generate_setlist(args):
+    """Generate a data-driven 5-phase setlist with mix sheets."""
+    print_section("5-Phase Setlist Generator")
+
+    from .ai.setlist_generator import generate_setlist, load_library
+
+    db_path = args.db or "data/djia.db"
+    tracks = load_library(db_path)
+    print(f"Library: {len(tracks)} analyzed tracks")
+    if len(tracks) < args.tracks:
+        print(f"✗ Need {args.tracks} tracks but only {len(tracks)} are analyzed.")
+        return 1
+
+    if not args.skip_mix_sheets:
+        print(f"Computing element-onset mix points for {args.tracks} tracks "
+              "(loads each MP3 once, cached afterwards)...")
+
+    output = generate_setlist(
+        db_path=db_path,
+        n_tracks=args.tracks,
+        output_path=args.output,
+        with_mix_sheets=not args.skip_mix_sheets,
+    )
+    print(f"✓ Setlist written to: {output}")
     return 0
 
 
@@ -354,6 +380,18 @@ Examples:
     playlist_parser.add_argument('steps', type=int, nargs='?', default=5, help='Number of steps')
     playlist_parser.add_argument('--db', help='Database path (default: data/djia.db)')
     playlist_parser.set_defaults(func=cmd_generate_playlist)
+
+    # Generate setlist command
+    setlist_parser = subparsers.add_parser(
+        'generate-setlist', help='Generate a data-driven 5-phase setlist with mix sheets')
+    setlist_parser.add_argument('--tracks', type=int, default=28,
+                                help='Number of tracks in the set (default: 28)')
+    setlist_parser.add_argument('--output', default='results/setlist_5phase.md',
+                                help='Output markdown path')
+    setlist_parser.add_argument('--db', help='Database path (default: data/djia.db)')
+    setlist_parser.add_argument('--skip-mix-sheets', action='store_true',
+                                help='Skip audio-based mix points (much faster)')
+    setlist_parser.set_defaults(func=cmd_generate_setlist)
 
     # Export Traktor command
     traktor_parser = subparsers.add_parser('export-traktor', help='Export to Traktor NML')

@@ -65,8 +65,10 @@ Four ordered engines (Groove → Phrasing → Mood → Curation), orchestrated b
 - Transition quality scoring between tracks
 - Transition graph construction
 - Smart playlist generation with optimization
+- Data-driven 5-phase setlist generation (warm-up→build→peak→breakdown→comeback) with
+  per-transition mix sheets
 
-**Modules:** `src/ai/transition_mapper.py`, `src/ai/playlist_generator.py`
+**Modules:** `src/ai/transition_mapper.py`, `src/ai/playlist_generator.py`, `src/ai/setlist_generator.py`
 
 ### Optional: LangGraph Track Tuner
 A self-contained agent (`src/ai/track_tuner_*.py`) that iteratively tunes the phrasing parameters
@@ -143,7 +145,19 @@ python -m src.cli generate-playlist 1 10 5
 - BPM arc (start → end)
 - Average transition quality score
 
-### 5. Export to Traktor
+### 5. Generate a Full Setlist
+
+```bash
+python -m src.cli generate-setlist --tracks 28
+# 28-track, 5-phase set (warm-up→build→peak→breakdown→comeback) with per-transition mix sheets
+```
+
+**Output:** Markdown report at `results/setlist_5phase.md` — phase plan (tracks, BPM, key, energy,
+top mood per phase) plus a mix sheet for every transition (beatmatch pitch %, blend length, bass
+swap / full-on timings from element-onset detection). Add `--skip-mix-sheets` to skip the audio
+loads for a fast phase-plan-only preview.
+
+### 6. Export to Traktor
 
 ```bash
 python -m src.cli export-traktor djia_export.nml
@@ -190,6 +204,19 @@ Generate an optimal DJ playlist.
 python -m src.cli generate-playlist START_ID END_ID [STEPS] [OPTIONS]
   --db PATH             Database path (default: data/djia.db)
   # Example: generate-playlist 1 10 5  → 5-track path from track 1 to 10
+```
+
+#### `generate-setlist`
+Generate a data-driven 5-phase setlist with mix sheets.
+
+```bash
+python -m src.cli generate-setlist [OPTIONS]
+  --tracks N            Number of tracks in the set (default: 28)
+  --output PATH         Output markdown path (default: results/setlist_5phase.md)
+  --db PATH             Database path (default: data/djia.db)
+  --skip-mix-sheets     Skip audio-based mix points (fast; phase plan only)
+  # Phase quotas scale with --tracks: warm-up 20%, build 29%, peak 36%, comeback 15%,
+  # breakdown fixed at 1-2 tracks. Mix points cache to results/mix_points_cache.json.
 ```
 
 #### `export-traktor`
@@ -462,6 +489,7 @@ djia/
 │   │   ├── segmentation.py          # Phase 3: structural detection
 │   │   ├── transition_mapper.py     # Phase 5A: transition scoring
 │   │   ├── playlist_generator.py    # Phase 5B: playlist generation
+│   │   ├── setlist_generator.py     # Phase 5C: 5-phase setlist + mix sheets
 │   │   └── track_tuner_*.py         # optional LangGraph Track Tuner
 │   ├── database/              # Phase 4: schema.py, store.py (SQLite)
 │   ├── matching/similarity.py # Phase 4: cosine similarity

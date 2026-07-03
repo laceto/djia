@@ -33,6 +33,12 @@ python -m src.cli find-similar <track_id> [--top-k 5] [--db PATH]
 python -m src.cli generate-playlist <start_id> <end_id> [steps] [--db PATH]
 #   e.g. generate-playlist 1 10 5   → 5-step path from track 1 → 10
 
+# generate-setlist — data-driven 5-phase set (warm-up→build→peak→breakdown→comeback)
+python -m src.cli generate-setlist [--tracks 28] [--output results/setlist_5phase.md] [--db PATH]
+#   writes a markdown phase plan + per-transition mix sheets (element-onset mix points)
+#   --skip-mix-sheets: skip the audio loads (fast; transitions lose the deck timings)
+#   mix points are cached in results/mix_points_cache.json — first run is slow, reruns instant
+
 # export-traktor (output nml_path positional, default djia_export.nml)
 python -m src.cli export-traktor [out.nml] [--traktor-input Collection.nml] [--db PATH]
 #   --traktor-input: existing Traktor Collection.nml to source hot cues from

@@ -42,7 +42,7 @@ right context. The data contract for everything is the `Track` dataclass in `src
 src/
   dsp/          core pipeline: extractor + groove/phrasing/mood/curation engines, config.py
   ai/           stem_separator, classifier, segmentation, processor, transition_mapper,
-                playlist_generator, track_tuner_* (optional LangGraph agent)
+                playlist_generator, setlist_generator, track_tuner_* (optional LangGraph agent)
   features/     schema.py — the Track dataclass, THE data contract
   database/     SQLite schema + store (TrackStore)
   matching/     cosine similarity over feature vectors

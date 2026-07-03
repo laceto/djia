@@ -41,6 +41,11 @@ Public entry points for programmatic use. Import the package from the repo root.
 
 - **`transition_mapper`** — scores track-to-track transition compatibility.
 - **`playlist_generator`** — builds optimal DJ sequences from transition scores.
+- **`setlist_generator.generate_setlist(db_path, n_tracks=28, output_path, with_mix_sheets=True) -> path`**
+  — data-driven 5-phase set (warm-up→build→peak→breakdown→comeback): phase quotas by proportion,
+  phase assignment from measured mood/energy/brightness/BPM, transition-optimized ordering, and a
+  markdown report with element-onset mix sheets per transition. Pure core: `build_setlist(tracks, n)`;
+  its `camelot_score(a, b)` scores Camelot codes ('7A'), unlike `transition_mapper`'s note-name scorer.
 - **`stem_separator`** — Demucs stems (Drums/Bass/Vocals/Melody), on-disk cached.
 - **`classifier`** — 6-dimension mood classification.
 - **`segmentation`** — structural detection (drop/breakdown/outro) with confidence.

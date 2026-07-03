@@ -340,5 +340,105 @@ class TestIntegration:
         print(f"Processed audio in {elapsed:.2f}s")
 
 
+class TestSetlistGenerator:
+    """Test the 5-phase setlist generator (pure functions, no audio/DB)."""
+
+    @staticmethod
+    def _library(n=40):
+        """Synthetic library spanning calm-hypnotic to aggressive-euphoric."""
+        tracks = []
+        for i in range(n):
+            x = i / (n - 1)  # 0 = calmest, 1 = hardest
+            tracks.append({
+                'id': i + 1,
+                'file_name': f'track_{i + 1:02d}.mp3',
+                'file_path': None,
+                'title': f'Track {i + 1}',
+                'artist': 'Test',
+                'duration': 360.0,
+                'bpm': 122.0 + 6.0 * x,
+                'camelot_key': f'{(i % 12) + 1}A',
+                'rms_mean': 0.10 + 0.20 * x,
+                'brightness': 1000.0 + 2000.0 * x,
+                'dark': 0.5,
+                'hypnotic': 1.0 - x,
+                'euphoric': x,
+                'aggressive': max(0.0, x - 0.3),
+                'industrial': 0.3,
+                'minimal': 1.0 - x,
+            })
+        return tracks
+
+    def test_phase_quotas_sum_and_breakdown(self):
+        from src.ai.setlist_generator import phase_quotas
+
+        for n in (15, 25, 28, 30):
+            quotas = phase_quotas(n)
+            assert sum(quotas.values()) == n
+            assert quotas['breakdown'] == (1 if n < 26 else 2)
+            assert all(q >= 1 for q in quotas.values())
+            # Peak is the biggest phase
+            assert quotas['peak'] == max(quotas.values())
+
+    def test_phase_quotas_too_small(self):
+        from src.ai.setlist_generator import phase_quotas
+
+        with pytest.raises(ValueError):
+            phase_quotas(4)
+
+    def test_camelot_score(self):
+        from src.ai.setlist_generator import camelot_score
+
+        assert camelot_score('7A', '7A') == 1.0
+        assert camelot_score('7A', '7B') == 0.9   # relative
+        assert camelot_score('6A', '7A') == 0.9   # adjacent same mode
+        assert camelot_score('12A', '1A') == 0.9  # wheel wraps around
+        assert camelot_score('7A', '12A') == 0.3  # clash-prone
+        assert camelot_score(None, '7A') == 0.5
+        assert camelot_score('garbage', '7A') == 0.5
+
+    def test_build_setlist_structure(self):
+        from src.ai.setlist_generator import PHASE_ORDER, build_setlist
+
+        setlist = build_setlist(self._library(), n_tracks=28)
+        order = setlist['order']
+
+        assert len(order) == 28
+        assert len({t['id'] for t in order}) == 28, 'no duplicates'
+
+        # Phases appear in canonical order (each track tagged with its phase)
+        phase_seq = [t['phase'] for t in order]
+        seen = [p for i, p in enumerate(phase_seq) if i == 0 or p != phase_seq[i - 1]]
+        assert seen == [p for p in PHASE_ORDER if p in seen]
+
+        # The energy arc: peak tracks are hotter than warm-up tracks on average
+        by_phase = {}
+        for t in order:
+            by_phase.setdefault(t['phase'], []).append(t['rms_mean'])
+        assert (sum(by_phase['peak']) / len(by_phase['peak'])
+                > sum(by_phase['warmup']) / len(by_phase['warmup']))
+
+    def test_setlist_needs_enough_tracks(self):
+        from src.ai.setlist_generator import build_setlist
+
+        with pytest.raises(ValueError):
+            build_setlist(self._library(10), n_tracks=28)
+
+    def test_render_report_with_stub_mix_points(self):
+        from src.ai.setlist_generator import build_setlist, render_report
+
+        setlist = build_setlist(self._library(), n_tracks=25)
+        stub = lambda t: {'mix_in': 0.0, 'bass_in': 30.0, 'full_on': 90.0,
+                          'mix_out': 300.0, 'n_onsets': 10}
+        report = render_report(setlist, mix_points_fn=stub)
+
+        for header in ('WARMUP', 'BUILD', 'PEAK', 'BREAKDOWN', 'COMEBACK'):
+            assert header in report
+        # One mix sheet per consecutive pair
+        assert report.count('Beatmatch') == 24
+        assert 'Bass swap' in report
+        assert 'Clean break' in report  # the breakdown transition
+
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
