@@ -2,50 +2,55 @@
 
 import numpy as np
 import librosa
-from typing import Tuple, List
+from typing import Tuple
 from ..features.schema import GrooveResult
 
 
 def compute_swing_score(beat_frames: np.ndarray, onset_frames: np.ndarray) -> float:
     """
-    Compute swing score (0=stiff industrial, 1=groovy bouncy).
+    Compute swing score (0=straight/machine grid, 1=fully swung/triplet shuffle).
 
-    Swing is measured by deviation from perfect grid. Onsets that fall off the
-    beat grid create a "shuffled" or swung feel.
+    Swing is measured from WHERE offbeat onsets land within the beat, not from
+    how many onsets are off the grid: a straight groove places its offbeat
+    events (e.g. hats) exactly halfway between beats (beat phase 0.5), while a
+    swung/shuffled groove pushes them late toward the triplet position
+    (phase ~0.67). Onsets on the grid itself (kicks) carry no swing
+    information and are ignored — otherwise any track with offbeat hats
+    saturates the measure.
 
     Args:
         beat_frames: Detected beat frame positions
         onset_frames: Detected onset frame positions
 
     Returns:
-        swing_score: 0.0 (stiff) to 1.0 (groovy)
+        swing_score: 0.0 (straight) to 1.0 (full triplet swing)
     """
     if len(beat_frames) < 2 or len(onset_frames) == 0:
         return 0.5  # Default neutral swing
 
-    # Compute beat grid spacing
-    beat_intervals = np.diff(beat_frames)
-    mean_beat_interval = np.mean(beat_intervals)
-
-    # For each onset, find distance to nearest beat
-    onset_deviations = []
+    # Beat phase (0-1) of each onset that falls between two detected beats
+    offbeat_phases = []
     for onset in onset_frames:
-        # Distance to nearest beat
-        distances = np.abs(onset - beat_frames)
-        min_dist = np.min(distances)
-        onset_deviations.append(min_dist)
+        idx = np.searchsorted(beat_frames, onset)
+        if idx == 0 or idx >= len(beat_frames):
+            continue
+        prev_beat, next_beat = beat_frames[idx - 1], beat_frames[idx]
+        interval = next_beat - prev_beat
+        if interval <= 0:
+            continue
+        phase = (onset - prev_beat) / interval
+        # Keep only clear offbeat events; near-grid onsets say nothing about swing
+        if 0.25 <= phase <= 0.85:
+            offbeat_phases.append(phase)
 
-    # Calculate off-grid percentage
-    # Onsets significantly off the beat indicate swing
-    threshold = mean_beat_interval * 0.1  # 10% of beat interval
-    off_grid_ratio = np.mean([d > threshold for d in onset_deviations])
+    if len(offbeat_phases) < 4:
+        return 0.0  # no offbeat events to swing — rigid on-grid groove
 
-    # Scale swing from 0-1:
-    # - High precision (low off_grid_ratio) = low swing = 0
-    # - More variation = higher swing = 1
-    swing_score = min(1.0, off_grid_ratio * 2.0)
+    # 0.5 = perfectly straight 8ths; 2/3 = full triplet swing
+    median_phase = float(np.median(offbeat_phases))
+    swing_score = abs(median_phase - 0.5) / (2.0 / 3.0 - 0.5)
 
-    return float(swing_score)
+    return float(np.clip(swing_score, 0.0, 1.0))
 
 
 def check_tempo_stability(beat_frames: np.ndarray, sr: int, hop_length: int = 512) -> Tuple[bool, float]:
