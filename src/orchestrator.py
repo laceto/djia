@@ -8,7 +8,9 @@ from tqdm import tqdm
 from .ingestion.scanner import AudioScanner
 from .ingestion.loader import AudioLoader
 from .audio_analysis import analyze_track as analyze_audio
+from .dsp.config import get_config
 from .dsp.mood_engine import analyze_mood as analyze_tonality
+from .dsp.phrasing_engine import analyze_structure, create_phrase_locked_segments
 from .ai.classifier import MoodClassifier
 from .database.store import TrackStore
 
@@ -19,12 +21,69 @@ logging.basicConfig(level=logging.INFO)
 class Orchestrator:
     """Master orchestrator for complete DJIA pipeline."""
 
-    def __init__(self, db_path: str = "data/djia.db"):
-        """Initialize orchestrator with database."""
+    def __init__(
+        self,
+        db_path: str = "data/djia.db",
+        segment_preset: str = "minimal",
+        bars_per_phrase: int = 16,
+    ):
+        """
+        Initialize orchestrator with database.
+
+        Args:
+            db_path: Path to SQLite database
+            segment_preset: DSP config preset for spectral segment detection
+            bars_per_phrase: Phrase length (bars) for the phrase-locked segment grid
+        """
         self.db_path = db_path
         self.store = TrackStore(db_path)
         self.loader = AudioLoader()
         self.mood_classifier = MoodClassifier()
+        self.segment_config = get_config(segment_preset)
+        self.bars_per_phrase = bars_per_phrase
+
+    @staticmethod
+    def _segment_dicts(segments) -> List[Dict[str, Any]]:
+        """Convert phrasing Segment objects to store dicts, stripping beat ranges from labels."""
+        return [
+            {
+                # "drop (beats 32-64)" -> "drop"
+                'segment_type': seg.label.split('(')[0].strip(),
+                'start_time': seg.start_time,
+                'end_time': seg.end_time,
+                'confidence': seg.confidence,
+            }
+            for seg in segments
+        ]
+
+    def _add_segments(self, track_id: int, y, sr, bpm, file_path) -> None:
+        """Detect and persist structure segments — spectral + phrase-locked grid (best-effort)."""
+        if not bpm:
+            logger.warning(f"No BPM for {file_path}; skipping segment detection")
+            return
+        try:
+            phrasing_cfg = self.segment_config.phrasing
+            result = analyze_structure(
+                y, sr, bpm,
+                hop_length=self.segment_config.hop_length,
+                novelty_threshold=phrasing_cfg.novelty_threshold,
+                min_segment_duration=phrasing_cfg.min_segment_duration,
+                breakdown_threshold=phrasing_cfg.breakdown_duration_threshold,
+            )
+            self.store.replace_segments(
+                track_id, self._segment_dicts(result.segments), method="spectral"
+            )
+
+            locked = create_phrase_locked_segments(
+                duration=len(y) / sr,
+                bpm=bpm,
+                bars_per_phrase=self.bars_per_phrase,
+            )
+            self.store.replace_segments(
+                track_id, self._segment_dicts(locked), method=f"phrase{self.bars_per_phrase}"
+            )
+        except Exception as e:
+            logger.warning(f"Failed to detect segments for {file_path}: {e}")
 
     def _add_tonality(self, features: Dict[str, Any], y, sr, file_path) -> None:
         """Detect musical key/Camelot and merge into the features dict (best-effort)."""
@@ -48,8 +107,9 @@ class Orchestrator:
         1. Scan directory for audio files
         2. Load audio and extract metadata
         3. Extract DSP features (audio analysis)
-        4. Classify mood
-        5. Store in database
+        4. Detect structure segments (spectral + phrase-locked grid)
+        5. Classify mood
+        6. Store in database
 
         Args:
             data_dir: Directory containing audio files
@@ -137,6 +197,9 @@ class Orchestrator:
 
                 # Store features
                 self.store.insert_features(track_id, features)
+
+                # Detect structure segments (spectral + 16-bar phrase grid) and persist
+                self._add_segments(track_id, y, sr, features.get('bpm'), file_path)
 
                 # Phase 4: Classify mood
                 try:

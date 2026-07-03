@@ -55,7 +55,10 @@ Default DB: `data/djia.db`. Foreign keys ON; `ON DELETE CASCADE` from `tracks`.
   RMS (`rms_mean/std/peak`).
 - **`mood`** — `track_id` UNIQUE FK + 6 mood dimensions: `dark`, `hypnotic`, `euphoric`,
   `aggressive`, `industrial`, `minimal`.
-- **`segments`** — `track_id` FK, `segment_type`, `start_time`, `end_time`, `confidence`.
+- **`segments`** — `track_id` FK, `segment_type`, `start_time`, `end_time`, `confidence`,
+  `method` (`'spectral'` = novelty detection with the orchestrator's preset, default `minimal`;
+  `'phrase<N>'` = fixed N-bar phrase grid, default `phrase16`). `analyze` writes both sets per
+  track via `TrackStore.replace_segments` (idempotent per method).
 
 Indices exist on `tracks(file_path/artist/title)`, `features(track_id)`, `mood(track_id)`,
 `segments(track_id/segment_type)`.

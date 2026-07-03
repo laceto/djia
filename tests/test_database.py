@@ -314,6 +314,39 @@ class TestTrackStore:
         assert segments[1]['segment_type'] == 'build'
         assert segments[2]['segment_type'] == 'drop'
 
+    def test_replace_segments_per_method(self, temp_db):
+        """Test that replace_segments only replaces its own method's rows."""
+        store = TrackStore(temp_db)
+        track_id = store.insert_track(
+            file_path="/path/to/track.mp3",
+            file_name="track.mp3",
+            format=".mp3",
+            duration=120.5,
+        )
+
+        spectral = [
+            {'segment_type': 'intro', 'start_time': 0.0, 'end_time': 20.0, 'confidence': 0.8},
+            {'segment_type': 'outro', 'start_time': 100.0, 'end_time': 120.5, 'confidence': 0.8},
+        ]
+        grid = [
+            {'segment_type': 'intro', 'start_time': 0.0, 'end_time': 30.0, 'confidence': 0.95},
+            {'segment_type': 'build', 'start_time': 30.0, 'end_time': 60.0, 'confidence': 0.95},
+            {'segment_type': 'drop', 'start_time': 60.0, 'end_time': 90.0, 'confidence': 0.95},
+            {'segment_type': 'outro', 'start_time': 90.0, 'end_time': 120.5, 'confidence': 0.95},
+        ]
+        store.replace_segments(track_id, spectral, method="spectral")
+        store.replace_segments(track_id, grid, method="phrase16")
+
+        all_segments = store.get_track_segments(track_id)
+        assert len(all_segments) == 6, "Both methods should be stored"
+
+        # Re-running one method replaces only that method's rows
+        store.replace_segments(track_id, spectral[:1], method="spectral")
+        all_segments = store.get_track_segments(track_id)
+        assert len(all_segments) == 5, "Spectral rows replaced, phrase16 untouched"
+        methods = {s['method'] for s in all_segments}
+        assert methods == {'spectral', 'phrase16'}
+
     def test_get_tracks_count(self, temp_db):
         """Test getting total track count."""
         store = TrackStore(temp_db)

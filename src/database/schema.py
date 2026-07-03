@@ -3,7 +3,6 @@
 import sqlite3
 import logging
 from pathlib import Path
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -68,6 +67,8 @@ CREATE TABLE IF NOT EXISTS mood (
 );
 
 -- Segments table: track structure segments
+-- method: how the segments were derived — 'spectral' (novelty detection)
+-- or 'phrase<N>' (fixed N-bar phrase grid, e.g. 'phrase16')
 CREATE TABLE IF NOT EXISTS segments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     track_id INTEGER NOT NULL,
@@ -75,6 +76,7 @@ CREATE TABLE IF NOT EXISTS segments (
     start_time REAL NOT NULL,
     end_time REAL NOT NULL,
     confidence REAL DEFAULT 1.0,
+    method TEXT NOT NULL DEFAULT 'spectral',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (track_id) REFERENCES tracks (id) ON DELETE CASCADE
 );
@@ -128,6 +130,9 @@ def init_db(db_path: str = "data/djia.db") -> sqlite3.Connection:
             "key": "TEXT",
             "camelot_key": "TEXT",
             "key_confidence": "REAL",
+        })
+        _add_missing_columns(conn, "segments", {
+            "method": "TEXT NOT NULL DEFAULT 'spectral'",
         })
 
         conn.commit()
