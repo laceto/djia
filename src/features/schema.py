@@ -24,12 +24,24 @@ class CuePoint:
 
 
 @dataclass
+class ElementOnset:
+    """The moment a new sound element (e.g. a beep, hat, synth line) enters the track."""
+    time: float        # seconds (bar-snapped when detected with a BPM)
+    band: int          # frequency-band index (0 = lowest)
+    freq_low: float    # band lower edge (Hz)
+    freq_high: float   # band upper edge (Hz)
+    confidence: float  # 0-1, from the additive-novelty peak height
+    label: str = "element"  # human hint from the band (e.g. "low", "mid", "high")
+
+
+@dataclass
 class PhrasingResult:
     """Output from phrasing engine (Step 1)."""
     segment_boundaries: List[float]  # timestamps of section changes
     segments: List[Segment]           # labeled sections with times
     cue_points: List[CuePoint]        # predicted hot-cue positions
     structure_confidence: float = 0.0  # overall confidence in detection
+    element_onsets: List[ElementOnset] = field(default_factory=list)  # new-element entries
 
 
 @dataclass

@@ -2,9 +2,9 @@
 
 import numpy as np
 import librosa
-from typing import List, Tuple
+from typing import Dict, List, Optional, Tuple
 from scipy import signal
-from ..features.schema import Segment, CuePoint, PhrasingResult
+from ..features.schema import Segment, CuePoint, PhrasingResult, ElementOnset
 
 
 def compute_novelty_curve(y: np.ndarray, sr: int, hop_length: int = 512) -> np.ndarray:
@@ -33,6 +33,215 @@ def compute_novelty_curve(y: np.ndarray, sr: int, hop_length: int = 512) -> np.n
     novelty = (flux - np.min(flux)) / (np.max(flux) - np.min(flux) + 1e-8)
 
     return novelty
+
+
+def _band_name(freq_low: float, freq_high: float) -> str:
+    """Human hint for a band, in DJ-EQ language, from its geometric-center freq."""
+    center = np.sqrt(max(freq_low, 1.0) * max(freq_high, 1.0))
+    if center < 120:
+        return "sub"
+    if center < 300:
+        return "low"
+    if center < 800:
+        return "low-mid"
+    if center < 2500:
+        return "mid"
+    if center < 6000:
+        return "high-mid"
+    return "high"
+
+
+def _band_log_energy(
+    y: np.ndarray, sr: int, n_bands: int = 8, hop_length: int = 512
+) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Split the spectrogram into log-spaced frequency bands and return their
+    log-energy over time.
+
+    Returns:
+        log_energy: (n_bands, n_frames) array, np.log1p of summed magnitude per band
+        edge_hz: (n_bands + 1,) array of band edge frequencies in Hz
+    """
+    S = np.abs(librosa.stft(y, hop_length=hop_length))
+    n_freq = S.shape[0]
+    n_fft = 2 * (n_freq - 1)
+    freqs = librosa.fft_frequencies(sr=sr, n_fft=n_fft)
+
+    # Log-spaced band edges from ~20 Hz to Nyquist, mapped to STFT bins
+    edge_hz = np.logspace(np.log10(20.0), np.log10(sr / 2), n_bands + 1)
+    edge_bin = np.clip(np.searchsorted(freqs, edge_hz), 0, n_freq)
+
+    band_energy = np.zeros((n_bands, S.shape[1]))
+    for b in range(n_bands):
+        lo = edge_bin[b]
+        hi = max(lo + 1, edge_bin[b + 1])  # ensure ≥1 bin per band
+        band_energy[b] = S[lo:hi].sum(axis=0)
+
+    return np.log1p(band_energy), edge_hz
+
+
+def _rectified_band_novelty(log_energy: np.ndarray) -> np.ndarray:
+    """
+    Half-wave-rectified temporal flux per band, each band min-max normalized to 0-1.
+
+    Keeping only energy *increases* means an element being added lights up its
+    band, while an element dropping out (a negative flux) is clipped to zero.
+    """
+    flux = np.diff(log_energy, axis=1)
+    flux = np.maximum(flux, 0.0)  # additive events only
+    flux = np.concatenate([np.zeros((log_energy.shape[0], 1)), flux], axis=1)  # keep frame alignment
+
+    lo = flux.min(axis=1, keepdims=True)
+    hi = flux.max(axis=1, keepdims=True)
+    return (flux - lo) / (hi - lo + 1e-8)
+
+
+def compute_additive_novelty(
+    y: np.ndarray, sr: int, n_bands: int = 8, hop_length: int = 512
+) -> np.ndarray:
+    """
+    Per-band "a new element entered" curve.
+
+    Unlike `compute_novelty_curve` (symmetric spectral flux over the whole
+    spectrum, which fires on *any* change and buries a quiet element under a
+    loud one), this splits the spectrum into log-spaced bands and keeps only
+    per-band energy increases. A new beep/hat/synth line lights up its own
+    band; unchanged bands stay flat; elements dropping out are ignored.
+
+    Args:
+        y: Audio waveform
+        sr: Sample rate
+        n_bands: Number of log-spaced frequency bands
+        hop_length: Hop length for STFT
+
+    Returns:
+        novelty: (n_bands, n_frames) array in 0-1, one additive-novelty curve
+                 per band (lowest band first).
+    """
+    log_energy, _ = _band_log_energy(y, sr, n_bands=n_bands, hop_length=hop_length)
+    return _rectified_band_novelty(log_energy)
+
+
+def detect_element_onsets(
+    y: np.ndarray,
+    sr: int,
+    bpm: float,
+    n_bands: int = 8,
+    hop_length: int = 512,
+    threshold: float = 0.4,
+    min_sustain_bars: float = 2.0,
+    snap_to_bar: bool = True,
+) -> List[ElementOnset]:
+    """
+    Detect the moments new sound elements enter, per frequency band.
+
+    Pipeline: additive-novelty per band → peak-pick above `threshold` →
+    keep only peaks whose band energy stays elevated for `min_sustain_bars`
+    (rejects one-shot FX) → snap each onset to the nearest bar.
+
+    Args:
+        y: Audio waveform
+        sr: Sample rate
+        bpm: Track BPM (needed for bar math / sustain window)
+        n_bands: Number of frequency bands to watch
+        hop_length: Hop length for STFT
+        threshold: Peak height (0-1) on the additive-novelty curve
+        min_sustain_bars: Bars the new element must persist to count
+        snap_to_bar: Snap onset times to the nearest bar
+
+    Returns:
+        List[ElementOnset] sorted by (time, band).
+    """
+    log_energy, edge_hz = _band_log_energy(y, sr, n_bands=n_bands, hop_length=hop_length)
+    novelty = _rectified_band_novelty(log_energy)
+    n_frames = novelty.shape[1]
+
+    sustain_frames = max(1, int(round(bar_to_time(min_sustain_bars, bpm) * sr / hop_length)))
+
+    # Gate out near-dead bands so their normalized noise can't fire false onsets
+    band_mean = log_energy.mean(axis=1)
+    energy_gate = band_mean.max() * 0.15 if band_mean.max() > 0 else 0.0
+
+    onsets: List[ElementOnset] = []
+    for b in range(n_bands):
+        if band_mean[b] < energy_gate:
+            continue
+
+        peaks, props = signal.find_peaks(
+            novelty[b], height=threshold, distance=sustain_frames
+        )
+        for pk, height in zip(peaks, props["peak_heights"]):
+            pre = log_energy[b, max(0, pk - sustain_frames):pk]
+            post = log_energy[b, pk:min(n_frames, pk + sustain_frames)]
+            if pre.size == 0 or post.size == 0:
+                continue
+            # Sustained (not a one-shot): post-onset energy holds above the
+            # pre-onset baseline for most of the window (20th percentile guard).
+            if np.percentile(post, 20) <= pre.mean():
+                continue
+
+            t = librosa.frames_to_time(pk, sr=sr, hop_length=hop_length)
+            if snap_to_bar:
+                t = bar_to_time(round(time_to_bar(t, bpm)), bpm)
+
+            onsets.append(ElementOnset(
+                time=float(t),
+                band=int(b),
+                freq_low=float(edge_hz[b]),
+                freq_high=float(edge_hz[b + 1]),
+                confidence=float(round(height, 3)),
+                label=_band_name(edge_hz[b], edge_hz[b + 1]),
+            ))
+
+    onsets.sort(key=lambda o: (o.time, o.band))
+    return onsets
+
+
+def derive_mix_points(
+    onsets: List[ElementOnset],
+    bpm: float,
+    duration: float,
+    mix_out_bars: int = 32,
+) -> Dict[str, Optional[float]]:
+    """
+    Turn a track's element onsets into named, deck-actionable mix points.
+
+    Args:
+        onsets: Output of `detect_element_onsets` (may be empty)
+        bpm: Track BPM
+        duration: Track duration in seconds
+        mix_out_bars: Bars before the end to place the mix-out point
+
+    Returns:
+        Dict with (each None when underivable):
+        - "mix_in": first element entry — where to start the incoming deck
+        - "bass_in": first sub/low-band entry — where to swap the lows
+        - "full_on": all detected bands have entered — blend should be done
+        - "mix_out": `mix_out_bars` before the end, bar-snapped — start leaving
+    """
+    points: Dict[str, Optional[float]] = {
+        "mix_in": None, "bass_in": None, "full_on": None, "mix_out": None,
+    }
+
+    if onsets:
+        points["mix_in"] = onsets[0].time
+        points["bass_in"] = next(
+            (o.time for o in onsets if o.label in ("sub", "low")), None
+        )
+        all_bands = {o.band for o in onsets}
+        entered = set()
+        for o in onsets:
+            entered.add(o.band)
+            if entered == all_bands:
+                points["full_on"] = o.time
+                break
+
+    if bpm > 0 and duration > 0:
+        out_bar = int(time_to_bar(duration, bpm)) - mix_out_bars
+        if out_bar > 0:
+            points["mix_out"] = bar_to_time(out_bar, bpm)
+
+    return points
 
 
 def detect_segment_boundaries(
@@ -348,7 +557,11 @@ def analyze_structure(
     novelty_threshold: float = 0.5,
     min_segment_duration: float = 8.0,
     breakdown_threshold: float = 24.0,
-    include_beats: bool = True
+    include_beats: bool = True,
+    detect_elements: bool = False,
+    element_n_bands: int = 8,
+    element_onset_threshold: float = 0.4,
+    element_min_sustain_bars: float = 2.0,
 ) -> PhrasingResult:
     """
     Complete phrasing analysis with beat-based labels.
@@ -392,6 +605,17 @@ def analyze_structure(
     # Map to cue points
     cue_points = map_segments_to_hotcues(segments)
 
+    # Optionally detect new-element entries (beep/hat/synth coming in)
+    element_onsets = []
+    if detect_elements:
+        element_onsets = detect_element_onsets(
+            y, sr, bpm,
+            n_bands=element_n_bands,
+            hop_length=hop_length,
+            threshold=element_onset_threshold,
+            min_sustain_bars=element_min_sustain_bars,
+        )
+
     # Calculate structure confidence (average segment confidence)
     avg_confidence = np.mean([s.confidence for s in segments]) if segments else 0.0
 
@@ -399,5 +623,6 @@ def analyze_structure(
         segment_boundaries=boundaries,
         segments=segments,
         cue_points=cue_points,
-        structure_confidence=avg_confidence
+        structure_confidence=avg_confidence,
+        element_onsets=element_onsets,
     )

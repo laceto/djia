@@ -10,11 +10,14 @@ from src.dsp.phrasing_engine import (
     compute_novelty_curve,
     detect_segment_boundaries,
     analyze_structure,
+    compute_additive_novelty,
+    detect_element_onsets,
+    derive_mix_points,
 )
 from src.dsp.groove_engine import analyze_groove, compute_swing_score
 from src.dsp.mood_engine import analyze_mood, detect_key_from_chroma
 from src.dsp.curation_engine import analyze_curation, classify_energy_profile
-from src.features.schema import Track
+from src.features.schema import Track, ElementOnset
 
 
 # Test data directory
@@ -70,10 +73,101 @@ class TestPhrasingEngine:
         for seg in phrasing.segments:
             assert seg.start_time >= 0
             assert seg.end_time > seg.start_time
-            assert seg.label in ["intro", "build", "drop", "breakdown", "outro"]
+            # labels carry beat/bar ranges when include_beats=True, e.g. "intro (beats 0-4)"
+            assert seg.label.split(" (")[0] in ["intro", "build", "drop", "breakdown", "outro"]
 
         # Should have cue points
         assert hasattr(phrasing, "cue_points")
+
+
+class TestElementOnsets:
+    """Test additive-novelty element-onset detection."""
+
+    def test_additive_novelty_shape(self):
+        """Per-band novelty is (n_bands, n_frames) and normalized to 0-1."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        n_bands = 8
+        novelty = compute_additive_novelty(y, sr, n_bands=n_bands)
+
+        assert novelty.ndim == 2
+        assert novelty.shape[0] == n_bands
+        assert novelty.shape[1] > 0
+        assert novelty.min() >= -0.01
+        assert novelty.max() <= 1.01
+
+    def test_element_onsets_valid(self):
+        """Detected onsets have valid, in-range fields."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        n_bands = 8
+        onsets = detect_element_onsets(y, sr, bpm=128.0, n_bands=n_bands)
+
+        duration = librosa.get_duration(y=y, sr=sr)
+        for o in onsets:
+            assert 0 <= o.time <= duration + 1.0  # bar-snap may nudge slightly past end
+            assert 0 <= o.band < n_bands
+            assert o.freq_low < o.freq_high
+            assert 0.0 <= o.confidence <= 1.0
+            assert isinstance(o.label, str) and o.label
+
+        # Onsets are returned sorted by time
+        times = [o.time for o in onsets]
+        assert times == sorted(times)
+
+    def test_threshold_monotonicity(self):
+        """A higher threshold never yields more onsets than a lower one."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        low = detect_element_onsets(y, sr, bpm=128.0, threshold=0.3)
+        high = detect_element_onsets(y, sr, bpm=128.0, threshold=0.7)
+        assert len(high) <= len(low)
+
+
+class TestMixPoints:
+    """Test derive_mix_points (pure — synthetic onsets, no audio)."""
+
+    @staticmethod
+    def _onset(time, band, label):
+        return ElementOnset(
+            time=time, band=band, freq_low=20.0 * 2**band,
+            freq_high=20.0 * 2**(band + 1), confidence=0.8, label=label,
+        )
+
+    def test_named_points(self):
+        """mix_in = first onset, bass_in = first sub/low, full_on = last new band."""
+        onsets = [
+            self._onset(7.5, 4, "mid"),
+            self._onset(15.0, 1, "sub"),
+            self._onset(30.0, 6, "high"),
+            self._onset(45.0, 4, "mid"),  # repeat band — must not move full_on
+        ]
+        points = derive_mix_points(onsets, bpm=128.0, duration=360.0)
+
+        assert points["mix_in"] == 7.5
+        assert points["bass_in"] == 15.0
+        assert points["full_on"] == 30.0
+        # mix_out is bar-snapped, 32 bars before the end, inside the track
+        assert points["mix_out"] is not None
+        assert 0 < points["mix_out"] < 360.0
+
+    def test_empty_onsets(self):
+        """No onsets — element points are None, mix_out still derived."""
+        points = derive_mix_points([], bpm=128.0, duration=360.0)
+        assert points["mix_in"] is None
+        assert points["bass_in"] is None
+        assert points["full_on"] is None
+        assert points["mix_out"] is not None
+
+    def test_short_track_no_mix_out(self):
+        """A track shorter than mix_out_bars gets no mix_out point."""
+        points = derive_mix_points([], bpm=128.0, duration=30.0, mix_out_bars=32)
+        assert points["mix_out"] is None
+
+    def test_no_bass_band(self):
+        """bass_in is None when no sub/low element ever enters."""
+        onsets = [self._onset(10.0, 5, "high-mid")]
+        points = derive_mix_points(onsets, bpm=128.0, duration=300.0)
+        assert points["bass_in"] is None
+        assert points["mix_in"] == 10.0
+        assert points["full_on"] == 10.0
 
 
 class TestGrooveEngine:
