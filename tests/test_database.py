@@ -231,6 +231,7 @@ class TestTrackStore:
             'tempo': 125.0,
             'spectral_centroid_mean': 2500.0,
             'harmonic_ratio': 1.5,
+            'swing_score': 0.35,
         }
         store.insert_features(track_id, features)
 
@@ -238,6 +239,7 @@ class TestTrackStore:
         assert retrieved_features is not None, "Features not found"
         assert retrieved_features['bpm'] == 125.0
         assert retrieved_features['spectral_centroid_mean'] == 2500.0
+        assert retrieved_features['swing_score'] == 0.35
 
     def test_insert_mood(self, temp_db):
         """Test inserting mood classification."""

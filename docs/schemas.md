@@ -52,7 +52,8 @@ Default DB: `data/djia.db`. Foreign keys ON; `ON DELETE CASCADE` from `tracks`.
 - **`features`** — `track_id` UNIQUE FK, `bpm`, spectral stats (`spectral_centroid_mean/std`,
   `spectral_rolloff_mean`, `spectral_flux_mean`), `harmonic_ratio`, `percussive_ratio`, MFCC stats
   (`mfcc_mean/std/delta_mean`, `mfcc_vector` as TEXT), chroma (`chroma_variance`, `chroma_entropy`),
-  RMS (`rms_mean/std/peak`).
+  RMS (`rms_mean/std/peak`), `key`/`camelot_key`/`key_confidence`, `swing_score`
+  (0=straight, 1=swung, from the groove engine).
 - **`mood`** — `track_id` UNIQUE FK + 6 mood dimensions: `dark`, `hypnotic`, `euphoric`,
   `aggressive`, `industrial`, `minimal`.
 - **`segments`** — `track_id` FK, `segment_type`, `start_time`, `end_time`, `confidence`,

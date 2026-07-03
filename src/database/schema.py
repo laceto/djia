@@ -45,6 +45,7 @@ CREATE TABLE IF NOT EXISTS features (
     key TEXT,
     camelot_key TEXT,
     key_confidence REAL,
+    swing_score REAL,
     mfcc_vector TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -130,6 +131,7 @@ def init_db(db_path: str = "data/djia.db") -> sqlite3.Connection:
             "key": "TEXT",
             "camelot_key": "TEXT",
             "key_confidence": "REAL",
+            "swing_score": "REAL",
         })
         _add_missing_columns(conn, "segments", {
             "method": "TEXT NOT NULL DEFAULT 'spectral'",

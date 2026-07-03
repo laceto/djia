@@ -9,6 +9,7 @@ from .ingestion.scanner import AudioScanner
 from .ingestion.loader import AudioLoader
 from .audio_analysis import analyze_track as analyze_audio
 from .dsp.config import get_config
+from .dsp.groove_engine import analyze_groove
 from .dsp.mood_engine import analyze_mood as analyze_tonality
 from .dsp.phrasing_engine import analyze_structure, create_phrase_locked_segments
 from .ai.classifier import MoodClassifier
@@ -94,6 +95,14 @@ class Orchestrator:
             features['key_confidence'] = tonality.key_confidence
         except Exception as e:
             logger.warning(f"Failed to detect key for {file_path}: {e}")
+
+    def _add_swing(self, features: Dict[str, Any], y, sr, file_path) -> None:
+        """Measure swing (0=straight, 1=swung) and merge into the features dict (best-effort)."""
+        try:
+            groove = analyze_groove(y, sr)
+            features['swing_score'] = groove.swing_score
+        except Exception as e:
+            logger.warning(f"Failed to measure swing for {file_path}: {e}")
 
     def analyze_library(
         self,
@@ -192,8 +201,9 @@ class Orchestrator:
                     errors += 1
                     continue
 
-                # Detect musical key (Camelot) and merge into features
+                # Detect musical key (Camelot) and swing, merge into features
                 self._add_tonality(features, y, sr, file_path)
+                self._add_swing(features, y, sr, file_path)
 
                 # Store features
                 self.store.insert_features(track_id, features)
@@ -258,8 +268,9 @@ class Orchestrator:
                 logger.error(f"Failed to extract features: {file_path}")
                 return None
 
-            # Detect musical key (Camelot) and merge into features
+            # Detect musical key (Camelot) and swing, merge into features
             self._add_tonality(features, y, sr, file_path)
+            self._add_swing(features, y, sr, file_path)
 
             # Classify mood
             try:
