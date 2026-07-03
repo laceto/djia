@@ -11,7 +11,7 @@ Audio files
   → ingestion (scan + librosa load, 22,050 Hz mono)
   → DSP pipeline (Groove → Phrasing → Mood → Curation)  →  Track
   → AI layer (stems, mood classification, segmentation)
-  → database (SQLite) + matching (similarity) + traktor (NML export)
+  → database (SQLite) + matching (similarity) + traktor (NML export) + djuced (hot-cue export)
 ```
 
 `src/orchestrator.py` (`Orchestrator`) ties ingestion → DSP → AI → DB together and is what the CLI
@@ -26,6 +26,10 @@ because of data dependencies:**
 2. **Phrasing** (`phrasing_engine.py`) → structural segments (intro/build/drop/breakdown/outro) +
    hot-cue positions. Takes BPM and the tunable phrasing params. Segments carry beat/bar ranges when
    `include_beats=True`. `time_to_bar(seconds, bpm)` is the shared time↔bar conversion.
+   Also hosts **element-onset detection** (`detect_element_onsets` — per-band additive novelty
+   marking where new sound elements enter; opt-in via `analyze_structure(detect_elements=True)` or
+   direct call) and `derive_mix_points(onsets, bpm, duration)` which turns onsets into named
+   mix points (mix_in / bass_in / full_on / mix_out) for DJ use.
 3. **Mood** (`mood_engine.py`) → Camelot key + brightness. Independent.
 4. **Curation** (`curation_engine.py`) → danceability, energy curve, semantic tags. Consumes BPM,
    swing, brightness.
@@ -73,6 +77,9 @@ them consistent.
 - `database/schema.py` + `database/store.py` — SQLite (`TrackStore`); default DB is `data/djia.db`.
 - `matching/similarity.py` — cosine similarity over feature vectors, filterable by BPM/key/mood.
 - `traktor/exporter.py` — writes Traktor NML with BPM, key, and auto hot cues.
+- `djuced/exporter.py` — writes `DJIA …`-prefixed hot cues directly into DJUCED's own
+  `DJUCED.db` (Hercules controllers), matched by fuzzy filename. Dry-run by default,
+  auto-backup before the first real write; DJUCED must be closed while writing.
 
 ## Ingestion
 

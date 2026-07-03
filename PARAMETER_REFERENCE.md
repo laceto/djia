@@ -362,6 +362,33 @@ config = get_config("my_minimal")
 
 ---
 
+## Element-onset detection parameters
+
+Separate from segmentation: `detect_element_onsets` marks **where a new sound element enters**
+(kick, hat, synth line) by splitting the spectrum into log-spaced bands and keeping only per-band
+energy *increases*. Opt-in — `analyze_structure(..., detect_elements=True)` or a direct call.
+Three tunables live in `PhrasingConfig` (`src/dsp/config.py`):
+
+| Parameter | Default | Effect |
+|---|---|---|
+| `element_n_bands` | 8 | Log-spaced frequency bands watched independently. More bands = finer frequency localization, more potential onsets. |
+| `element_onset_threshold` | 0.4 | Peak height (0-1) on the per-band additive-novelty curve. Lower = more sensitive (quieter elements, more false positives). |
+| `element_min_sustain_bars` | 2.0 | Bars a new element must persist to count — rejects one-shot FX. |
+
+Onsets are bar-snapped and carry a band label in DJ-EQ language (`sub`/`low`/…/`high`).
+`derive_mix_points(onsets, bpm, duration, mix_out_bars=32)` reduces them to named mix points:
+`mix_in` (first entry), `bass_in` (first sub/low entry), `full_on` (all bands in), `mix_out`
+(N bars before the end). The track-pairing notebook and the DJUCED cue export are the consumers.
+
+```python
+from src.dsp.phrasing_engine import detect_element_onsets, derive_mix_points
+
+onsets = detect_element_onsets(y, sr, bpm=126, threshold=0.4, min_sustain_bars=2.0)
+points = derive_mix_points(onsets, bpm=126, duration=360.0)
+```
+
+---
+
 ## Beat & bar labels
 
 Segment labels include **beat ranges** aligned to groups of 4 beats (one 4/4 bar), so cues land on

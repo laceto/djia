@@ -29,7 +29,7 @@ right context. The data contract for everything is the `Track` dataclass in `src
 → READ: `PARAMETER_REFERENCE.md` for what each parameter does
 → ALSO READ: `coding-rules.md` (segmentation/tuning section)
 
-**DATA / EXPORT** — DB queries, similarity search, or Traktor NML export
+**DATA / EXPORT** — DB queries, similarity search, Traktor NML export, or DJUCED cue export
 → READ: `docs/api-reference.md`
 → ALSO READ: `docs/scripts-reference.md` for CLI commands
 
@@ -47,6 +47,7 @@ src/
   database/     SQLite schema + store (TrackStore)
   matching/     cosine similarity over feature vectors
   traktor/      NML exporter with hot cues
+  djuced/       hot-cue exporter writing directly into DJUCED.db (Hercules)
   ingestion/    scanner + loader (librosa, 22,050 Hz mono)
   orchestrator.py   ties ingestion → DSP → AI → DB
   cli.py            argparse subcommands

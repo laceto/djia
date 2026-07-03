@@ -16,6 +16,12 @@ Public entry points for programmatic use. Import the package from the repo root.
   — spectral-novelty segmentation; segment labels carry beat/bar ranges when `include_beats=True`.
 - **`phrasing_engine.create_phrase_locked_segments(duration, bpm, bars_per_phrase, include_beats=True) -> List[Segment]`**
   — alternative fixed-bar segmentation (every segment exactly N bars).
+- **`phrasing_engine.detect_element_onsets(y, sr, bpm, n_bands, threshold, min_sustain_bars) -> List[ElementOnset]`**
+  — per-band additive novelty: the bar-snapped moments a new sound element (kick, hat, synth line)
+  enters, with frequency band and confidence. One-shot FX are rejected via the sustain window.
+- **`phrasing_engine.derive_mix_points(onsets, bpm, duration, mix_out_bars=32) -> dict`**
+  — turns element onsets into named mix points: `mix_in` (first element entry), `bass_in` (first
+  sub/low entry — swap the lows here), `full_on` (all bands in), `mix_out` (phrase math before the end).
 - **Time/beat/bar helpers** (`phrasing_engine`): `time_to_bar`, `bar_to_time`, `time_to_beat`,
   `beat_to_bar_group`, `snap_to_bar_boundary` — conversions used by phrasing and for snapping cues
   to bar boundaries. See `PARAMETER_REFERENCE.md` for the beat/bar and phrase-locking model.
@@ -47,6 +53,20 @@ Public entry points for programmatic use. Import the package from the repo root.
 
 > Import tuner entry points directly from `src.ai.track_tuner_graph` — `src/ai/__init__.py` does not
 > re-export them, and their deps are not in `requirements.txt`.
+
+## DJUCED export (`src/djuced/`)
+
+- **`exporter.export_mix_cues(track_cues, db_path=DEFAULT_DJUCED_DB, dry_run=True) -> report`**
+  — write `DJIA …`-prefixed hot cues straight into DJUCED's own `DJUCED.db` (matched by fuzzy
+  filename; all duplicate copies get the cues). Dry-run by default; auto-backup before the first
+  real write; only DJIA-named cues are ever replaced. Close DJUCED before writing.
+- **`exporter.match_djuced_tracks(file_name, library)`** / **`load_djuced_library(db_path)`** —
+  filename-normalized matching between DJIA's library and DJUCED's.
+
+## Traktor export (`src/traktor/`)
+
+- **`exporter.export_all_tracks(nml_path, db_path, output_path)`** — add BPM/cues from the DB to a
+  Traktor `Collection.nml` copy.
 
 ## Orchestration
 

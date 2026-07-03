@@ -20,7 +20,8 @@ Track(
 Component results:
 
 - **`PhrasingResult`** — `segment_boundaries: List[float]`, `segments: List[Segment]`,
-  `cue_points: List[CuePoint]`, `structure_confidence: float`.
+  `cue_points: List[CuePoint]`, `structure_confidence: float`,
+  `element_onsets: List[ElementOnset]` (empty unless element detection was run).
 - **`GrooveResult`** — `bpm: float`, `beat_grid: np.ndarray`, `beat_times: List[float]`,
   `swing_score: float` (0=stiff, 1=groovy), `tempo_stability: bool`, `stability_variance: float`.
 - **`MoodResult`** — `key: str` (e.g. "A minor"), `camelot_key: str` (e.g. "7A"),
@@ -33,6 +34,9 @@ Building blocks:
 - **`Segment`** — `start_time`, `end_time` (seconds), `label` (intro/build/drop/breakdown/outro),
   `confidence`.
 - **`CuePoint`** — `time` (seconds), `label` (e.g. "Pad 1"), `type` (default "hotcue").
+- **`ElementOnset`** — the moment a new sound element enters: `time` (seconds, bar-snapped),
+  `band` (frequency-band index, 0 = lowest), `freq_low`/`freq_high` (Hz), `confidence` (0-1),
+  `label` (DJ-EQ band hint: "sub"/"low"/"low-mid"/"mid"/"high-mid"/"high").
 
 Wrappers / helpers:
 

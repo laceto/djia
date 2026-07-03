@@ -17,7 +17,9 @@ DJIA analyzes your audio library to extract features, classify mood, detect stru
 - Track structure detection (drops, breakdowns, transitions)
 - Smart transition scoring based on BPM, key, mood, and energy
 - DJ playlist generation with optimal transitions
+- Element-onset detection (where new sound elements enter) with derived mix points
 - Traktor NML export for direct DJ software integration
+- DJUCED hot-cue export (mix marks straight onto Hercules controller pads)
 - SQLite database for persistent analysis results
 
 ## System Architecture
@@ -34,7 +36,8 @@ DJIA consists of 5 phases integrated through a master orchestrator:
 ### Phase 2: DSP (Digital Signal Processing)
 Four ordered engines (Groove → Phrasing → Mood → Curation), orchestrated by `extractor.py`:
 - **Groove** — decimal BPM, beat grid, swing (runs first; BPM feeds everything downstream)
-- **Phrasing** — structural segments (intro/build/drop/breakdown/outro) + hot-cue positions
+- **Phrasing** — structural segments (intro/build/drop/breakdown/outro) + hot-cue positions,
+  plus opt-in element-onset detection and mix-point derivation (`derive_mix_points`)
 - **Mood** — musical key (Camelot) + brightness
 - **Curation** — danceability, energy curve, semantic tags
 
@@ -53,8 +56,10 @@ Four ordered engines (Groove → Phrasing → Mood → Curation), orchestrated b
 - SQLite storage of tracks, features, mood, and segments
 - Query interface for track analysis results
 - Traktor NML export for DJ software integration
+- DJUCED hot-cue export: writes DJIA mix points into DJUCED's own database (dry-run by
+  default, auto-backup, only DJIA-named cues replaced)
 
-**Modules:** `src/database/`, `src/traktor/`
+**Modules:** `src/database/`, `src/traktor/`, `src/djuced/`
 
 ### Phase 5: Advanced AI (Optional)
 - Transition quality scoring between tracks
@@ -461,6 +466,7 @@ djia/
 │   ├── database/              # Phase 4: schema.py, store.py (SQLite)
 │   ├── matching/similarity.py # Phase 4: cosine similarity
 │   ├── traktor/exporter.py    # Phase 4: Traktor NML export
+│   ├── djuced/exporter.py     # Phase 4: DJUCED hot-cue export (Hercules)
 │   └── main.py, audio_analysis.py, ...  # LEGACY (do not extend)
 ├── tests/                     # pytest suite (one file per subsystem)
 ├── docs/                      # architecture, schemas, api-reference, scripts-reference, archive/
