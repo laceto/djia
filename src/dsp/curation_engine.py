@@ -120,6 +120,42 @@ def compute_spectral_flux(y: np.ndarray, sr: int, hop_length: int = 512) -> floa
     return float(np.mean(flux_norm))
 
 
+def compute_spectral_flatness(y: np.ndarray, sr: int, hop_length: int = 512) -> float:
+    """
+    Compute spectral flatness (Wiener entropy): how tonal/pure vs. noise-like the
+    audio is, averaged across frames.
+
+    Args:
+        y: Audio waveform
+        sr: Sample rate
+        hop_length: Hop length
+
+    Returns:
+        flatness_mean: 0.0 (pure tone / clean, isolated sounds) to 1.0 (white-noise-like,
+        saturated/dense soundscape)
+    """
+    flatness = librosa.feature.spectral_flatness(y=y, hop_length=hop_length)[0]
+    return float(np.clip(np.mean(flatness), 0.0, 1.0))
+
+
+def compute_crest_factor(rms_mean: float, rms_peak: float) -> float:
+    """
+    Compute crest factor (peak-to-average ratio): how punchy/dynamic vs. compressed
+    a track is.
+
+    Args:
+        rms_mean: Mean RMS energy
+        rms_peak: Peak RMS energy
+
+    Returns:
+        crest_factor: rms_peak / rms_mean. High = punchy, dynamic (kick dominates the
+        mix); low (near 1.0) = overly compressed, wall-of-sound.
+    """
+    if not rms_mean:
+        return 0.0
+    return float(rms_peak / rms_mean)
+
+
 def generate_semantic_tags(
     danceability: float,
     energy_type: str,
@@ -233,6 +269,13 @@ def analyze_curation(
     energy_cv = np.std(energy_curve) / (np.mean(energy_curve) + 1e-8)
     complexity_score = (spectral_flux + np.clip(energy_cv / 0.5, 0, 1)) / 2
 
+    # Spectral density metrics
+    spectral_flatness = compute_spectral_flatness(y, sr, hop_length)
+    crest_factor = compute_crest_factor(
+        rms_mean=float(np.mean(energy_curve)),
+        rms_peak=float(np.max(energy_curve)),
+    )
+
     # Generate tags
     tags = generate_semantic_tags(
         danceability,
@@ -248,5 +291,7 @@ def analyze_curation(
         energy_curve=energy_curve,
         energy_type=energy_type,
         semantic_tags=tags,
-        complexity_score=complexity_score
+        complexity_score=complexity_score,
+        spectral_flatness=spectral_flatness,
+        crest_factor=crest_factor,
     )

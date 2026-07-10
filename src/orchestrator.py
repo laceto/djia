@@ -11,6 +11,7 @@ from .audio_analysis import analyze_track as analyze_audio
 from .dsp.config import get_config
 from .dsp.groove_engine import analyze_groove
 from .dsp.mood_engine import analyze_mood as analyze_tonality
+from .dsp.curation_engine import compute_spectral_flatness, compute_crest_factor
 from .dsp.phrasing_engine import analyze_structure, create_phrase_locked_segments
 from .ai.classifier import MoodClassifier
 from .database.store import TrackStore
@@ -87,22 +88,41 @@ class Orchestrator:
             logger.warning(f"Failed to detect segments for {file_path}: {e}")
 
     def _add_tonality(self, features: Dict[str, Any], y, sr, file_path) -> None:
-        """Detect musical key/Camelot and merge into the features dict (best-effort)."""
+        """Detect musical key/Camelot/timbral roughness/ZCR and merge into the features dict
+        (best-effort)."""
         try:
             tonality = analyze_tonality(y, sr)
             features['key'] = tonality.key
             features['camelot_key'] = tonality.camelot_key
             features['key_confidence'] = tonality.key_confidence
+            features['zero_crossing_rate'] = tonality.zero_crossing_rate
+            features['roughness'] = tonality.roughness
         except Exception as e:
             logger.warning(f"Failed to detect key for {file_path}: {e}")
 
     def _add_swing(self, features: Dict[str, Any], y, sr, file_path) -> None:
-        """Measure swing (0=straight, 1=swung) and merge into the features dict (best-effort)."""
+        """Measure swing, onset strength, and beat strength; merge into the features dict
+        (best-effort)."""
         try:
             groove = analyze_groove(y, sr)
             features['swing_score'] = groove.swing_score
+            features['onset_strength_mean'] = groove.onset_strength_mean
+            features['onset_strength_std'] = groove.onset_strength_std
+            features['beat_strength'] = groove.beat_strength
         except Exception as e:
             logger.warning(f"Failed to measure swing for {file_path}: {e}")
+
+    def _add_density(self, features: Dict[str, Any], y, sr, file_path) -> None:
+        """Measure spectral density (flatness, crest factor) and merge into the features dict
+        (best-effort). Crest factor reuses rms_mean/rms_peak already extracted by analyze_audio."""
+        try:
+            features['spectral_flatness'] = compute_spectral_flatness(y, sr)
+            features['crest_factor'] = compute_crest_factor(
+                rms_mean=features.get('rms_mean'),
+                rms_peak=features.get('rms_peak'),
+            )
+        except Exception as e:
+            logger.warning(f"Failed to measure spectral density for {file_path}: {e}")
 
     def analyze_library(
         self,
@@ -201,9 +221,14 @@ class Orchestrator:
                     errors += 1
                     continue
 
-                # Detect musical key (Camelot) and swing, merge into features
+                # analyze_audio() only sets 'tempo', not 'bpm' — alias so downstream
+                # callers that read features.get('bpm') (e.g. _add_segments) see it too.
+                features.setdefault('bpm', features.get('tempo'))
+
+                # Detect musical key (Camelot), timbre, swing, and density; merge into features
                 self._add_tonality(features, y, sr, file_path)
                 self._add_swing(features, y, sr, file_path)
+                self._add_density(features, y, sr, file_path)
 
                 # Store features
                 self.store.insert_features(track_id, features)
@@ -268,9 +293,13 @@ class Orchestrator:
                 logger.error(f"Failed to extract features: {file_path}")
                 return None
 
-            # Detect musical key (Camelot) and swing, merge into features
+            # analyze_audio() only sets 'tempo', not 'bpm' — alias for downstream callers.
+            features.setdefault('bpm', features.get('tempo'))
+
+            # Detect musical key (Camelot), timbre, swing, and density; merge into features
             self._add_tonality(features, y, sr, file_path)
             self._add_swing(features, y, sr, file_path)
+            self._add_density(features, y, sr, file_path)
 
             # Classify mood
             try:

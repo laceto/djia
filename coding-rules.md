@@ -21,6 +21,14 @@ How to write code in this repo. Read before adding or changing any Python in `sr
   3. **Mood** → independent (Camelot key + brightness).
   4. **Curation** → consumes BPM, swing, brightness.
 - See `docs/architecture.md` for the full data-flow rationale.
+- Density/onset/timbre metrics are grouped onto the engine that already computes related
+  spectral/rhythm features, not bolted onto `audio_analysis.py` (legacy, see below):
+  `spectral_flatness`/`crest_factor` → curation engine (alongside `spectral_flux`/`complexity_score`);
+  `onset_strength_mean/std`/`beat_strength` → groove engine (alongside BPM/swing, reusing the
+  onset envelope already computed there); `zero_crossing_rate`/`roughness` → mood engine (alongside
+  key/brightness). `orchestrator.py`'s `_add_density`/`_add_swing`/`_add_tonality` call these
+  directly for the DB-persisted `analyze` CLI path; `extractor.extract_track_features` picks them
+  up automatically via the engine results for the standalone/no-DB path.
 
 ### Segmentation / tuning
 

@@ -103,8 +103,11 @@ class TrackStore:
                  spectral_rolloff_mean, spectral_flux_mean, harmonic_ratio,
                  percussive_ratio, mfcc_mean, mfcc_std, mfcc_delta_mean,
                  chroma_variance, chroma_entropy, rms_mean, rms_std, rms_peak,
-                 key, camelot_key, key_confidence, swing_score, mfcc_vector)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 key, camelot_key, key_confidence, swing_score,
+                 spectral_flatness, crest_factor, onset_strength_mean,
+                 onset_strength_std, beat_strength, zero_crossing_rate, roughness,
+                 mfcc_vector)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 track_id,
                 features.get('tempo'),
@@ -126,6 +129,13 @@ class TrackStore:
                 features.get('camelot_key'),
                 features.get('key_confidence'),
                 features.get('swing_score'),
+                features.get('spectral_flatness'),
+                features.get('crest_factor'),
+                features.get('onset_strength_mean'),
+                features.get('onset_strength_std'),
+                features.get('beat_strength'),
+                features.get('zero_crossing_rate'),
+                features.get('roughness'),
                 mfcc_vector,
             ))
 

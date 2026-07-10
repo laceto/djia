@@ -14,9 +14,24 @@ from src.dsp.phrasing_engine import (
     detect_element_onsets,
     derive_mix_points,
 )
-from src.dsp.groove_engine import analyze_groove, compute_swing_score
-from src.dsp.mood_engine import analyze_mood, detect_key_from_chroma
-from src.dsp.curation_engine import analyze_curation, classify_energy_profile
+from src.dsp.groove_engine import (
+    analyze_groove,
+    compute_swing_score,
+    compute_onset_strength_stats,
+    compute_beat_strength,
+)
+from src.dsp.mood_engine import (
+    analyze_mood,
+    detect_key_from_chroma,
+    compute_zero_crossing_rate,
+    compute_roughness,
+)
+from src.dsp.curation_engine import (
+    analyze_curation,
+    classify_energy_profile,
+    compute_spectral_flatness,
+    compute_crest_factor,
+)
 from src.features.schema import Track, ElementOnset
 
 
@@ -214,6 +229,46 @@ class TestGrooveEngine:
         for beat_time in groove.beat_times:
             assert 0 <= beat_time <= duration
 
+    def test_onset_strength_stats_persisted(self):
+        """analyze_groove() exposes onset strength mean/std (non-negative, mean is real-valued)."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        groove = analyze_groove(y, sr)
+
+        assert groove.onset_strength_mean >= 0.0
+        assert groove.onset_strength_std >= 0.0
+
+    def test_onset_strength_stats_scale(self):
+        """Scaling the onset envelope scales the summary stats proportionally."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+
+        mean1, std1 = compute_onset_strength_stats(onset_env, scale=1.0)
+        mean2, std2 = compute_onset_strength_stats(onset_env, scale=2.0)
+
+        assert mean2 == pytest.approx(mean1 * 2, rel=1e-6)
+        assert std2 == pytest.approx(std1 * 2, rel=1e-6)
+
+    def test_onset_strength_stats_empty(self):
+        """Empty onset envelope returns neutral zeros, not an error."""
+        mean, std = compute_onset_strength_stats(np.array([]))
+        assert mean == 0.0
+        assert std == 0.0
+
+    def test_beat_strength_range(self):
+        """analyze_groove() exposes beat_strength in 0-1."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        groove = analyze_groove(y, sr)
+
+        assert 0.0 <= groove.beat_strength <= 1.0
+
+    def test_beat_strength_no_bpm(self):
+        """No/zero BPM returns 0.0 rather than raising."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+
+        assert compute_beat_strength(onset_env, sr, bpm=0.0) == 0.0
+        assert compute_beat_strength(onset_env, sr, bpm=None) == 0.0
+
 
 class TestMoodEngine:
     """Test Step 3: Mood Engine."""
@@ -255,6 +310,32 @@ class TestMoodEngine:
         mood = analyze_mood(y, sr)
 
         assert 0.0 <= mood.key_confidence <= 1.0
+
+    def test_zero_crossing_rate_range(self):
+        """analyze_mood() exposes zero_crossing_rate as a small non-negative fraction."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        mood = analyze_mood(y, sr)
+
+        assert 0.0 <= mood.zero_crossing_rate <= 1.0
+
+    def test_zero_crossing_rate_matches_helper(self):
+        """analyze_mood()'s stored ZCR matches the standalone helper for the same audio."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        mood = analyze_mood(y, sr)
+
+        assert mood.zero_crossing_rate == pytest.approx(compute_zero_crossing_rate(y), rel=1e-6)
+
+    def test_roughness_range(self):
+        """analyze_mood() exposes roughness in 0-1."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        mood = analyze_mood(y, sr)
+
+        assert 0.0 <= mood.roughness <= 1.0
+
+    def test_roughness_silence_is_zero(self):
+        """Silence has no spectral peaks to be dissonant -> roughness is 0."""
+        silence = np.zeros(22050 * 2, dtype=np.float32)
+        assert compute_roughness(silence, 22050) == 0.0
 
 
 class TestCurationEngine:
@@ -303,6 +384,32 @@ class TestCurationEngine:
 
         assert 0.0 <= curation.complexity_score <= 1.0
 
+    def test_spectral_flatness_range(self):
+        """analyze_curation() exposes spectral_flatness in 0-1."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        curation = analyze_curation(y, sr, bpm=120.0, swing_score=0.5, brightness=0.5)
+
+        assert 0.0 <= curation.spectral_flatness <= 1.0
+
+    def test_crest_factor_at_least_one(self):
+        """analyze_curation() exposes crest_factor; peak RMS can never be below mean RMS."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        curation = analyze_curation(y, sr, bpm=120.0, swing_score=0.5, brightness=0.5)
+
+        assert curation.crest_factor >= 1.0
+
+    def test_crest_factor_helper(self):
+        """compute_crest_factor is a plain peak/mean ratio, guarded against zero mean."""
+        assert compute_crest_factor(rms_mean=0.1, rms_peak=0.5) == pytest.approx(5.0)
+        assert compute_crest_factor(rms_mean=0.0, rms_peak=0.5) == 0.0
+        assert compute_crest_factor(rms_mean=None, rms_peak=0.5) == 0.0
+
+    def test_spectral_flatness_helper_silence(self):
+        """Silence is neither tonal nor noisy in a meaningful sense, but must not error."""
+        silence = np.zeros(22050, dtype=np.float32)
+        flatness = compute_spectral_flatness(silence, 22050)
+        assert 0.0 <= flatness <= 1.0
+
 
 class TestOrchestratorExtractor:
     """Test Master Orchestrator (extractor.py)."""
@@ -328,6 +435,12 @@ class TestOrchestratorExtractor:
         assert track.groove.bpm > 0
         assert len(track.mood.key) > 0
         assert 0 <= track.curation.danceability <= 1
+
+        # New density/onset/timbre metrics flow through the extractor path too
+        assert 0.0 <= track.groove.beat_strength <= 1.0
+        assert 0.0 <= track.mood.roughness <= 1.0
+        assert 0.0 <= track.curation.spectral_flatness <= 1.0
+        assert track.curation.crest_factor >= 1.0
 
     def test_analyze_track_wrapper(self):
         """Test analyze_track wrapper function."""

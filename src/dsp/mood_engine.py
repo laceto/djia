@@ -138,16 +138,104 @@ def compute_brightness(y: np.ndarray, sr: int) -> float:
     return float(brightness)
 
 
+def compute_zero_crossing_rate(y: np.ndarray) -> float:
+    """
+    Compute zero-crossing rate: how rapidly the waveform crosses zero amplitude.
+
+    Args:
+        y: Audio waveform
+
+    Returns:
+        zcr_mean: 0.0-1.0ish (typically < 0.3). High-frequency noise and jagged,
+        distorted "acid" sounds have a much higher ZCR than clean bass/pads.
+    """
+    zcr = librosa.feature.zero_crossing_rate(y)[0]
+    return float(np.mean(zcr))
+
+
+def _sethares_dissonance(f1: float, f2: float) -> float:
+    """Plomp-Levelt sensory dissonance between two pure tones (Sethares 1993 formula)."""
+    b1, b2 = 3.5, 5.75
+    xstar = 0.24
+    s1, s2 = 0.0207, 18.96
+    fmin = min(f1, f2)
+    fdiff = abs(f2 - f1)
+    s = xstar / (s1 * fmin + s2)
+    return float(np.exp(-b1 * s * fdiff) - np.exp(-b2 * s * fdiff))
+
+
+def compute_roughness(
+    y: np.ndarray,
+    sr: int,
+    hop_length: int = 512,
+    n_fft: int = 2048,
+    n_peaks: int = 6,
+    max_frames: int = 200,
+) -> float:
+    """
+    Compute timbral roughness (0=smooth/round, 1=rough/harsh) via a pragmatic
+    approximation of the Plomp-Levelt psychoacoustic roughness model (Sethares 1993):
+    for each analyzed frame, pick the top spectral peaks, sum the pairwise sensory
+    dissonance between them (weighted by their relative amplitude), then average
+    across frames and squash to 0-1.
+
+    This favors severe modulation/distortion/close-packed harmonics (acid basslines,
+    distorted industrial kicks, metallic synths) over clean sine-like tones (deep
+    house bass, jazzy chords).
+
+    Args:
+        y: Audio waveform
+        sr: Sample rate
+        hop_length: Hop length for the STFT
+        n_fft: FFT window size
+        n_peaks: Number of loudest spectral peaks to compare per frame
+        max_frames: Cap on frames analyzed (subsampled evenly) — keeps this tractable
+            on long tracks since it's O(n_peaks^2) per frame
+
+    Returns:
+        roughness: 0.0 (smooth/consonant) to 1.0 (rough/dissonant), tanh-squashed
+    """
+    S = np.abs(librosa.stft(y, n_fft=n_fft, hop_length=hop_length))
+    freqs = librosa.fft_frequencies(sr=sr, n_fft=n_fft)
+    n_frames = S.shape[1]
+    if n_frames == 0:
+        return 0.0
+
+    stride = max(1, n_frames // max_frames)
+    frame_roughness = []
+
+    for i in range(0, n_frames, stride):
+        spectrum = S[:, i]
+        if spectrum.max() <= 0:
+            continue
+        k = min(n_peaks, len(spectrum))
+        peak_idx = np.argpartition(spectrum, -k)[-k:]
+        peak_freqs = freqs[peak_idx]
+        peak_amps = spectrum[peak_idx]
+        peak_amps = peak_amps / (peak_amps.max() + 1e-8)
+
+        r = 0.0
+        for a in range(len(peak_idx)):
+            for b in range(a + 1, len(peak_idx)):
+                r += peak_amps[a] * peak_amps[b] * _sethares_dissonance(peak_freqs[a], peak_freqs[b])
+        frame_roughness.append(r)
+
+    if not frame_roughness:
+        return 0.0
+    return float(np.tanh(np.mean(frame_roughness)))
+
+
 def analyze_mood(y: np.ndarray, sr: int) -> MoodResult:
     """
-    Complete mood analysis (key, camelot, brightness, confidence).
+    Complete mood analysis (key, camelot, brightness, confidence, ZCR, roughness).
 
     Args:
         y: Audio waveform
         sr: Sample rate
 
     Returns:
-        MoodResult with key, camelot, brightness, and confidence
+        MoodResult with key, camelot, brightness, confidence, zero-crossing rate,
+        and timbral roughness
     """
     # Compute chromagram
     chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
@@ -164,9 +252,15 @@ def analyze_mood(y: np.ndarray, sr: int) -> MoodResult:
     # Create full key name
     key_name = f"{key_note} {key_type}"
 
+    # Timbral character
+    zero_crossing_rate = compute_zero_crossing_rate(y)
+    roughness = compute_roughness(y, sr)
+
     return MoodResult(
         key=key_name,
         camelot_key=camelot_key,
         brightness=brightness,
-        key_confidence=key_confidence
+        key_confidence=key_confidence,
+        zero_crossing_rate=zero_crossing_rate,
+        roughness=roughness,
     )

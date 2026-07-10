@@ -8,7 +8,7 @@ from .phrasing_engine import analyze_structure
 from .groove_engine import analyze_groove
 from .mood_engine import analyze_mood
 from .curation_engine import analyze_curation
-from .config import DSPConfig, get_config, custom_config
+from .config import DSPConfig, get_config
 
 
 def load_audio(file_path: str, sr: int = 22050, duration: Optional[float] = None) -> tuple[np.ndarray, int]:
@@ -70,7 +70,11 @@ def extract_track_features(
     track_duration = librosa.get_duration(y=y, sr=sr)
 
     # Step 1: Groove Engine (must be first to get BPM)
-    groove = analyze_groove(y, sr, hop_length=hop_length)
+    groove = analyze_groove(
+        y, sr, hop_length=hop_length,
+        onset_strength_scale=config.groove.onset_strength_scale,
+        tempogram_window=config.groove.tempogram_window,
+    )
 
     # Step 2: Phrasing Engine (uses BPM from groove + config parameters)
     phrasing = analyze_structure(
@@ -170,10 +174,15 @@ def extract_feature_vector(track: Track) -> dict:
         "bpm": track.groove.bpm,
         "swing_score": track.groove.swing_score,
         "tempo_stability": float(track.groove.tempo_stability),
+        "onset_strength_mean": track.groove.onset_strength_mean,
+        "onset_strength_std": track.groove.onset_strength_std,
+        "beat_strength": track.groove.beat_strength,
 
         # Mood features
         "brightness": track.mood.brightness,
         "key_confidence": track.mood.key_confidence,
+        "zero_crossing_rate": track.mood.zero_crossing_rate,
+        "roughness": track.mood.roughness,
 
         # Curation features
         "danceability": track.curation.danceability,
@@ -181,6 +190,8 @@ def extract_feature_vector(track: Track) -> dict:
         "energy_type_dynamic": 1.0 if track.curation.energy_type == "dynamic" else 0.0,
         "energy_type_gradual": 1.0 if track.curation.energy_type == "gradual" else 0.0,
         "complexity_score": track.curation.complexity_score,
+        "spectral_flatness": track.curation.spectral_flatness,
+        "crest_factor": track.curation.crest_factor,
 
         # Phrasing features
         "num_segments": len(track.phrasing.segments),
@@ -206,18 +217,18 @@ if __name__ == "__main__":
             track = result.track
             print(f"File: {track.file_path}")
             print(f"Duration: {track.duration:.1f}s")
-            print(f"\nGroove:")
+            print("\nGroove:")
             print(f"  BPM: {track.groove.bpm:.2f}")
             print(f"  Swing: {track.groove.swing_score:.2f}")
             print(f"  Stable: {track.groove.tempo_stability}")
-            print(f"\nMood:")
+            print("\nMood:")
             print(f"  Key: {track.mood.key}")
             print(f"  Camelot: {track.mood.camelot_key}")
             print(f"  Brightness: {track.mood.brightness:.2f}")
-            print(f"\nPhrasing:")
+            print("\nPhrasing:")
             print(f"  Segments: {len(track.phrasing.segments)}")
             print(f"  Cues: {len(track.phrasing.cue_points)}")
-            print(f"\nCuration:")
+            print("\nCuration:")
             print(f"  Danceability: {track.curation.danceability:.2f}")
             print(f"  Energy: {track.curation.energy_type}")
             print(f"  Tags: {', '.join(track.curation.semantic_tags)}")

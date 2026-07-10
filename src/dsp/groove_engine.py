@@ -84,17 +84,94 @@ def check_tempo_stability(beat_frames: np.ndarray, sr: int, hop_length: int = 51
     return bool(is_stable), float(tempo_variance)
 
 
-def analyze_groove(y: np.ndarray, sr: int, hop_length: int = 512) -> GrooveResult:
+def compute_onset_strength_stats(onset_env: np.ndarray, scale: float = 1.0) -> Tuple[float, float]:
     """
-    Complete groove analysis (BPM, beat grid, swing, tempo stability).
+    Summarize the onset envelope (novelty curve) into a scalar strength/consistency pair.
+
+    A track with an aggressive, dominant kick has large periodic spikes in the onset
+    envelope -> high mean and std. A track with soft, blended transients stays low
+    and flat.
+
+    Args:
+        onset_env: Onset strength envelope (from librosa.onset.onset_strength)
+        scale: Sensitivity multiplier applied before summarizing (GrooveConfig.onset_strength_scale)
+
+    Returns:
+        (onset_strength_mean, onset_strength_std)
+    """
+    if onset_env is None or len(onset_env) == 0:
+        return 0.0, 0.0
+    scaled = onset_env * scale
+    return float(np.mean(scaled)), float(np.std(scaled))
+
+
+def compute_beat_strength(
+    onset_env: np.ndarray,
+    sr: int,
+    bpm: float,
+    hop_length: int = 512,
+    window_seconds: float = 2.0,
+) -> float:
+    """
+    Compute beat strength (0-1): how strong, steady, and dominant the rhythmic pulse
+    is at the detected tempo.
+
+    Builds a tempogram (local autocorrelation of the onset envelope) and measures,
+    per frame, how close the periodicity at the lag matching the detected BPM is to
+    the single strongest periodicity in that frame — then averages across frames.
+    A steady, dominant pulse means the detected tempo *is* (or nearly is) that
+    strongest peak; a weak/unclear pulse means some other periodicity wins instead.
+
+    Args:
+        onset_env: Onset strength envelope
+        sr: Sample rate
+        bpm: Detected BPM (from beat tracking)
+        hop_length: Hop length used for the onset envelope
+        window_seconds: Tempogram autocorrelation window (GrooveConfig.tempogram_window)
+
+    Returns:
+        beat_strength: 0.0 (weak/no clear pulse) to 1.0 (pulse totally dominates)
+    """
+    if onset_env is None or len(onset_env) < 2 or not bpm or bpm <= 0:
+        return 0.0
+
+    win_length = max(2, int(round(window_seconds * sr / hop_length)))
+    tempogram = librosa.feature.tempogram(
+        onset_envelope=onset_env, sr=sr, hop_length=hop_length, win_length=win_length
+    )
+
+    # Map each lag bin to the tempo (BPM) it represents; bin 0 is DC (infinite period).
+    tempo_freqs = librosa.tempo_frequencies(win_length, sr=sr, hop_length=hop_length)
+    tempo_idx = int(np.argmin(np.abs(tempo_freqs[1:] - bpm)) + 1)
+
+    magnitude = np.abs(tempogram)
+    strength_at_tempo = magnitude[tempo_idx, :]
+    max_strength = np.max(magnitude[1:, :], axis=0) + 1e-8
+
+    ratio = np.clip(strength_at_tempo / max_strength, 0.0, 1.0)
+    return float(np.mean(ratio))
+
+
+def analyze_groove(
+    y: np.ndarray,
+    sr: int,
+    hop_length: int = 512,
+    onset_strength_scale: float = 1.0,
+    tempogram_window: float = 2.0,
+) -> GrooveResult:
+    """
+    Complete groove analysis (BPM, beat grid, swing, tempo stability, onset strength,
+    beat strength).
 
     Args:
         y: Audio waveform
         sr: Sample rate
         hop_length: Hop length for feature extraction
+        onset_strength_scale: Sensitivity multiplier for onset strength stats (GrooveConfig)
+        tempogram_window: Tempogram autocorrelation window in seconds (GrooveConfig)
 
     Returns:
-        GrooveResult with BPM, beat grid, swing, and stability
+        GrooveResult with BPM, beat grid, swing, stability, onset strength, and beat strength
     """
     # Extract onset strength
     onset_env = librosa.onset.onset_strength(y=y, sr=sr)
@@ -128,11 +205,22 @@ def analyze_groove(y: np.ndarray, sr: int, hop_length: int = 512) -> GrooveResul
     else:
         bpm = float(bpm)
 
+    # Onset strength / beat strength (transient hardness and pulse dominance)
+    onset_strength_mean, onset_strength_std = compute_onset_strength_stats(
+        onset_env, scale=onset_strength_scale
+    )
+    beat_strength = compute_beat_strength(
+        onset_env, sr, bpm, hop_length=hop_length, window_seconds=tempogram_window
+    )
+
     return GrooveResult(
         bpm=bpm,
         beat_grid=beat_frames,
         beat_times=beat_times,
         swing_score=swing_score,
         tempo_stability=is_stable,
-        stability_variance=tempo_variance
+        stability_variance=tempo_variance,
+        onset_strength_mean=onset_strength_mean,
+        onset_strength_std=onset_strength_std,
+        beat_strength=beat_strength,
     )
