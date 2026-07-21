@@ -20,6 +20,7 @@ Plots are written to results/plots/ (headless-safe); pass --show to open windows
 
 import argparse
 import copy
+import logging
 import os
 import sys
 import warnings
@@ -28,6 +29,7 @@ from collections import Counter
 from pathlib import Path
 
 warnings.filterwarnings("ignore")
+logging.disable(logging.INFO)  # keep the text report clean of INFO chatter
 
 import numpy as np
 
@@ -47,6 +49,22 @@ plt.rcParams["axes.grid"] = True
 plt.rcParams["grid.alpha"] = 0.3
 
 PLOT_DIR = Path("results/plots")
+REPORT_PATH = Path("results/demo_report.txt")
+
+
+class Tee:
+    """Write everything printed to stdout to a text report file as well."""
+
+    def __init__(self, *streams):
+        self.streams = streams
+
+    def write(self, data):
+        for s in self.streams:
+            s.write(data)
+
+    def flush(self):
+        for s in self.streams:
+            s.flush()
 
 
 def banner(title: str) -> None:
@@ -378,19 +396,31 @@ def main():
         print("Pass a path, e.g.:  python demo_capabilities.py path/to/track.mp3")
         sys.exit(1)
 
-    banner("DJIA — DJ MIXING ANALYTICS · FULL CAPABILITY DEMO")
-    print("Track:", args.audio, "(%.1f MB)" % (os.path.getsize(args.audio) / 1e6))
+    # Tee all console output into a readable text report.
+    REPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    report_file = open(REPORT_PATH, "w")
+    original_stdout = sys.stdout
+    sys.stdout = Tee(original_stdout, report_file)
 
-    y, sr = phase1_ingestion(args.audio, args.show)
-    track = phase2_dsp(args.audio, y, sr, args.show)
-    moods = phase3_classifier(y, sr, args.show)
-    store, _ = phase4_database(args.audio, track, moods, sr)
-    phase5_advanced(track, store)
+    try:
+        banner("DJIA — DJ MIXING ANALYTICS · FULL CAPABILITY DEMO")
+        print("Track:", args.audio, "(%.1f MB)" % (os.path.getsize(args.audio) / 1e6))
 
-    banner("DEMO COMPLETE — all 5 phases exercised on real repo code")
-    print("Plots  -> results/plots/*.png")
-    print("DB     -> results/demo_djia.db")
-    print("Traktor-> results/demo_collection.nml")
+        y, sr = phase1_ingestion(args.audio, args.show)
+        track = phase2_dsp(args.audio, y, sr, args.show)
+        moods = phase3_classifier(y, sr, args.show)
+        store, _ = phase4_database(args.audio, track, moods, sr)
+        phase5_advanced(track, store)
+
+        banner("DEMO COMPLETE — all 5 phases exercised on real repo code")
+        print("Report -> results/demo_report.txt")
+        print("Plots  -> results/plots/*.png")
+        print("DB     -> results/demo_djia.db")
+        print("Traktor-> results/demo_collection.nml")
+    finally:
+        sys.stdout = original_stdout
+        report_file.close()
+        print(f"\nText report written to {REPORT_PATH}")
 
 
 if __name__ == "__main__":
