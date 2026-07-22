@@ -89,17 +89,19 @@ def convert_to_camelot(note: str, key_type: str) -> str:
 
     note_num = note_to_num.get(note, 0)
 
-    # Convert to Camelot position (1-12)
-    # Major: C=8B, G=9B, D=10B, A=11B, E=12B, B=1B, etc.
-    # Minor: A=8A, E=9A, B=10A, F#/Gb=11A, C#/Db=12A, G#/Ab=1A, etc.
+    # Convert to Camelot position (1-12) by walking the circle of fifths.
+    # Both wheels are anchored at position 8 — C major = 8B, A minor = 8A — so the
+    # circle-of-fifths index (0 for the anchor) is offset by +8, then wrapped to 1-12.
+    # Major: C=8B, G=9B, D=10B, A=11B, E=12B, B=1B, F#/Gb=2B, C#/Db=3B, ...
+    # Minor: A=8A, E=9A, B=10A, F#/Gb=11A, C#/Db=12A, G#/Ab=1A, D#/Eb=2A, A#/Bb=3A, F=4A, ...
 
     if key_type == "major":
-        # Major key Camelot: starts at C=8B
-        camelot_pos = ((note_num * 7) % 12) + 1  # Chromatic circle of 5ths
+        # Major key Camelot: anchored at C=8B
+        camelot_pos = ((note_num * 7) % 12) + 8  # Chromatic circle of 5ths
         camelot_type = "B"
     else:
-        # Minor key Camelot: starts at A=8A
-        camelot_pos = (((note_num - 9) * 7) % 12) + 1  # Offset from A
+        # Minor key Camelot: anchored at A=8A (A is note_num 9)
+        camelot_pos = (((note_num - 9) * 7) % 12) + 8  # Offset from A
         camelot_type = "A"
 
     # Clamp to 1-12

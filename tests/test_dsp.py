@@ -23,6 +23,7 @@ from src.dsp.groove_engine import (
 from src.dsp.mood_engine import (
     analyze_mood,
     detect_key_from_chroma,
+    convert_to_camelot,
     compute_zero_crossing_rate,
     compute_roughness,
 )
@@ -343,6 +344,77 @@ class TestMoodEngine:
         """Silence has no spectral peaks to be dissonant -> roughness is 0."""
         silence = np.zeros(22050 * 2, dtype=np.float32)
         assert compute_roughness(silence, 22050) == 0.0
+
+
+class TestCamelotConversion:
+    """Test key -> Camelot mapping against the standard Camelot / Mixed In Key wheel.
+
+    The wheel is anchored at position 8 (C major = 8B, A minor = 8A) and advances one
+    number per perfect fifth. A regression here previously rotated every code 7 steps
+    (e.g. F#/Gb minor read '4A' instead of the correct '11A').
+    """
+
+    # (note_name, key_type) -> canonical Camelot code, for all 24 keys.
+    EXPECTED = {
+        # Minor keys (A side) — walk the circle of fifths from A minor = 8A
+        ("A", "minor"): "8A",
+        ("E", "minor"): "9A",
+        ("B", "minor"): "10A",
+        ("F#/Gb", "minor"): "11A",
+        ("C#/Db", "minor"): "12A",
+        ("G#/Ab", "minor"): "1A",
+        ("D#/Eb", "minor"): "2A",
+        ("A#/Bb", "minor"): "3A",
+        ("F", "minor"): "4A",
+        ("C", "minor"): "5A",
+        ("G", "minor"): "6A",
+        ("D", "minor"): "7A",
+        # Major keys (B side) — walk the circle of fifths from C major = 8B
+        ("C", "major"): "8B",
+        ("G", "major"): "9B",
+        ("D", "major"): "10B",
+        ("A", "major"): "11B",
+        ("E", "major"): "12B",
+        ("B", "major"): "1B",
+        ("F#/Gb", "major"): "2B",
+        ("C#/Db", "major"): "3B",
+        ("G#/Ab", "major"): "4B",
+        ("D#/Eb", "major"): "5B",
+        ("A#/Bb", "major"): "6B",
+        ("F", "major"): "7B",
+    }
+
+    def test_all_24_keys(self):
+        """Every key maps to its canonical Camelot code."""
+        for (note, key_type), expected in self.EXPECTED.items():
+            assert convert_to_camelot(note, key_type) == expected, (
+                f"{note} {key_type} -> {convert_to_camelot(note, key_type)}, expected {expected}"
+            )
+
+    def test_anchor_keys(self):
+        """The two anchor keys sit at position 8."""
+        assert convert_to_camelot("C", "major") == "8B"
+        assert convert_to_camelot("A", "minor") == "8A"
+
+    def test_pak_pak_regression(self):
+        """F#/Gb minor is 11A (the reported '4A' was the rotated-by-7 bug)."""
+        assert convert_to_camelot("F#/Gb", "minor") == "11A"
+
+    def test_relative_major_minor_share_number(self):
+        """Relative major/minor pairs share a wheel number, differing only in letter."""
+        pairs = [("C", "major", "A", "minor"), ("C#/Db", "major", "A#/Bb", "minor"),
+                 ("G", "major", "E", "minor"), ("A", "major", "F#/Gb", "minor")]
+        for maj_note, _, min_note, _ in pairs:
+            maj = convert_to_camelot(maj_note, "major")
+            minor = convert_to_camelot(min_note, "minor")
+            assert maj[:-1] == minor[:-1] and maj[-1] == "B" and minor[-1] == "A"
+
+    def test_output_format(self):
+        """Every code is 'NA'/'NB' with N in 1-12."""
+        for note, key_type in self.EXPECTED:
+            code = convert_to_camelot(note, key_type)
+            assert code[-1] in ("A", "B")
+            assert 1 <= int(code[:-1]) <= 12
 
 
 class TestCurationEngine:
