@@ -25,6 +25,14 @@ Public entry points for programmatic use. Import the package from the repo root.
 - **Time/beat/bar helpers** (`phrasing_engine`): `time_to_bar`, `bar_to_time`, `time_to_beat`,
   `beat_to_bar_group`, `snap_to_bar_boundary` — conversions used by phrasing and for snapping cues
   to bar boundaries. See `PARAMETER_REFERENCE.md` for the beat/bar and phrase-locking model.
+- **`spectrogram.compute_and_save_spectrogram(y, sr, key, hop_length=512, base_dir=DEFAULT_SPECTROGRAM_DIR) -> Path`**
+  — computes a log-magnitude (dB) STFT and saves it to `base_dir/{key}.npy` (`key` is typically the
+  DB `track_id`); returns the saved path. `compute_spectrogram(y, sr, hop_length)` and
+  `save_spectrogram(S, key, base_dir)` are the split-out steps. Default dir: `data/spectrograms`.
+- **`worker.analyze_one_track(file_path, segment_preset, bars_per_phrase, spectrogram_dir, spectrogram_key) -> dict`**
+  — module-level (picklable), compute-only per-track pipeline used by `Orchestrator.analyze_library`;
+  never touches the DB, never raises (failures surface via the returned dict's `"error"` key). Not
+  normally called directly — see `docs/architecture.md` for the parallel-analyze design.
 
 ## Database (`src/database/`)
 
@@ -75,6 +83,11 @@ Public entry points for programmatic use. Import the package from the repo root.
 
 ## Orchestration
 
-- **`orchestrator.Orchestrator`** — ties ingestion → DSP → AI → DB; drives the CLI.
+- **`orchestrator.Orchestrator(db_path="data/djia.db", segment_preset="minimal", bars_per_phrase=16, spectrogram_dir=DEFAULT_SPECTROGRAM_DIR)`**
+  — ties ingestion → DSP → AI → DB; drives the CLI.
+- **`Orchestrator.analyze_library(data_dir="data", skip_existing=False, workers=1) -> dict`** —
+  `workers<=1` runs the per-track compute sequentially in-process; `workers>1` fans it out across a
+  `ProcessPoolExecutor` (via `dsp.worker.analyze_one_track`). All DB writes stay serial in the main
+  process regardless of `workers`. Returns `{'analyzed', 'skipped', 'errors'}`.
 
 Data shapes returned by these APIs are documented in `docs/schemas.md`.

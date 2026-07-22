@@ -44,6 +44,10 @@ python -m src.cli generate-setlist [--tracks 28] [--output results/setlist_5phas
 # export-traktor (output nml_path positional, default djia_export.nml)
 python -m src.cli export-traktor [out.nml] [--traktor-input Collection.nml] [--db PATH]
 #   --traktor-input: existing Traktor Collection.nml to source hot cues from
+
+# spectrogram (track_id positional) — regenerate the .npy spectrogram for an already-analyzed track
+python -m src.cli spectrogram <track_id> [--db PATH] [--spectrogram-dir data/spectrograms]
+#   e.g. spectrogram 1   → loads the track's audio and saves data/spectrograms/1.npy
 ```
 
 ## Direct DSP (no DB)

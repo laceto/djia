@@ -115,6 +115,10 @@ python -m src.cli analyze --data-dir /path/to/tracks
 
 # Skip already-analyzed tracks
 python -m src.cli analyze --skip-existing
+
+# Parallel analysis across worker processes (default: os.cpu_count(); use --workers 1 for
+# the old sequential behavior)
+python -m src.cli analyze --workers 8
 ```
 
 **Output:** Analyzed tracks stored in `data/djia.db`
@@ -164,6 +168,13 @@ python -m src.cli export-traktor djia_export.nml
 # Export library to Traktor NML format
 ```
 
+### 7. Regenerate a Spectrogram
+
+```bash
+python -m src.cli spectrogram 1
+# Recompute and save the .npy log-magnitude spectrogram for an already-analyzed track (ID 1)
+```
+
 ## CLI Reference
 
 ### Commands
@@ -177,6 +188,8 @@ python -m src.cli analyze [OPTIONS]
   --track PATH          Analyze single track by path
   --db PATH             Database path (default: data/djia.db)
   --skip-existing       Skip already-analyzed tracks
+  --workers N           Parallel worker processes (default: os.cpu_count(); use 1 for the
+                        old sequential behavior; ignored with --track)
 ```
 
 #### `list-tracks`
@@ -228,6 +241,16 @@ python -m src.cli export-traktor [NML_PATH] [OPTIONS]
   # Example: export-traktor traktor_library.nml
 ```
 
+#### `spectrogram`
+Regenerate and save the `.npy` log-magnitude spectrogram for an already-analyzed track.
+
+```bash
+python -m src.cli spectrogram TRACK_ID [OPTIONS]
+  --db PATH             Database path (default: data/djia.db)
+  --spectrogram-dir PATH  Output directory (default: data/spectrograms)
+  # Example: spectrogram 1
+```
+
 ## Programmatic API
 
 ### Orchestrator: End-to-End Analysis
@@ -238,8 +261,8 @@ from src.orchestrator import Orchestrator
 # Initialize
 orchestrator = Orchestrator(db_path="data/djia.db")
 
-# Analyze library
-result = orchestrator.analyze_library("data/")
+# Analyze library (workers=1 is sequential; workers>1 fans compute out to a ProcessPoolExecutor)
+result = orchestrator.analyze_library("data/", workers=4)
 print(f"Analyzed: {result['analyzed']} tracks")
 
 # Analyze single track
@@ -344,6 +367,8 @@ Each track analysis produces:
     'duration': 300.0,  # seconds
     'tempo': 128.5,      # BPM
     'key': 'D',          # Camelot: C, C#, D, D#, E, F, F#, G, G#, A, A#, B
+    'camelot_key': '7A',
+    'key_confidence': 0.72,
     'spectral_centroid_mean': 3400,
     'spectral_centroid_std': 800,
     'spectral_rolloff_mean': 12000,
@@ -358,6 +383,14 @@ Each track analysis produces:
     'rms_mean': 0.11,
     'rms_std': 0.02,
     'rms_peak': 0.5,
+    'swing_score': 0.35,          # 0=straight, 1=fully swung (groove engine)
+    'onset_strength_mean': 2.1,   # transient hardness / kick punch (groove engine)
+    'onset_strength_std': 0.8,
+    'beat_strength': 0.83,        # 0-1, how dominant the detected tempo's pulse is (groove engine)
+    'zero_crossing_rate': 0.06,   # waveform sign-change rate; higher = noisier/acid (mood engine)
+    'roughness': 0.22,            # 0-1 timbral roughness, smooth to harsh (mood engine)
+    'spectral_flatness': 0.15,    # 0=tonal/clean, 1=noise-like/saturated (curation engine)
+    'crest_factor': 4.6,          # peak-to-average RMS ratio; high = punchy/dynamic (curation engine)
 }
 ```
 
@@ -483,6 +516,8 @@ djia/
 │   ├── features/schema.py     # Track dataclass — the data contract
 │   ├── ingestion/             # Phase 1: scanner.py, loader.py
 │   ├── dsp/                   # Phase 2: extractor + groove/phrasing/mood/curation engines, config.py
+│   │   ├── worker.py                # picklable per-track analyze step for ProcessPoolExecutor
+│   │   └── spectrogram.py           # log-magnitude STFT computation + .npy persistence
 │   ├── ai/
 │   │   ├── classifier.py            # Phase 3: mood classification
 │   │   ├── stem_separator.py        # Phase 3: Demucs stems
