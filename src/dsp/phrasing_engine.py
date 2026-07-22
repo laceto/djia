@@ -283,10 +283,11 @@ def map_segments_to_hotcues(
 
     * ``max_pads = N`` — keep only the N most important sections and re-label them
       ``Pad 1..N`` in chronological order, for controllers with a fixed number of
-      performance pads (e.g. 4). Importance: the intro and the first (main) drop
-      are always kept; remaining slots go to the longest sections (drops and
-      breakdowns), with the outro lowest priority. The original section type is
-      preserved on ``CuePoint.type`` for colour-coding.
+      performance pads (e.g. 4). Importance: the intro, the first (main) drop and
+      the outro (mix-out point) are always kept; remaining slots go to the longest
+      sections (drops and breakdowns). Because pads are numbered by time, the
+      outro naturally takes the last pad. The original section type is preserved
+      on ``CuePoint.type`` for colour-coding.
 
     Args:
         segments: List of Segment objects
@@ -318,21 +319,23 @@ def map_segments_to_hotcues(
     if max_pads < 1:
         return []
 
+    # Guaranteed sections rank above any real section length (seconds):
+    #   intro (mix-in) > main drop > outro (mix-out) > longest other sections
     candidates = []  # (start_time, type, importance)
     drop_seen = False
     for seg in segments:
         duration = seg.end_time - seg.start_time
         if seg.label == "intro":
-            importance = float("inf")  # always keep the mix-in point
+            importance = 1e12  # always keep the mix-in point
+        elif seg.label == "outro":
+            importance = 1e10  # always keep the mix-out point
         elif seg.label == "drop":
             importance = duration
             if not drop_seen:
-                importance += 1e9  # main drop is guaranteed a pad
+                importance += 1e11  # main drop is guaranteed a pad
                 drop_seen = True
-        elif seg.label == "breakdown":
+        else:  # breakdown (and any other) ranked by length
             importance = duration
-        else:  # outro — lowest priority
-            importance = -1.0
         candidates.append((seg.start_time, seg.label, importance))
 
     # Keep the most important, then restore chronological order
