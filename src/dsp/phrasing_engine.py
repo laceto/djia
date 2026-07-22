@@ -2,7 +2,7 @@
 
 import numpy as np
 import librosa
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 from scipy import signal
 from ..features.schema import Segment, CuePoint, PhrasingResult
 
@@ -266,39 +266,83 @@ def label_energy_sections(sections: List[Tuple[bool, float, float]]) -> List[Seg
     return segments
 
 
-def map_segments_to_hotcues(segments: List[Segment]) -> List[CuePoint]:
+def map_segments_to_hotcues(
+    segments: List[Segment],
+    max_pads: Optional[int] = None,
+) -> List[CuePoint]:
     """
     Map structural segments to hot-cue positions at their START (the cue point a
     DJ actually wants to jump to).
 
-    - intro     -> Pad 1
-    - first drop -> Pad 4 (the main drop), later drops -> Pad 3
-    - breakdown -> Pad 2
+    Two modes:
+
+    * ``max_pads is None`` (default) — one cue per structural section, labelled by
+      type: intro -> Pad 1, first (main) drop -> Pad 4, later drops -> Pad 3,
+      breakdown -> Pad 2, outro -> Pad 1. Useful when the target (e.g. Traktor)
+      has unlimited cues.
+
+    * ``max_pads = N`` — keep only the N most important sections and re-label them
+      ``Pad 1..N`` in chronological order, for controllers with a fixed number of
+      performance pads (e.g. 4). Importance: the intro and the first (main) drop
+      are always kept; remaining slots go to the longest sections (drops and
+      breakdowns), with the outro lowest priority. The original section type is
+      preserved on ``CuePoint.type`` for colour-coding.
 
     Args:
         segments: List of Segment objects
+        max_pads: Max number of hot cues / physical pads (None = unlimited)
 
     Returns:
-        cues: List of CuePoint objects, at segment start times
+        cues: List of CuePoint objects at segment start times, time-ordered
     """
-    cues = []
+    # --- default unlimited mode: label by type ---
+    if max_pads is None:
+        cues = []
+        drop_seen = False
+        for seg in segments:
+            if seg.label == "intro":
+                cues.append(CuePoint(time=seg.start_time, label="Pad 1", type="intro"))
+            elif seg.label == "breakdown":
+                cues.append(CuePoint(time=seg.start_time, label="Pad 2", type="breakdown"))
+            elif seg.label == "drop":
+                if not drop_seen:
+                    cues.append(CuePoint(time=seg.start_time, label="Pad 4", type="drop"))
+                    drop_seen = True
+                else:
+                    cues.append(CuePoint(time=seg.start_time, label="Pad 3", type="drop"))
+            elif seg.label == "outro":
+                cues.append(CuePoint(time=seg.start_time, label="Pad 1", type="outro"))
+        return cues
+
+    # --- limited mode: pick the N most important sections ---
+    if max_pads < 1:
+        return []
+
+    candidates = []  # (start_time, type, importance)
     drop_seen = False
-
     for seg in segments:
+        duration = seg.end_time - seg.start_time
         if seg.label == "intro":
-            cues.append(CuePoint(time=seg.start_time, label="Pad 1", type="intro"))
-        elif seg.label == "breakdown":
-            cues.append(CuePoint(time=seg.start_time, label="Pad 2", type="breakdown"))
+            importance = float("inf")  # always keep the mix-in point
         elif seg.label == "drop":
+            importance = duration
             if not drop_seen:
-                cues.append(CuePoint(time=seg.start_time, label="Pad 4", type="drop"))
+                importance += 1e9  # main drop is guaranteed a pad
                 drop_seen = True
-            else:
-                cues.append(CuePoint(time=seg.start_time, label="Pad 3", type="drop"))
-        elif seg.label == "outro":
-            cues.append(CuePoint(time=seg.start_time, label="Pad 1", type="outro"))
+        elif seg.label == "breakdown":
+            importance = duration
+        else:  # outro — lowest priority
+            importance = -1.0
+        candidates.append((seg.start_time, seg.label, importance))
 
-    return cues
+    # Keep the most important, then restore chronological order
+    keep = sorted(candidates, key=lambda c: c[2], reverse=True)[:max_pads]
+    keep = sorted(keep, key=lambda c: c[0])
+
+    return [
+        CuePoint(time=t, label=f"Pad {i}", type=typ)
+        for i, (t, typ, _) in enumerate(keep, start=1)
+    ]
 
 
 def analyze_structure(
@@ -308,6 +352,7 @@ def analyze_structure(
     hop_length: int = 512,
     min_bars: int = 4,
     thresh_frac: float = 0.4,
+    max_pads: Optional[int] = None,
 ) -> PhrasingResult:
     """
     Complete phrasing analysis driven by kick+bass (low-band) energy.
@@ -325,6 +370,7 @@ def analyze_structure(
         hop_length: Hop length for STFT
         min_bars: Ignore/merge sections shorter than this many bars
         thresh_frac: Kick-on threshold as a fraction of peak low-band energy
+        max_pads: Limit hot cues to this many pads (None = one per section)
 
     Returns:
         PhrasingResult with segments, boundaries, and cue points
@@ -338,7 +384,7 @@ def analyze_structure(
 
     # Label sections and place cue points at their starts
     segments = label_energy_sections(sections)
-    cue_points = map_segments_to_hotcues(segments)
+    cue_points = map_segments_to_hotcues(segments, max_pads=max_pads)
 
     # Boundaries = the interior section starts (skip the 0.0 start of the track)
     boundaries = [seg.start_time for seg in segments if seg.start_time > 0.0]

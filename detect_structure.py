@@ -91,6 +91,8 @@ def main():
                     help="Ignore sections shorter than this many bars")
     ap.add_argument("--thresh", type=float, default=0.4,
                     help="Kick-on threshold as a fraction of peak low-band energy")
+    ap.add_argument("--pads", type=int, default=0,
+                    help="Limit hot cues to N physical pads (e.g. 4). 0 = one cue per section")
     ap.add_argument("--no-plot", action="store_true")
     args = ap.parse_args()
 
@@ -127,6 +129,21 @@ def main():
     drops = [r for r in rows if "DROP" in r[3]]
     print(f"\n{len(drops)} DROP point(s) — bars: {', '.join(str(r[0]) for r in drops)}")
 
+    # --- optional: reduce to N physical pads (e.g. a 4-pad controller) ---
+    pad_cues = []
+    if args.pads > 0:
+        from src.dsp.phrasing_engine import label_energy_sections, map_segments_to_hotcues
+        segments = label_energy_sections(sections)
+        cues = map_segments_to_hotcues(segments, max_pads=args.pads)
+        print(f"\nHOT CUES on {args.pads} pads (most important sections):")
+        print(f"  {'PAD':>4}  {'BAR':>5}  {'TIME':>8}  TYPE")
+        print("  " + "-" * 32)
+        for c in cues:
+            bar = snap(to_bar(c.time, spb), args.phrase)
+            m, s = divmod(c.time, 60)
+            print(f"  {c.label:>4}  {bar:>5}  {int(m):02d}:{s:05.2f}  {c.type}")
+            pad_cues.append((c.label, bar, c.time, c.type))
+
     # write text report
     os.makedirs("results", exist_ok=True)
     rpt = Path("results/structure_bars.txt")
@@ -139,6 +156,11 @@ def main():
             m, s = divmod(t0, 60)
             f.write(f"{bar:>5}  {int(m):02d}:{s:05.2f}  {label:<22}  {length} bars\n")
         f.write(f"\nDROP bars: {', '.join(str(r[0]) for r in drops)}\n")
+        if pad_cues:
+            f.write(f"\nHOT CUES on {args.pads} pads:\n")
+            for pad, bar, t, typ in pad_cues:
+                m, s = divmod(t, 60)
+                f.write(f"  {pad:>4}  bar {bar:>4}  {int(m):02d}:{s:05.2f}  {typ}\n")
     print(f"\nText report -> {rpt}")
 
     if not args.no_plot:
@@ -151,6 +173,11 @@ def main():
             plt.axvline(t0, color=color, lw=1.2)
             plt.text(t0, energy_s.max() * 0.95, f"b{bar}", rotation=90,
                      va="top", ha="right", fontsize=8, color=color)
+        # mark the pads selected for the controller
+        for pad, bar, t, typ in pad_cues:
+            plt.axvline(t, color="#1f77b4", lw=1.6, ls=":")
+            plt.text(t, energy_s.max() * 0.55, pad, rotation=90, va="top", ha="left",
+                     fontsize=8, color="#1f77b4", fontweight="bold")
         plt.title(f"Structure from low-band energy — green=DROP, red=BREAKDOWN  ({bpm:.1f} BPM)")
         plt.xlabel("Time (s)"); plt.ylabel("Low-band energy")
         plt.legend(loc="upper right", fontsize=8)
