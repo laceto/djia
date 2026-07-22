@@ -5,30 +5,29 @@ Adjust these presets based on track genre and characteristics.
 """
 
 from dataclasses import dataclass
-from typing import Dict
+from typing import Dict, Optional
 
 
 @dataclass
 class PhrasingConfig:
-    """Phrasing Engine parameters for structure detection."""
+    """Phrasing Engine parameters for low-band-energy structure detection."""
 
-    # Peak detection threshold (0-1): higher = fewer segments detected
-    # 0.3 = aggressive (many segments)
-    # 0.5 = balanced
-    # 0.7 = conservative (only major changes)
-    novelty_threshold: float = 0.5
+    # Minimum section length in bars; shorter sections get merged into the
+    # previous one so short blips don't fragment the structure.
+    # 2 = aggressive (allows short sections)
+    # 4 = balanced
+    # 8 = conservative (forces long sections)
+    min_bars: int = 4
 
-    # Minimum gap between segments in seconds: higher = fewer, longer segments
-    # 4.0 = aggressive (allows short segments)
-    # 8.0 = balanced
-    # 16.0 = conservative (forces long segments)
-    min_segment_duration: float = 8.0
+    # Kick-on threshold as a fraction of peak low-band energy (0-1): lower =
+    # more of the track reads as "kick on" (drop), so more/shorter breakdowns.
+    # 0.3 = aggressive (many drop/breakdown transitions)
+    # 0.4 = balanced
+    # 0.5 = conservative (only clear drops register)
+    thresh_frac: float = 0.4
 
-    # Duration threshold for labeling segments as "breakdown" (seconds)
-    # 16 = aggressive (any short segment is breakdown)
-    # 24 = balanced
-    # 32 = conservative (must be very short to be breakdown)
-    breakdown_duration_threshold: float = 24.0
+    # Max hot cues / physical pads (None = one cue per structural section)
+    max_pads: Optional[int] = None
 
 
 @dataclass
@@ -84,37 +83,32 @@ class DSPConfig:
 PRESETS: Dict[str, DSPConfig] = {
     "default": DSPConfig(
         phrasing=PhrasingConfig(
-            novelty_threshold=0.5,
-            min_segment_duration=8.0,
-            breakdown_duration_threshold=24.0,
+            min_bars=4,
+            thresh_frac=0.4,
         ),
     ),
     "minimal": DSPConfig(
         phrasing=PhrasingConfig(
-            novelty_threshold=0.65,  # ← Higher threshold = fewer false detections
-            min_segment_duration=12.0,  # ← Larger gap = longer segments
-            breakdown_duration_threshold=32.0,  # ← Less aggressive labeling
+            min_bars=8,  # ← Larger minimum = fewer, longer sections
+            thresh_frac=0.5,  # ← Higher threshold = fewer false detections
         ),
     ),
     "house": DSPConfig(
         phrasing=PhrasingConfig(
-            novelty_threshold=0.55,
-            min_segment_duration=10.0,
-            breakdown_duration_threshold=28.0,
+            min_bars=6,
+            thresh_frac=0.45,
         ),
     ),
     "techno": DSPConfig(
         phrasing=PhrasingConfig(
-            novelty_threshold=0.45,
-            min_segment_duration=6.0,
-            breakdown_duration_threshold=20.0,
+            min_bars=4,
+            thresh_frac=0.35,
         ),
     ),
     "aggressive": DSPConfig(
         phrasing=PhrasingConfig(
-            novelty_threshold=0.3,  # ← Low threshold = many segments
-            min_segment_duration=4.0,  # ← Small gap = short segments
-            breakdown_duration_threshold=16.0,  # ← Aggressive labeling
+            min_bars=2,  # ← Small minimum = short sections kept
+            thresh_frac=0.3,  # ← Low threshold = more drop/breakdown transitions
         ),
     ),
 }
@@ -136,25 +130,25 @@ def get_config(preset: str = "default") -> DSPConfig:
 
 
 def custom_config(
-    novelty_threshold: float = 0.5,
-    min_segment_duration: float = 8.0,
-    breakdown_duration_threshold: float = 24.0,
+    min_bars: int = 4,
+    thresh_frac: float = 0.4,
+    max_pads: Optional[int] = None,
 ) -> DSPConfig:
     """
     Create a custom DSP configuration.
 
     Args:
-        novelty_threshold: Peak detection threshold (0-1)
-        min_segment_duration: Minimum gap between segments (seconds)
-        breakdown_duration_threshold: Duration threshold for breakdown label (seconds)
+        min_bars: Minimum section length in bars
+        thresh_frac: Kick-on threshold as a fraction of peak low-band energy
+        max_pads: Max hot cues / physical pads (None = one per section)
 
     Returns:
         DSPConfig: Custom configuration object
     """
     return DSPConfig(
         phrasing=PhrasingConfig(
-            novelty_threshold=novelty_threshold,
-            min_segment_duration=min_segment_duration,
-            breakdown_duration_threshold=breakdown_duration_threshold,
+            min_bars=min_bars,
+            thresh_frac=thresh_frac,
+            max_pads=max_pads,
         ),
     )

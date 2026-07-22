@@ -77,10 +77,9 @@ def extract_track_features(
         y, sr,
         bpm=groove.bpm,
         hop_length=hop_length,
-        novelty_threshold=config.phrasing.novelty_threshold,
-        min_segment_duration=config.phrasing.min_segment_duration,
-        breakdown_threshold=config.phrasing.breakdown_duration_threshold,
-        include_beats=True  # Add beat ranges to segment labels
+        min_bars=config.phrasing.min_bars,
+        thresh_frac=config.phrasing.thresh_frac,
+        max_pads=config.phrasing.max_pads,
     )
 
     # Step 3: Mood Engine (independent)
