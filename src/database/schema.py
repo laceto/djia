@@ -3,7 +3,6 @@
 import sqlite3
 import logging
 from pathlib import Path
-from typing import Optional
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +42,17 @@ CREATE TABLE IF NOT EXISTS features (
     rms_mean REAL,
     rms_std REAL,
     rms_peak REAL,
+    key TEXT,
+    camelot_key TEXT,
+    key_confidence REAL,
+    swing_score REAL,
+    spectral_flatness REAL,
+    crest_factor REAL,
+    onset_strength_mean REAL,
+    onset_strength_std REAL,
+    beat_strength REAL,
+    zero_crossing_rate REAL,
+    roughness REAL,
     mfcc_vector TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -65,6 +75,8 @@ CREATE TABLE IF NOT EXISTS mood (
 );
 
 -- Segments table: track structure segments
+-- method: how the segments were derived — 'spectral' (novelty detection)
+-- or 'phrase<N>' (fixed N-bar phrase grid, e.g. 'phrase16')
 CREATE TABLE IF NOT EXISTS segments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     track_id INTEGER NOT NULL,
@@ -72,6 +84,7 @@ CREATE TABLE IF NOT EXISTS segments (
     start_time REAL NOT NULL,
     end_time REAL NOT NULL,
     confidence REAL DEFAULT 1.0,
+    method TEXT NOT NULL DEFAULT 'spectral',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (track_id) REFERENCES tracks (id) ON DELETE CASCADE
 );
@@ -85,6 +98,15 @@ CREATE INDEX IF NOT EXISTS idx_mood_track_id ON mood (track_id);
 CREATE INDEX IF NOT EXISTS idx_segments_track_id ON segments (track_id);
 CREATE INDEX IF NOT EXISTS idx_segments_type ON segments (segment_type);
 """
+
+
+def _add_missing_columns(conn: sqlite3.Connection, table: str, columns: dict) -> None:
+    """Add any columns not already present on `table` (simple forward migration)."""
+    existing = {row[1] for row in conn.execute(f"PRAGMA table_info({table})")}
+    for name, coltype in columns.items():
+        if name not in existing:
+            conn.execute(f"ALTER TABLE {table} ADD COLUMN {name} {coltype}")
+            logger.info(f"Migrated {table}: added column {name}")
 
 
 def init_db(db_path: str = "data/djia.db") -> sqlite3.Connection:
@@ -109,6 +131,25 @@ def init_db(db_path: str = "data/djia.db") -> sqlite3.Connection:
             statement = statement.strip()
             if statement:
                 conn.execute(statement)
+
+        # Lightweight migrations: add columns that older DBs are missing.
+        # SQLite has no ADD COLUMN IF NOT EXISTS, so check pragma first.
+        _add_missing_columns(conn, "features", {
+            "key": "TEXT",
+            "camelot_key": "TEXT",
+            "key_confidence": "REAL",
+            "swing_score": "REAL",
+            "spectral_flatness": "REAL",
+            "crest_factor": "REAL",
+            "onset_strength_mean": "REAL",
+            "onset_strength_std": "REAL",
+            "beat_strength": "REAL",
+            "zero_crossing_rate": "REAL",
+            "roughness": "REAL",
+        })
+        _add_missing_columns(conn, "segments", {
+            "method": "TEXT NOT NULL DEFAULT 'spectral'",
+        })
 
         conn.commit()
         logger.info(f"Database initialized at {db_path}")

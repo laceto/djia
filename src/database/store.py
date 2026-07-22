@@ -3,9 +3,7 @@
 import sqlite3
 import json
 import logging
-from pathlib import Path
 from typing import Dict, List, Any, Optional
-from datetime import datetime
 
 from .schema import get_connection, init_db
 
@@ -60,7 +58,7 @@ class TrackStore:
             track_id = cursor.lastrowid
             logger.info(f"Inserted track {track_id}: {file_name}")
             return track_id
-        except sqlite3.IntegrityError as e:
+        except sqlite3.IntegrityError:
             logger.warning(f"Track already exists: {file_path}")
             # Return existing track ID
             return self.get_track_id(file_path)
@@ -105,8 +103,11 @@ class TrackStore:
                  spectral_rolloff_mean, spectral_flux_mean, harmonic_ratio,
                  percussive_ratio, mfcc_mean, mfcc_std, mfcc_delta_mean,
                  chroma_variance, chroma_entropy, rms_mean, rms_std, rms_peak,
+                 key, camelot_key, key_confidence, swing_score,
+                 spectral_flatness, crest_factor, onset_strength_mean,
+                 onset_strength_std, beat_strength, zero_crossing_rate, roughness,
                  mfcc_vector)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 track_id,
                 features.get('tempo'),
@@ -124,6 +125,17 @@ class TrackStore:
                 features.get('rms_mean'),
                 features.get('rms_std'),
                 features.get('rms_peak'),
+                features.get('key'),
+                features.get('camelot_key'),
+                features.get('key_confidence'),
+                features.get('swing_score'),
+                features.get('spectral_flatness'),
+                features.get('crest_factor'),
+                features.get('onset_strength_mean'),
+                features.get('onset_strength_std'),
+                features.get('beat_strength'),
+                features.get('zero_crossing_rate'),
+                features.get('roughness'),
                 mfcc_vector,
             ))
 
@@ -185,6 +197,7 @@ class TrackStore:
         start_time: float,
         end_time: float,
         confidence: float = 1.0,
+        method: str = "spectral",
     ) -> int:
         """
         Insert a segment for a track.
@@ -195,6 +208,7 @@ class TrackStore:
             start_time: Start time in seconds
             end_time: End time in seconds
             confidence: Confidence score (0-1)
+            method: How the segment was derived ('spectral' or 'phrase<N>')
 
         Returns:
             Segment record ID
@@ -205,15 +219,65 @@ class TrackStore:
 
             cursor.execute("""
                 INSERT INTO segments
-                (track_id, segment_type, start_time, end_time, confidence)
-                VALUES (?, ?, ?, ?, ?)
-            """, (track_id, segment_type, start_time, end_time, confidence))
+                (track_id, segment_type, start_time, end_time, confidence, method)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (track_id, segment_type, start_time, end_time, confidence, method))
 
             conn.commit()
             logger.debug(f"Inserted segment for track {track_id}")
             return cursor.lastrowid
         except Exception as e:
             logger.error(f"Error inserting segment: {e}")
+            raise
+        finally:
+            conn.close()
+
+    def replace_segments(
+        self,
+        track_id: int,
+        segments: List[Dict[str, Any]],
+        method: str = "spectral",
+    ) -> int:
+        """
+        Replace all segments of a given method for a track (idempotent re-analysis).
+
+        Args:
+            track_id: ID of the track
+            segments: Dicts with segment_type, start_time, end_time, confidence
+            method: How the segments were derived ('spectral' or 'phrase<N>')
+
+        Returns:
+            Number of segments inserted
+        """
+        try:
+            conn = get_connection(self.db_path)
+            cursor = conn.cursor()
+
+            cursor.execute(
+                "DELETE FROM segments WHERE track_id = ? AND method = ?",
+                (track_id, method),
+            )
+            cursor.executemany("""
+                INSERT INTO segments
+                (track_id, segment_type, start_time, end_time, confidence, method)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, [
+                (
+                    track_id,
+                    seg["segment_type"],
+                    seg["start_time"],
+                    seg["end_time"],
+                    seg.get("confidence", 1.0),
+                    method,
+                )
+                for seg in segments
+            ])
+
+            conn.commit()
+            logger.debug(f"Replaced {len(segments)} '{method}' segments for track {track_id}")
+            return len(segments)
+        except Exception as e:
+            logger.error(f"Error replacing segments: {e}")
             raise
         finally:
             conn.close()

@@ -29,6 +29,18 @@ class PhrasingConfig:
     # Max hot cues / physical pads (None = one cue per structural section)
     max_pads: Optional[int] = None
 
+    # --- Element-onset detection (when a new sound element enters) ---
+    # Number of log-spaced frequency bands to watch independently.
+    # More bands = finer frequency localization, more potential onsets.
+    element_n_bands: int = 8
+
+    # Peak height (0-1) on the per-band additive-novelty curve to call an onset.
+    # Lower = more sensitive (catches quieter elements, more false positives).
+    element_onset_threshold: float = 0.4
+
+    # Minimum bars a new element must persist to count (rejects one-shot FX).
+    element_min_sustain_bars: float = 2.0
+
 
 @dataclass
 class GrooveConfig:

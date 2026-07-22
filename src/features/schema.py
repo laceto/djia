@@ -24,12 +24,24 @@ class CuePoint:
 
 
 @dataclass
+class ElementOnset:
+    """The moment a new sound element (e.g. a beep, hat, synth line) enters the track."""
+    time: float        # seconds (bar-snapped when detected with a BPM)
+    band: int          # frequency-band index (0 = lowest)
+    freq_low: float    # band lower edge (Hz)
+    freq_high: float   # band upper edge (Hz)
+    confidence: float  # 0-1, from the additive-novelty peak height
+    label: str = "element"  # human hint from the band (e.g. "low", "mid", "high")
+
+
+@dataclass
 class PhrasingResult:
     """Output from phrasing engine (Step 1)."""
     segment_boundaries: List[float]  # timestamps of section changes
     segments: List[Segment]           # labeled sections with times
     cue_points: List[CuePoint]        # predicted hot-cue positions
     structure_confidence: float = 0.0  # overall confidence in detection
+    element_onsets: List[ElementOnset] = field(default_factory=list)  # new-element entries
 
 
 @dataclass
@@ -41,6 +53,9 @@ class GrooveResult:
     swing_score: float             # 0.0 (stiff) to 1.0 (groovy)
     tempo_stability: bool          # whether tempo drifts
     stability_variance: float = 0.0  # tempo variance
+    onset_strength_mean: float = 0.0  # mean transient hardness (kick punch)
+    onset_strength_std: float = 0.0   # transient hardness variability
+    beat_strength: float = 0.0        # 0-1, how dominant the pulse is at the detected tempo
 
 
 @dataclass
@@ -50,6 +65,8 @@ class MoodResult:
     camelot_key: str               # Camelot notation (e.g., "7A")
     brightness: float              # 0.0 (dark) to 1.0 (bright)
     key_confidence: float           # 0.0-1.0 confidence in key detection
+    zero_crossing_rate: float = 0.0  # waveform sign-change rate; higher = noisier/acid
+    roughness: float = 0.0            # 0-1 Plomp-Levelt-style timbral roughness
 
 
 @dataclass
@@ -60,6 +77,8 @@ class CurationResult:
     energy_type: str               # "flat", "dynamic", or "gradual"
     semantic_tags: List[str]       # auto-generated labels
     complexity_score: float = 0.0  # 0-1 complexity metric
+    spectral_flatness: float = 0.0  # 0 (tonal/clean) to 1 (noise-like/saturated)
+    crest_factor: float = 0.0       # peak-to-average ratio; high = punchy/dynamic
 
 
 @dataclass

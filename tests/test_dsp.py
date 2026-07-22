@@ -10,11 +10,36 @@ from src.dsp.phrasing_engine import (
     compute_novelty_curve,
     detect_segment_boundaries,
     analyze_structure,
+    compute_additive_novelty,
+    detect_element_onsets,
+    derive_mix_points,
 )
-from src.dsp.groove_engine import analyze_groove, compute_swing_score
-from src.dsp.mood_engine import analyze_mood, detect_key_from_chroma
-from src.dsp.curation_engine import analyze_curation, classify_energy_profile
-from src.features.schema import Track
+from src.dsp.groove_engine import (
+    analyze_groove,
+    compute_swing_score,
+    compute_onset_strength_stats,
+    compute_beat_strength,
+)
+from src.dsp.mood_engine import (
+    analyze_mood,
+    detect_key_from_chroma,
+    compute_zero_crossing_rate,
+    compute_roughness,
+)
+from src.dsp.curation_engine import (
+    analyze_curation,
+    classify_energy_profile,
+    compute_spectral_flatness,
+    compute_crest_factor,
+)
+from src.dsp.worker import analyze_one_track
+from src.dsp.spectrogram import (
+    compute_spectrogram,
+    save_spectrogram,
+    spectrogram_path,
+    compute_and_save_spectrogram,
+)
+from src.features.schema import Track, ElementOnset
 
 
 # Test data directory
@@ -70,10 +95,101 @@ class TestPhrasingEngine:
         for seg in phrasing.segments:
             assert seg.start_time >= 0
             assert seg.end_time > seg.start_time
-            assert seg.label in ["intro", "build", "drop", "breakdown", "outro"]
+            # labels carry beat/bar ranges when include_beats=True, e.g. "intro (beats 0-4)"
+            assert seg.label.split(" (")[0] in ["intro", "build", "drop", "breakdown", "outro"]
 
         # Should have cue points
         assert hasattr(phrasing, "cue_points")
+
+
+class TestElementOnsets:
+    """Test additive-novelty element-onset detection."""
+
+    def test_additive_novelty_shape(self):
+        """Per-band novelty is (n_bands, n_frames) and normalized to 0-1."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        n_bands = 8
+        novelty = compute_additive_novelty(y, sr, n_bands=n_bands)
+
+        assert novelty.ndim == 2
+        assert novelty.shape[0] == n_bands
+        assert novelty.shape[1] > 0
+        assert novelty.min() >= -0.01
+        assert novelty.max() <= 1.01
+
+    def test_element_onsets_valid(self):
+        """Detected onsets have valid, in-range fields."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        n_bands = 8
+        onsets = detect_element_onsets(y, sr, bpm=128.0, n_bands=n_bands)
+
+        duration = librosa.get_duration(y=y, sr=sr)
+        for o in onsets:
+            assert 0 <= o.time <= duration + 1.0  # bar-snap may nudge slightly past end
+            assert 0 <= o.band < n_bands
+            assert o.freq_low < o.freq_high
+            assert 0.0 <= o.confidence <= 1.0
+            assert isinstance(o.label, str) and o.label
+
+        # Onsets are returned sorted by time
+        times = [o.time for o in onsets]
+        assert times == sorted(times)
+
+    def test_threshold_monotonicity(self):
+        """A higher threshold never yields more onsets than a lower one."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        low = detect_element_onsets(y, sr, bpm=128.0, threshold=0.3)
+        high = detect_element_onsets(y, sr, bpm=128.0, threshold=0.7)
+        assert len(high) <= len(low)
+
+
+class TestMixPoints:
+    """Test derive_mix_points (pure — synthetic onsets, no audio)."""
+
+    @staticmethod
+    def _onset(time, band, label):
+        return ElementOnset(
+            time=time, band=band, freq_low=20.0 * 2**band,
+            freq_high=20.0 * 2**(band + 1), confidence=0.8, label=label,
+        )
+
+    def test_named_points(self):
+        """mix_in = first onset, bass_in = first sub/low, full_on = last new band."""
+        onsets = [
+            self._onset(7.5, 4, "mid"),
+            self._onset(15.0, 1, "sub"),
+            self._onset(30.0, 6, "high"),
+            self._onset(45.0, 4, "mid"),  # repeat band — must not move full_on
+        ]
+        points = derive_mix_points(onsets, bpm=128.0, duration=360.0)
+
+        assert points["mix_in"] == 7.5
+        assert points["bass_in"] == 15.0
+        assert points["full_on"] == 30.0
+        # mix_out is bar-snapped, 32 bars before the end, inside the track
+        assert points["mix_out"] is not None
+        assert 0 < points["mix_out"] < 360.0
+
+    def test_empty_onsets(self):
+        """No onsets — element points are None, mix_out still derived."""
+        points = derive_mix_points([], bpm=128.0, duration=360.0)
+        assert points["mix_in"] is None
+        assert points["bass_in"] is None
+        assert points["full_on"] is None
+        assert points["mix_out"] is not None
+
+    def test_short_track_no_mix_out(self):
+        """A track shorter than mix_out_bars gets no mix_out point."""
+        points = derive_mix_points([], bpm=128.0, duration=30.0, mix_out_bars=32)
+        assert points["mix_out"] is None
+
+    def test_no_bass_band(self):
+        """bass_in is None when no sub/low element ever enters."""
+        onsets = [self._onset(10.0, 5, "high-mid")]
+        points = derive_mix_points(onsets, bpm=128.0, duration=300.0)
+        assert points["bass_in"] is None
+        assert points["mix_in"] == 10.0
+        assert points["full_on"] == 10.0
 
 
 class TestGrooveEngine:
@@ -120,6 +236,46 @@ class TestGrooveEngine:
         for beat_time in groove.beat_times:
             assert 0 <= beat_time <= duration
 
+    def test_onset_strength_stats_persisted(self):
+        """analyze_groove() exposes onset strength mean/std (non-negative, mean is real-valued)."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        groove = analyze_groove(y, sr)
+
+        assert groove.onset_strength_mean >= 0.0
+        assert groove.onset_strength_std >= 0.0
+
+    def test_onset_strength_stats_scale(self):
+        """Scaling the onset envelope scales the summary stats proportionally."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+
+        mean1, std1 = compute_onset_strength_stats(onset_env, scale=1.0)
+        mean2, std2 = compute_onset_strength_stats(onset_env, scale=2.0)
+
+        assert mean2 == pytest.approx(mean1 * 2, rel=1e-6)
+        assert std2 == pytest.approx(std1 * 2, rel=1e-6)
+
+    def test_onset_strength_stats_empty(self):
+        """Empty onset envelope returns neutral zeros, not an error."""
+        mean, std = compute_onset_strength_stats(np.array([]))
+        assert mean == 0.0
+        assert std == 0.0
+
+    def test_beat_strength_range(self):
+        """analyze_groove() exposes beat_strength in 0-1."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        groove = analyze_groove(y, sr)
+
+        assert 0.0 <= groove.beat_strength <= 1.0
+
+    def test_beat_strength_no_bpm(self):
+        """No/zero BPM returns 0.0 rather than raising."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        onset_env = librosa.onset.onset_strength(y=y, sr=sr)
+
+        assert compute_beat_strength(onset_env, sr, bpm=0.0) == 0.0
+        assert compute_beat_strength(onset_env, sr, bpm=None) == 0.0
+
 
 class TestMoodEngine:
     """Test Step 3: Mood Engine."""
@@ -161,6 +317,32 @@ class TestMoodEngine:
         mood = analyze_mood(y, sr)
 
         assert 0.0 <= mood.key_confidence <= 1.0
+
+    def test_zero_crossing_rate_range(self):
+        """analyze_mood() exposes zero_crossing_rate as a small non-negative fraction."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        mood = analyze_mood(y, sr)
+
+        assert 0.0 <= mood.zero_crossing_rate <= 1.0
+
+    def test_zero_crossing_rate_matches_helper(self):
+        """analyze_mood()'s stored ZCR matches the standalone helper for the same audio."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        mood = analyze_mood(y, sr)
+
+        assert mood.zero_crossing_rate == pytest.approx(compute_zero_crossing_rate(y), rel=1e-6)
+
+    def test_roughness_range(self):
+        """analyze_mood() exposes roughness in 0-1."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        mood = analyze_mood(y, sr)
+
+        assert 0.0 <= mood.roughness <= 1.0
+
+    def test_roughness_silence_is_zero(self):
+        """Silence has no spectral peaks to be dissonant -> roughness is 0."""
+        silence = np.zeros(22050 * 2, dtype=np.float32)
+        assert compute_roughness(silence, 22050) == 0.0
 
 
 class TestCurationEngine:
@@ -209,6 +391,70 @@ class TestCurationEngine:
 
         assert 0.0 <= curation.complexity_score <= 1.0
 
+    def test_spectral_flatness_range(self):
+        """analyze_curation() exposes spectral_flatness in 0-1."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        curation = analyze_curation(y, sr, bpm=120.0, swing_score=0.5, brightness=0.5)
+
+        assert 0.0 <= curation.spectral_flatness <= 1.0
+
+    def test_crest_factor_at_least_one(self):
+        """analyze_curation() exposes crest_factor; peak RMS can never be below mean RMS."""
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=30)
+        curation = analyze_curation(y, sr, bpm=120.0, swing_score=0.5, brightness=0.5)
+
+        assert curation.crest_factor >= 1.0
+
+    def test_crest_factor_helper(self):
+        """compute_crest_factor is a plain peak/mean ratio, guarded against zero mean."""
+        assert compute_crest_factor(rms_mean=0.1, rms_peak=0.5) == pytest.approx(5.0)
+        assert compute_crest_factor(rms_mean=0.0, rms_peak=0.5) == 0.0
+        assert compute_crest_factor(rms_mean=None, rms_peak=0.5) == 0.0
+
+    def test_spectral_flatness_helper_silence(self):
+        """Silence is neither tonal nor noisy in a meaningful sense, but must not error."""
+        silence = np.zeros(22050, dtype=np.float32)
+        flatness = compute_spectral_flatness(silence, 22050)
+        assert 0.0 <= flatness <= 1.0
+
+
+class TestSpectrogram:
+    """Test spectrogram computation and .npy persistence."""
+
+    def test_compute_spectrogram_shape(self):
+        """Log-magnitude STFT is 2D (freq_bins, frames) and finite."""
+        sr = 22050
+        y = np.sin(2 * np.pi * 440 * np.arange(sr) / sr).astype(np.float32)
+        S = compute_spectrogram(y, sr, hop_length=512)
+
+        assert S.ndim == 2
+        assert S.shape[1] > 0
+        assert np.all(np.isfinite(S))
+
+    def test_save_and_reload_roundtrip(self, tmp_path):
+        """Saved .npy reloads to the same array at the deterministic key path."""
+        sr = 22050
+        y = np.sin(2 * np.pi * 440 * np.arange(sr) / sr).astype(np.float32)
+        S = compute_spectrogram(y, sr)
+
+        out_path = save_spectrogram(S, key="123", base_dir=str(tmp_path))
+
+        assert out_path == spectrogram_path("123", str(tmp_path))
+        assert out_path.exists()
+        reloaded = np.load(out_path)
+        assert np.array_equal(reloaded, S)
+
+    def test_compute_and_save_creates_missing_dir(self, tmp_path):
+        """compute_and_save_spectrogram creates base_dir if it doesn't exist yet."""
+        sr = 22050
+        y = np.sin(2 * np.pi * 440 * np.arange(sr) / sr).astype(np.float32)
+        base_dir = tmp_path / "nested" / "spectrograms"
+
+        out_path = compute_and_save_spectrogram(y, sr, key=1, base_dir=str(base_dir))
+
+        assert out_path.exists()
+        assert out_path.parent == base_dir
+
 
 class TestOrchestratorExtractor:
     """Test Master Orchestrator (extractor.py)."""
@@ -234,6 +480,12 @@ class TestOrchestratorExtractor:
         assert track.groove.bpm > 0
         assert len(track.mood.key) > 0
         assert 0 <= track.curation.danceability <= 1
+
+        # New density/onset/timbre metrics flow through the extractor path too
+        assert 0.0 <= track.groove.beat_strength <= 1.0
+        assert 0.0 <= track.mood.roughness <= 1.0
+        assert 0.0 <= track.curation.spectral_flatness <= 1.0
+        assert track.curation.crest_factor >= 1.0
 
     def test_analyze_track_wrapper(self):
         """Test analyze_track wrapper function."""
@@ -334,6 +586,47 @@ class TestErrorHandling:
                 librosa.get_duration(y=y, sr=22050)
         except:
             pass  # Expected
+
+
+class TestWorkerAnalyzeOneTrack:
+    """Test the picklable per-track worker function (src/dsp/worker.py) used to
+    parallelize Orchestrator.analyze_library(). Called directly here (no
+    ProcessPoolExecutor involved), which also exercises the lazy construct-on-first-use
+    fallback for the mood classifier/loader (the pool `_init_worker` path isn't hit)."""
+
+    @pytest.mark.parametrize("track_path", TEST_TRACKS)
+    def test_analyze_one_track_success(self, track_path):
+        """Compute-only pipeline succeeds end-to-end and returns everything the main
+        process needs to persist, without ever touching the database."""
+        result = analyze_one_track(str(track_path), segment_preset="minimal", bars_per_phrase=16)
+
+        assert result["error"] is None
+
+        features = result["features"]
+        assert features is not None
+        assert features.get("bpm") or features.get("tempo")
+        for key in (
+            "swing_score", "spectral_flatness", "crest_factor",
+            "onset_strength_mean", "zero_crossing_rate", "roughness",
+        ):
+            assert key in features, f"Missing feature: {key}"
+
+        assert 0.0 <= features["swing_score"] <= 1.0
+        assert 0.0 <= features["spectral_flatness"] <= 1.0
+        assert features["crest_factor"] >= 1.0
+        assert features["onset_strength_mean"] >= 0.0
+        assert 0.0 <= features["zero_crossing_rate"] <= 1.0
+        assert 0.0 <= features["roughness"] <= 1.0
+
+        for segments in (result["segments_spectral"], result["segments_phrase"]):
+            assert isinstance(segments, list)
+            assert len(segments) > 0
+            for seg in segments:
+                assert isinstance(seg, dict)
+                assert "segment_type" in seg
+                assert "start_time" in seg
+                assert "end_time" in seg
+                assert "confidence" in seg
 
 
 if __name__ == "__main__":

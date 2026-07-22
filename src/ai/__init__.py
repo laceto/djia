@@ -9,6 +9,7 @@ from .processor import AIProcessor, process_with_stems
 # Phase 5 components (advanced AI)
 from .transition_mapper import score_transition, build_transition_graph, TransitionScore
 from .playlist_generator import generate_playlist, playlist_summary
+from .setlist_generator import build_setlist, generate_setlist
 
 __all__ = [
     # Phase 3
@@ -26,4 +27,6 @@ __all__ = [
     'TransitionScore',
     'generate_playlist',
     'playlist_summary',
+    'build_setlist',
+    'generate_setlist',
 ]
