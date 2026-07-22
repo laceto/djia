@@ -1,6 +1,7 @@
 """Command-line interface for DJIA."""
 
 import argparse
+import os
 import sys
 from pathlib import Path
 from typing import List
@@ -10,6 +11,8 @@ from .orchestrator import Orchestrator
 from .database.store import TrackStore
 from .traktor.exporter import export_all_tracks
 from .ai import generate_playlist, playlist_summary
+from .ingestion.loader import AudioLoader
+from .dsp.spectrogram import compute_and_save_spectrogram, DEFAULT_SPECTROGRAM_DIR
 
 
 def print_section(title: str):
@@ -73,7 +76,10 @@ def cmd_analyze(args):
         print(f"Analyzing audio library: {data_dir}\n")
 
         orchestrator = Orchestrator(db_path=args.db or "data/djia.db")
-        results = orchestrator.analyze_library(data_dir, skip_existing=args.skip_existing)
+        workers = max(1, args.workers)
+        results = orchestrator.analyze_library(
+            data_dir, skip_existing=args.skip_existing, workers=workers
+        )
 
         print_section("Analysis Complete")
         print(f"Tracks analyzed: {results['analyzed']}")
@@ -286,6 +292,37 @@ def cmd_generate_setlist(args):
     return 0
 
 
+def cmd_spectrogram(args):
+    """Regenerate and save the .npy spectrogram for an already-analyzed track, on demand."""
+    print_section("Spectrogram")
+
+    db_path = args.db or "data/djia.db"
+    store = TrackStore(db_path)
+    track = store.get_track(args.track_id)
+
+    if not track:
+        print(f"Track {args.track_id} not found.")
+        return 1
+
+    file_path = Path(track['file_path'])
+    print(f"Loading: {file_path}")
+
+    loader = AudioLoader()
+    audio_data = loader.load_audio(file_path)
+    if not audio_data:
+        print(f"Failed to load audio: {file_path}")
+        return 1
+
+    out_path = compute_and_save_spectrogram(
+        audio_data['audio_array'],
+        audio_data['sample_rate'],
+        args.track_id,
+        base_dir=args.spectrogram_dir,
+    )
+    print(f"✓ Saved spectrogram to: {out_path}")
+    return 0
+
+
 def cmd_export_traktor(args):
     """Export to Traktor NML format."""
     print_section("Traktor Export")
@@ -342,10 +379,12 @@ def main():
 Examples:
   python -m src.cli analyze                    # Analyze data/ directory
   python -m src.cli analyze --data-dir /path   # Analyze custom directory
+  python -m src.cli analyze --workers 4        # Analyze using 4 parallel workers
   python -m src.cli list-tracks                # Show all tracks
   python -m src.cli find-similar 1 --top-k 5   # Find tracks similar to ID 1
   python -m src.cli generate-playlist 1 10 5   # Create 5-track playlist from 1→10
   python -m src.cli export-traktor out.nml     # Export to Traktor
+  python -m src.cli spectrogram 1              # Save spectrogram .npy for track ID 1
         '''
     )
 
@@ -358,6 +397,10 @@ Examples:
     analyze_parser.add_argument('--db', help='Database path (default: data/djia.db)')
     analyze_parser.add_argument('--skip-existing', action='store_true',
                                 help='Skip already-analyzed tracks')
+    analyze_parser.add_argument('--workers', type=int, default=os.cpu_count(),
+                                help='Number of parallel worker processes for library analysis '
+                                     '(default: CPU count; use 1 for the old sequential behavior). '
+                                     'Ignored when --track is used.')
     analyze_parser.set_defaults(func=cmd_analyze)
 
     # List tracks command
@@ -392,6 +435,15 @@ Examples:
     setlist_parser.add_argument('--skip-mix-sheets', action='store_true',
                                 help='Skip audio-based mix points (much faster)')
     setlist_parser.set_defaults(func=cmd_generate_setlist)
+
+    # Spectrogram command
+    spectrogram_parser = subparsers.add_parser(
+        'spectrogram', help='Regenerate the .npy spectrogram for an already-analyzed track')
+    spectrogram_parser.add_argument('track_id', type=int, help='Track ID to compute a spectrogram for')
+    spectrogram_parser.add_argument('--db', help='Database path (default: data/djia.db)')
+    spectrogram_parser.add_argument('--spectrogram-dir', default=DEFAULT_SPECTROGRAM_DIR,
+                                    help=f'Output directory (default: {DEFAULT_SPECTROGRAM_DIR})')
+    spectrogram_parser.set_defaults(func=cmd_spectrogram)
 
     # Export Traktor command
     traktor_parser = subparsers.add_parser('export-traktor', help='Export to Traktor NML')

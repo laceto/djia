@@ -29,6 +29,9 @@ How to write code in this repo. Read before adding or changing any Python in `sr
   key/brightness). `orchestrator.py`'s `_add_density`/`_add_swing`/`_add_tonality` call these
   directly for the DB-persisted `analyze` CLI path; `extractor.extract_track_features` picks them
   up automatically via the engine results for the standalone/no-DB path.
+- `analyze_one_track` in `src/dsp/worker.py` is the single source of truth for "what happens to one
+  track" during `analyze_library` — `workers=1` and `workers>1` both call it (there's no separate
+  inline per-file loop anymore). Add new per-track DSP/AI steps there, not in `Orchestrator`.
 
 ### Segmentation / tuning
 

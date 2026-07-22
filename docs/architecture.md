@@ -107,6 +107,12 @@ them consistent.
   `curation_engine.analyze_curation` (danceability/energy_type/semantic_tags/complexity_score are
   only computed via the standalone `extractor.extract_track_features` path, not persisted to the DB
   through `analyze`).
+- **Parallel analyze (`workers>1`)**: `Orchestrator.analyze_library` can fan out per-track compute
+  (audio load through mood classification) to a `ProcessPoolExecutor`, dispatching the module-level
+  `analyze_one_track` (`src/dsp/worker.py`). DB writes remain exclusively serial in the main process —
+  every `insert_features`/`replace_segments`/`insert_mood` call happens only after a worker's result
+  comes back, for any `workers` value. This invariant must not be violated by future changes: a worker
+  process must never open its own connection to `data/djia.db`.
 - `matching/similarity.py` — cosine similarity over feature vectors, filterable by BPM/key/mood.
 - `traktor/exporter.py` — writes Traktor NML with BPM, key, and auto hot cues.
 - `djuced/exporter.py` — writes `DJIA …`-prefixed hot cues directly into DJUCED's own

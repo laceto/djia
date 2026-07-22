@@ -32,6 +32,13 @@ from src.dsp.curation_engine import (
     compute_spectral_flatness,
     compute_crest_factor,
 )
+from src.dsp.worker import analyze_one_track
+from src.dsp.spectrogram import (
+    compute_spectrogram,
+    save_spectrogram,
+    spectrogram_path,
+    compute_and_save_spectrogram,
+)
 from src.features.schema import Track, ElementOnset
 
 
@@ -411,6 +418,44 @@ class TestCurationEngine:
         assert 0.0 <= flatness <= 1.0
 
 
+class TestSpectrogram:
+    """Test spectrogram computation and .npy persistence."""
+
+    def test_compute_spectrogram_shape(self):
+        """Log-magnitude STFT is 2D (freq_bins, frames) and finite."""
+        sr = 22050
+        y = np.sin(2 * np.pi * 440 * np.arange(sr) / sr).astype(np.float32)
+        S = compute_spectrogram(y, sr, hop_length=512)
+
+        assert S.ndim == 2
+        assert S.shape[1] > 0
+        assert np.all(np.isfinite(S))
+
+    def test_save_and_reload_roundtrip(self, tmp_path):
+        """Saved .npy reloads to the same array at the deterministic key path."""
+        sr = 22050
+        y = np.sin(2 * np.pi * 440 * np.arange(sr) / sr).astype(np.float32)
+        S = compute_spectrogram(y, sr)
+
+        out_path = save_spectrogram(S, key="123", base_dir=str(tmp_path))
+
+        assert out_path == spectrogram_path("123", str(tmp_path))
+        assert out_path.exists()
+        reloaded = np.load(out_path)
+        assert np.array_equal(reloaded, S)
+
+    def test_compute_and_save_creates_missing_dir(self, tmp_path):
+        """compute_and_save_spectrogram creates base_dir if it doesn't exist yet."""
+        sr = 22050
+        y = np.sin(2 * np.pi * 440 * np.arange(sr) / sr).astype(np.float32)
+        base_dir = tmp_path / "nested" / "spectrograms"
+
+        out_path = compute_and_save_spectrogram(y, sr, key=1, base_dir=str(base_dir))
+
+        assert out_path.exists()
+        assert out_path.parent == base_dir
+
+
 class TestOrchestratorExtractor:
     """Test Master Orchestrator (extractor.py)."""
 
@@ -541,6 +586,47 @@ class TestErrorHandling:
                 librosa.get_duration(y=y, sr=22050)
         except:
             pass  # Expected
+
+
+class TestWorkerAnalyzeOneTrack:
+    """Test the picklable per-track worker function (src/dsp/worker.py) used to
+    parallelize Orchestrator.analyze_library(). Called directly here (no
+    ProcessPoolExecutor involved), which also exercises the lazy construct-on-first-use
+    fallback for the mood classifier/loader (the pool `_init_worker` path isn't hit)."""
+
+    @pytest.mark.parametrize("track_path", TEST_TRACKS)
+    def test_analyze_one_track_success(self, track_path):
+        """Compute-only pipeline succeeds end-to-end and returns everything the main
+        process needs to persist, without ever touching the database."""
+        result = analyze_one_track(str(track_path), segment_preset="minimal", bars_per_phrase=16)
+
+        assert result["error"] is None
+
+        features = result["features"]
+        assert features is not None
+        assert features.get("bpm") or features.get("tempo")
+        for key in (
+            "swing_score", "spectral_flatness", "crest_factor",
+            "onset_strength_mean", "zero_crossing_rate", "roughness",
+        ):
+            assert key in features, f"Missing feature: {key}"
+
+        assert 0.0 <= features["swing_score"] <= 1.0
+        assert 0.0 <= features["spectral_flatness"] <= 1.0
+        assert features["crest_factor"] >= 1.0
+        assert features["onset_strength_mean"] >= 0.0
+        assert 0.0 <= features["zero_crossing_rate"] <= 1.0
+        assert 0.0 <= features["roughness"] <= 1.0
+
+        for segments in (result["segments_spectral"], result["segments_phrase"]):
+            assert isinstance(segments, list)
+            assert len(segments) > 0
+            for seg in segments:
+                assert isinstance(seg, dict)
+                assert "segment_type" in seg
+                assert "start_time" in seg
+                assert "end_time" in seg
+                assert "confidence" in seg
 
 
 if __name__ == "__main__":

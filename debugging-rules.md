@@ -46,6 +46,24 @@ Known failure modes and environment quirks. Read when a script errors or output 
   cached by file name in `results/mix_points_cache.json` and never recomputed once cached. Delete
   the relevant entry (or the whole file) to force a recompute on the next run.
 
+- **`--workers` beyond `os.cpu_count()` won't help.** This is CPU-bound DSP/audio work, so adding
+  workers past the core count only adds process-spawn/scheduling overhead. Even within `cpu_count()`
+  the speedup is sub-linear, not proportional: 6 tracks went from 58.09s (workers=1) to 28.18s
+  (workers=4) — 2.06x; 28 tracks went from 417.34s (workers=1) to 98.88s (workers=22) — 4.22x, not
+  22x — because process-pool startup (re-importing librosa/numpy, reinitializing `MoodClassifier`
+  per worker) dominates at these library sizes.
+
+- **A crash inside `analyze_one_track` doesn't kill a parallel `analyze` run.** Per-track exceptions
+  are caught inside the worker and returned via the result dict's `"error"` key, same as the
+  sequential path. If the *pool itself* fails instead (e.g. a worker process dies), `future.result()`
+  raises in `Orchestrator.analyze_library`'s `as_completed` loop; that's caught, logged, counted as
+  an error, and the loop moves on to the next future rather than aborting the batch.
+
+- **`ProcessPoolExecutor` needs a guarded entry point on Windows.** `python -m src.cli analyze
+  --workers N` already satisfies this (argparse module execution). This only matters if you call
+  `Orchestrator.analyze_library(workers>1)` directly from an unguarded top-level script (no
+  `if __name__ == "__main__":`) — informational, not a current problem.
+
 ## Where to look
 
 - Data flow / who-produces-what → `docs/architecture.md`.
