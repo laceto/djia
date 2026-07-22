@@ -2,7 +2,7 @@
 
 import numpy as np
 import librosa
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 from scipy import signal
 from ..features.schema import Segment, CuePoint, PhrasingResult
 
@@ -136,73 +136,268 @@ def create_segments(
     return segments
 
 
-def map_segments_to_hotcues(segments: List[Segment]) -> List[CuePoint]:
+def compute_lowband_energy(
+    y: np.ndarray,
+    sr: int,
+    hop_length: int = 512,
+    fmin: float = 20.0,
+    fmax: float = 150.0,
+) -> np.ndarray:
     """
-    Map structural segments to hot-cue positions (Pad 1, 2, 4).
+    Mean magnitude in the kick+bass band per STFT frame.
 
-    Target: Pad 1 at intro/first drop, Pad 2 at breakdown, Pad 4 at main drop.
+    For four-on-the-floor techno the low end carries the structure: it is present
+    during drops and falls away during breakdowns. This is far more reliable than
+    generic spectral novelty for detecting drops/breakdowns.
+
+    Args:
+        y: Audio waveform
+        sr: Sample rate
+        hop_length: Hop length for STFT
+        fmin: Low bound of the band (Hz)
+        fmax: High bound of the band (Hz)
+
+    Returns:
+        energy: 1D array of mean low-band magnitude per frame
+    """
+    S = np.abs(librosa.stft(y, hop_length=hop_length))
+    freqs = librosa.fft_frequencies(sr=sr)
+    band = np.where((freqs >= fmin) & (freqs <= fmax))[0]
+    if len(band) == 0:
+        return np.zeros(S.shape[1])
+    return S[band, :].mean(axis=0)
+
+
+def detect_energy_sections(
+    energy: np.ndarray,
+    sr: int,
+    bpm: float,
+    hop_length: int = 512,
+    min_bars: int = 4,
+    thresh_frac: float = 0.4,
+) -> List[Tuple[bool, float, float]]:
+    """
+    Split the track into DROP (kick on) / BREAKDOWN (kick off) sections.
+
+    The low-band energy is smoothed over ~1 bar and thresholded at a fraction of
+    its peak. Sections shorter than ``min_bars`` are merged into the previous one
+    so short blips do not fragment the structure. Sections stay contiguous and
+    cover the whole track.
+
+    Args:
+        energy: Low-band energy envelope (from compute_lowband_energy)
+        sr: Sample rate
+        bpm: Track BPM (used to derive bar length and the smoothing window)
+        hop_length: Hop length used for the energy envelope
+        min_bars: Minimum section length in bars
+        thresh_frac: Kick-on threshold as a fraction of peak low-band energy
+
+    Returns:
+        List of (is_drop, start_time, end_time) tuples, time-ordered & contiguous
+    """
+    n = len(energy)
+    if n == 0:
+        return []
+
+    times = librosa.frames_to_time(np.arange(n), sr=sr, hop_length=hop_length)
+    end_time = float(times[-1]) if n > 1 else 0.0
+    spb = (60.0 / bpm) * 4.0 if bpm > 0 else 2.0
+
+    # Smooth over ~1 bar
+    win = max(1, int(spb / (hop_length / sr)))
+    energy_s = np.convolve(energy, np.ones(win) / win, mode="same")
+
+    peak = float(energy_s.max()) if energy_s.size else 0.0
+    if peak <= 0:
+        return [(True, 0.0, end_time)]  # degenerate: treat as one drop
+
+    on = energy_s > (thresh_frac * peak)
+
+    # Build raw contiguous sections
+    raw: List[List] = []
+    state = bool(on[0])
+    start_i = 0
+    for i in range(1, n):
+        if bool(on[i]) != state:
+            raw.append([state, float(times[start_i]), float(times[i])])
+            state = bool(on[i])
+            start_i = i
+    raw.append([state, float(times[start_i]), end_time])
+
+    # Merge sections shorter than min_bars into the previous section (keep contiguity)
+    min_len = min_bars * spb
+    merged: List[List] = []
+    for sec in raw:
+        if merged and (sec[2] - sec[1]) < min_len:
+            merged[-1][2] = sec[2]  # extend previous section's end
+        else:
+            merged.append(sec)
+
+    return [(bool(s[0]), s[1], s[2]) for s in merged]
+
+
+def label_energy_sections(sections: List[Tuple[bool, float, float]]) -> List[Segment]:
+    """
+    Label DROP/BREAKDOWN sections as intro/drop/breakdown/outro.
+
+    - kick-on section          -> "drop"
+    - kick-off first section    -> "intro"
+    - kick-off last section     -> "outro"
+    - kick-off in the middle    -> "breakdown"
+
+    Args:
+        sections: (is_drop, start, end) tuples from detect_energy_sections
+
+    Returns:
+        List of labeled Segment objects
+    """
+    segments = []
+    n = len(sections)
+    for i, (is_drop, start, end) in enumerate(sections):
+        if is_drop:
+            label = "drop"
+        elif i == 0:
+            label = "intro"
+        elif i == n - 1:
+            label = "outro"
+        else:
+            label = "breakdown"
+        segments.append(Segment(start_time=start, end_time=end, label=label, confidence=0.85))
+    return segments
+
+
+def map_segments_to_hotcues(
+    segments: List[Segment],
+    max_pads: Optional[int] = None,
+) -> List[CuePoint]:
+    """
+    Map structural segments to hot-cue positions at their START (the cue point a
+    DJ actually wants to jump to).
+
+    Two modes:
+
+    * ``max_pads is None`` (default) — one cue per structural section, labelled by
+      type: intro -> Pad 1, first (main) drop -> Pad 4, later drops -> Pad 3,
+      breakdown -> Pad 2, outro -> Pad 1. Useful when the target (e.g. Traktor)
+      has unlimited cues.
+
+    * ``max_pads = N`` — keep only the N most important sections and re-label them
+      ``Pad 1..N`` in chronological order, for controllers with a fixed number of
+      performance pads (e.g. 4). Importance: the intro, the first (main) drop and
+      the outro (mix-out point) are always kept; remaining slots go to the longest
+      sections (drops and breakdowns). Because pads are numbered by time, the
+      outro naturally takes the last pad. The original section type is preserved
+      on ``CuePoint.type`` for colour-coding.
 
     Args:
         segments: List of Segment objects
+        max_pads: Max number of hot cues / physical pads (None = unlimited)
 
     Returns:
-        cues: List of CuePoint objects
+        cues: List of CuePoint objects at segment start times, time-ordered
     """
-    cues = []
+    # --- default unlimited mode: label by type ---
+    if max_pads is None:
+        cues = []
+        drop_seen = False
+        for seg in segments:
+            if seg.label == "intro":
+                cues.append(CuePoint(time=seg.start_time, label="Pad 1", type="intro"))
+            elif seg.label == "breakdown":
+                cues.append(CuePoint(time=seg.start_time, label="Pad 2", type="breakdown"))
+            elif seg.label == "drop":
+                if not drop_seen:
+                    cues.append(CuePoint(time=seg.start_time, label="Pad 4", type="drop"))
+                    drop_seen = True
+                else:
+                    cues.append(CuePoint(time=seg.start_time, label="Pad 3", type="drop"))
+            elif seg.label == "outro":
+                cues.append(CuePoint(time=seg.start_time, label="Pad 1", type="outro"))
+        return cues
 
+    # --- limited mode: pick the N most important sections ---
+    if max_pads < 1:
+        return []
+
+    # Guaranteed sections rank above any real section length (seconds):
+    #   intro (mix-in) > main drop > outro (mix-out) > longest other sections
+    candidates = []  # (start_time, type, importance)
+    drop_seen = False
     for seg in segments:
-        cue_time = (seg.start_time + seg.end_time) / 2  # Midpoint of segment
-
+        duration = seg.end_time - seg.start_time
         if seg.label == "intro":
-            cues.append(CuePoint(time=cue_time, label="Pad 1", type="intro"))
-        elif seg.label == "breakdown":
-            cues.append(CuePoint(time=cue_time, label="Pad 2", type="breakdown"))
-        elif seg.label == "drop" and len([c for c in cues if "Pad 4" in c.label]) == 0:
-            # First major drop gets Pad 4
-            cues.append(CuePoint(time=cue_time, label="Pad 4", type="drop"))
+            importance = 1e12  # always keep the mix-in point
+        elif seg.label == "outro":
+            importance = 1e10  # always keep the mix-out point
+        elif seg.label == "drop":
+            importance = duration
+            if not drop_seen:
+                importance += 1e11  # main drop is guaranteed a pad
+                drop_seen = True
+        else:  # breakdown (and any other) ranked by length
+            importance = duration
+        candidates.append((seg.start_time, seg.label, importance))
 
-    return cues
+    # Keep the most important, then restore chronological order
+    keep = sorted(candidates, key=lambda c: c[2], reverse=True)[:max_pads]
+    keep = sorted(keep, key=lambda c: c[0])
+
+    return [
+        CuePoint(time=t, label=f"Pad {i}", type=typ)
+        for i, (t, typ, _) in enumerate(keep, start=1)
+    ]
 
 
 def analyze_structure(
     y: np.ndarray,
     sr: int,
     bpm: float,
-    hop_length: int = 512
+    hop_length: int = 512,
+    min_bars: int = 4,
+    thresh_frac: float = 0.4,
+    max_pads: Optional[int] = None,
 ) -> PhrasingResult:
     """
-    Complete phrasing analysis.
+    Complete phrasing analysis driven by kick+bass (low-band) energy.
+
+    Drops (kick present) and breakdowns (kick absent) are detected from the
+    20-150 Hz energy envelope — the reliable structural signal for techno —
+    rather than generic spectral novelty, which over-segments four-on-the-floor
+    material. Boundaries land on real drop/breakdown transitions and hot cues are
+    placed at each section start.
 
     Args:
         y: Audio waveform
         sr: Sample rate
         bpm: Track BPM (from groove engine)
         hop_length: Hop length for STFT
+        min_bars: Ignore/merge sections shorter than this many bars
+        thresh_frac: Kick-on threshold as a fraction of peak low-band energy
+        max_pads: Limit hot cues to this many pads (None = one per section)
 
     Returns:
         PhrasingResult with segments, boundaries, and cue points
     """
-    # Compute novelty curve
-    novelty = compute_novelty_curve(y, sr, hop_length)
+    # Low-band energy -> DROP/BREAKDOWN sections
+    energy = compute_lowband_energy(y, sr, hop_length)
+    sections = detect_energy_sections(
+        energy, sr, bpm, hop_length=hop_length,
+        min_bars=min_bars, thresh_frac=thresh_frac,
+    )
 
-    # Detect boundaries
-    boundaries = detect_segment_boundaries(novelty, sr, hop_length)
+    # Label sections and place cue points at their starts
+    segments = label_energy_sections(sections)
+    cue_points = map_segments_to_hotcues(segments, max_pads=max_pads)
 
-    # Get track duration
-    duration = librosa.get_duration(y=y, sr=sr)
+    # Boundaries = the interior section starts (skip the 0.0 start of the track)
+    boundaries = [seg.start_time for seg in segments if seg.start_time > 0.0]
 
-    # Create segments
-    segments = create_segments(boundaries, duration, bpm)
-
-    # Map to cue points
-    cue_points = map_segments_to_hotcues(segments)
-
-    # Calculate structure confidence (average segment confidence)
-    avg_confidence = np.mean([s.confidence for s in segments]) if segments else 0.0
+    # Structure confidence (average segment confidence)
+    avg_confidence = float(np.mean([s.confidence for s in segments])) if segments else 0.0
 
     return PhrasingResult(
         segment_boundaries=boundaries,
         segments=segments,
         cue_points=cue_points,
-        structure_confidence=avg_confidence
+        structure_confidence=avg_confidence,
     )
