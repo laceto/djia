@@ -83,7 +83,7 @@ def add_track_analysis(
     nml_root: ET.Element,
     track_id: int,
     track_analysis: Dict,
-    db_path: str = "data/djia.db"
+    db_path: str = "db/djia.db"
 ) -> Optional[ET.Element]:
     """
     Add analysis data to a track entry in NML tree.
@@ -279,7 +279,7 @@ def export_nml(nml_root: ET.Element, output_path: str) -> bool:
 
 def export_all_tracks(
     traktor_nml_path: str,
-    db_path: str = "data/djia.db",
+    db_path: str = "db/djia.db",
     output_path: str = "results/collection_analyzed.nml"
 ) -> str:
     """
@@ -303,7 +303,7 @@ def export_all_tracks(
     Example:
         >>> output = export_all_tracks(
         ...     "Collection.nml",
-        ...     "data/djia.db",
+        ...     "db/djia.db",
         ...     "results/collection_analyzed.nml"
         ... )
         >>> print(f"Saved to: {output}")

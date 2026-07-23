@@ -13,7 +13,7 @@ Known failure modes and environment quirks. Read when a script errors or output 
   track_tuner modules (so the CLI keeps working without those packages) — import them directly from
   `src.ai.track_tuner_graph`. An `ImportError` from `src.ai` on tuner code means the deps are missing.
 
-- **Reset a locked/corrupt DB** by deleting `data/djia.db`; it is recreated on the next `analyze` run.
+- **Reset a locked/corrupt DB** by deleting `db/djia.db`; it is recreated on the next `analyze` run.
 
 - **`data/` and `results/` are gitignored** (audio + generated artifacts were removed from the repo in
   commit 9099368). Don't commit tracks, `.db` files, or NML output.

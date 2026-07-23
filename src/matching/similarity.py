@@ -124,7 +124,7 @@ def find_similar_tracks(
     top_k: int = 5,
     bpm_tolerance: Optional[float] = None,
     mood_filter: Optional[str] = None,
-    db_path: str = "data/djia.db"
+    db_path: str = "db/djia.db"
 ) -> List[Tuple]:
     """
     Find similar tracks to a given track using cosine similarity.
@@ -222,7 +222,7 @@ def find_similar_tracks(
         conn.close()
 
 
-def batch_normalize_all_tracks(db_path: str = "data/djia.db") -> Dict[int, np.ndarray]:
+def batch_normalize_all_tracks(db_path: str = "db/djia.db") -> Dict[int, np.ndarray]:
     """
     Pre-compute and cache normalized feature vectors for all tracks.
 

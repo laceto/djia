@@ -53,7 +53,7 @@ Wrappers / helpers:
 
 ## SQLite schema (`src/database/schema.py`)
 
-Default DB: `data/djia.db`. Foreign keys ON; `ON DELETE CASCADE` from `tracks`.
+Default DB: `db/djia.db`. Foreign keys ON; `ON DELETE CASCADE` from `tracks`.
 
 - **`tracks`** — `id` PK, `file_path` UNIQUE, `file_name`, `format`, `artist`, `title`, `album`,
   `duration`, `analysis_date`, `created_at`, `updated_at`.

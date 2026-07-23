@@ -27,7 +27,7 @@ def example_similarity_search():
     """
     print("\n=== Phase 4: Similarity Search Example ===\n")
 
-    db_path = "data/djia.db"
+    db_path = "db/djia.db"
     store = TrackStore(db_path)
 
     # Get all tracks
@@ -100,7 +100,7 @@ def example_traktor_export():
         print("  3. Re-run this example\n")
         return
 
-    db_path = "data/djia.db"
+    db_path = "db/djia.db"
     output_nml = "results/collection_analyzed.nml"
 
     print(f"Input NML: {traktor_nml}")
@@ -144,7 +144,7 @@ def example_feature_normalization():
     """
     print("\n=== Phase 4: Feature Normalization Example ===\n")
 
-    db_path = "data/djia.db"
+    db_path = "db/djia.db"
     store = TrackStore(db_path)
 
     all_tracks = store.get_all_tracks()
@@ -194,7 +194,7 @@ def main():
     print("="*70)
 
     # Initialize database
-    db_path = "data/djia.db"
+    db_path = "db/djia.db"
     if not Path(db_path).exists():
         print(f"\nInitializing database: {db_path}")
         init_db(db_path)

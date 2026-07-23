@@ -8,14 +8,8 @@ from tqdm import tqdm
 
 from .ingestion.scanner import AudioScanner
 from .ingestion.loader import AudioLoader
-from .audio_analysis import analyze_track as analyze_audio
-from .dsp.config import get_config
-from .dsp.groove_engine import analyze_groove
-from .dsp.mood_engine import analyze_mood as analyze_tonality
-from .dsp.curation_engine import compute_spectral_flatness, compute_crest_factor
-from .dsp.spectrogram import compute_and_save_spectrogram, DEFAULT_SPECTROGRAM_DIR
+from .dsp.spectrogram import DEFAULT_SPECTROGRAM_DIR
 from .dsp.worker import analyze_one_track, _init_worker
-from .ai.classifier import MoodClassifier
 from .database.store import TrackStore
 
 logger = logging.getLogger(__name__)
@@ -27,7 +21,7 @@ class Orchestrator:
 
     def __init__(
         self,
-        db_path: str = "data/djia.db",
+        db_path: str = "db/djia.db",
         segment_preset: str = "minimal",
         bars_per_phrase: int = 16,
         spectrogram_dir: str = DEFAULT_SPECTROGRAM_DIR,
@@ -44,13 +38,10 @@ class Orchestrator:
         self.db_path = db_path
         self.store = TrackStore(db_path)
         self.loader = AudioLoader()
-        self.mood_classifier = MoodClassifier()
-        # Keep both: self.segment_config (resolved) for the methods below that already
-        # run in-process, and the preset *name* for analyze_one_track() — workers get a
-        # plain picklable string and resolve it themselves via get_config() rather than
-        # crossing the process boundary with a DSPConfig object.
+        # analyze_one_track() (workers) gets a plain picklable preset *name* and
+        # resolves it itself via get_config(), rather than crossing the process
+        # boundary with a DSPConfig object.
         self.segment_preset_name = segment_preset
-        self.segment_config = get_config(segment_preset)
         self.bars_per_phrase = bars_per_phrase
         self.spectrogram_dir = spectrogram_dir
 
@@ -67,56 +58,6 @@ class Orchestrator:
             }
             for seg in segments
         ]
-
-    def _add_tonality(self, features: Dict[str, Any], y, sr, file_path) -> None:
-        """Detect musical key/Camelot/timbral roughness/ZCR and merge into the features dict
-        (best-effort)."""
-        try:
-            tonality = analyze_tonality(y, sr)
-            features['key'] = tonality.key
-            features['camelot_key'] = tonality.camelot_key
-            features['key_confidence'] = tonality.key_confidence
-            features['zero_crossing_rate'] = tonality.zero_crossing_rate
-            features['roughness'] = tonality.roughness
-        except Exception as e:
-            logger.warning(f"Failed to detect key for {file_path}: {e}")
-
-    def _add_swing(self, features: Dict[str, Any], y, sr, file_path) -> None:
-        """Measure swing, onset strength, and beat strength; merge into the features dict
-        (best-effort)."""
-        try:
-            groove = analyze_groove(y, sr)
-            features['swing_score'] = groove.swing_score
-            features['onset_strength_mean'] = groove.onset_strength_mean
-            features['onset_strength_std'] = groove.onset_strength_std
-            features['beat_strength'] = groove.beat_strength
-        except Exception as e:
-            logger.warning(f"Failed to measure swing for {file_path}: {e}")
-
-    def _add_density(self, features: Dict[str, Any], y, sr, file_path) -> None:
-        """Measure spectral density (flatness, crest factor) and merge into the features dict
-        (best-effort). Crest factor reuses rms_mean/rms_peak already extracted by analyze_audio."""
-        try:
-            features['spectral_flatness'] = compute_spectral_flatness(y, sr)
-            features['crest_factor'] = compute_crest_factor(
-                rms_mean=features.get('rms_mean'),
-                rms_peak=features.get('rms_peak'),
-            )
-        except Exception as e:
-            logger.warning(f"Failed to measure spectral density for {file_path}: {e}")
-
-    def _add_spectrogram(self, key, y, sr, file_path) -> None:
-        """Compute and persist the log-magnitude STFT spectrogram (.npy), keyed by
-        track_id when available or filename stem otherwise (best-effort)."""
-        try:
-            out_path = compute_and_save_spectrogram(
-                y, sr, key,
-                hop_length=self.segment_config.hop_length,
-                base_dir=self.spectrogram_dir,
-            )
-            logger.debug(f"Saved spectrogram for {file_path} -> {out_path}")
-        except Exception as e:
-            logger.warning(f"Failed to save spectrogram for {file_path}: {e}")
 
     def _persist_result(
         self, track_id: int, file_path, result: Dict[str, Any], analyzed: int, errors: int
@@ -282,13 +223,20 @@ class Orchestrator:
 
     def analyze_single_track(self, file_path: str) -> Optional[Dict[str, Any]]:
         """
-        Analyze a single track through complete pipeline.
+        Analyze a single track and persist it to the database.
+
+        Registers the track (or reuses its existing track_id if it's already in
+        the DB), runs the same worker-safe compute pipeline analyze_library()
+        uses per file (dsp.worker.analyze_one_track), and writes through the same
+        _persist_result() path — so a single-track run is DB-identical to a
+        library scan that happens to contain just this one file.
 
         Args:
             file_path: Path to audio file
 
         Returns:
-            Dictionary with track features, or None if failed
+            Dictionary with track features (plus 'track_id'), or None if the
+            file doesn't exist or analysis/persistence failed.
         """
         file_path = Path(file_path)
 
@@ -297,44 +245,32 @@ class Orchestrator:
             return None
 
         try:
-            # Load metadata
             metadata = self.loader.extract_metadata(file_path)
 
-            # Load audio
-            audio_data = self.loader.load_audio(file_path)
-            if not audio_data:
-                logger.error(f"Failed to load audio: {file_path}")
+            existing_id = self.store.get_track_id(str(file_path))
+            track_id = existing_id or self.store.insert_track(
+                file_path=str(file_path),
+                file_name=metadata['file_name'],
+                format=metadata['format'],
+                duration=metadata.get('duration', 0),
+                artist=metadata.get('artist'),
+                title=metadata.get('title'),
+                album=metadata.get('album'),
+            )
+
+            result = analyze_one_track(
+                str(file_path), self.segment_preset_name, self.bars_per_phrase,
+                spectrogram_dir=self.spectrogram_dir, spectrogram_key=track_id,
+            )
+            _, errors = self._persist_result(track_id, file_path, result, 0, 0)
+            if errors:
                 return None
 
-            y = audio_data['audio_array']
-            sr = audio_data['sample_rate']
-
-            # Extract features
-            features = analyze_audio(str(file_path), sr, None)
-            if not features:
-                logger.error(f"Failed to extract features: {file_path}")
-                return None
-
-            # analyze_audio() only sets 'tempo', not 'bpm' — alias for downstream callers.
-            features.setdefault('bpm', features.get('tempo'))
-
-            # Detect musical key (Camelot), timbre, swing, and density; merge into features
-            self._add_tonality(features, y, sr, file_path)
-            self._add_swing(features, y, sr, file_path)
-            self._add_density(features, y, sr, file_path)
-            # No DB track_id on this standalone path — key by filename stem instead.
-            self._add_spectrogram(file_path.stem, y, sr, file_path)
-
-            # Classify mood
-            try:
-                mood_result = self.mood_classifier.classify_mood(y, sr)
-                if mood_result and 'moods' in mood_result:
-                    features['mood'] = mood_result['moods']
-            except Exception as e:
-                logger.warning(f"Failed to classify mood: {e}")
-
-            # Add metadata
+            features = dict(result["features"])
             features.update(metadata)
+            features['track_id'] = track_id
+            if result.get('mood_scores'):
+                features['mood'] = result['mood_scores']
 
             return features
 

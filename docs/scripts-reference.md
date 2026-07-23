@@ -20,7 +20,7 @@ Verified against `src/cli.py` (argparse). Flags are exactly as below.
 # analyze — directory (default data/) or a single track
 python -m src.cli analyze                          # analyze data/
 python -m src.cli analyze --data-dir "path/to/dir" # custom directory
-python -m src.cli analyze --track "path/to.mp3"    # single track
+python -m src.cli analyze --track "path/to.mp3"    # single track (persists to --db, same as a scan of just this file)
 python -m src.cli analyze --workers 8              # parallel analysis with 8 worker processes
 #   also: --db PATH   --skip-existing   --workers N (default: os.cpu_count(), min 1; workers<=1
 #         is the old sequential path; ignored/no-op with --track)

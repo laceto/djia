@@ -19,7 +19,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def ingest_all_tracks(data_dir: str = "data", db_path: str = "data/djia.db") -> None:
+def ingest_all_tracks(data_dir: str = "data", db_path: str = "db/djia.db") -> None:
     """
     Complete ingestion pipeline: scan, load, analyze, and store tracks.
 
@@ -106,7 +106,7 @@ def ingest_all_tracks(data_dir: str = "data", db_path: str = "data/djia.db") -> 
     logger.info(f"Total tracks in database: {total_tracks}")
 
 
-def query_database(db_path: str = "data/djia.db", search_query: str = None) -> None:
+def query_database(db_path: str = "db/djia.db", search_query: str = None) -> None:
     """
     Query and display database contents.
 
@@ -148,8 +148,8 @@ def query_database(db_path: str = "data/djia.db", search_query: str = None) -> N
 
 if __name__ == "__main__":
     # Run the ingestion pipeline
-    ingest_all_tracks(data_dir="data", db_path="data/djia.db")
+    ingest_all_tracks(data_dir="data", db_path="db/djia.db")
 
     # Query some results
     print("\n")
-    query_database(db_path="data/djia.db")
+    query_database(db_path="db/djia.db")

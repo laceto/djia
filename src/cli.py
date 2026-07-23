@@ -54,9 +54,10 @@ def cmd_analyze(args):
     print_section("DJIA Track Analysis")
 
     if args.track:
-        # Analyze single track
+        # Analyze single track (persists to the DB, same as a library scan of one file)
+        db_path = args.db or "db/djia.db"
         print(f"Analyzing single track: {args.track}\n")
-        orchestrator = Orchestrator()
+        orchestrator = Orchestrator(db_path=db_path)
         result = orchestrator.analyze_single_track(args.track)
 
         if result:
@@ -66,6 +67,7 @@ def cmd_analyze(args):
             print(f"  RMS Mean: {result.get('rms_mean', 'N/A')}")
             if result.get('mood'):
                 print(f"  Mood: {result['mood']}")
+            print(f"  Saved as track_id {result['track_id']} in {db_path}")
         else:
             print("Failed to analyze track.")
             return 1
@@ -75,7 +77,7 @@ def cmd_analyze(args):
         data_dir = args.data_dir or "data"
         print(f"Analyzing audio library: {data_dir}\n")
 
-        orchestrator = Orchestrator(db_path=args.db or "data/djia.db")
+        orchestrator = Orchestrator(db_path=args.db or "db/djia.db")
         workers = max(1, args.workers)
         results = orchestrator.analyze_library(
             data_dir, skip_existing=args.skip_existing, workers=workers
@@ -94,7 +96,7 @@ def cmd_list_tracks(args):
     """List all analyzed tracks."""
     print_section("Analyzed Tracks")
 
-    store = TrackStore(args.db or "data/djia.db")
+    store = TrackStore(args.db or "db/djia.db")
     tracks = store.get_all_tracks()[:args.limit]
 
     if not tracks:
@@ -126,7 +128,7 @@ def cmd_find_similar(args):
     """Find similar tracks."""
     print_section("Similar Tracks")
 
-    store = TrackStore(args.db or "data/djia.db")
+    store = TrackStore(args.db or "db/djia.db")
     track = store.get_track(args.track_id)
 
     if not track:
@@ -196,7 +198,7 @@ def cmd_generate_playlist(args):
     """Generate a DJ playlist."""
     print_section("Playlist Generator")
 
-    store = TrackStore(args.db or "data/djia.db")
+    store = TrackStore(args.db or "db/djia.db")
 
     # Verify start and end tracks exist
     start_track = store.get_track(args.start_id)
@@ -271,7 +273,7 @@ def cmd_generate_setlist(args):
 
     from .ai.setlist_generator import generate_setlist, load_library
 
-    db_path = args.db or "data/djia.db"
+    db_path = args.db or "db/djia.db"
     tracks = load_library(db_path)
     print(f"Library: {len(tracks)} analyzed tracks")
     if len(tracks) < args.tracks:
@@ -296,7 +298,7 @@ def cmd_spectrogram(args):
     """Regenerate and save the .npy spectrogram for an already-analyzed track, on demand."""
     print_section("Spectrogram")
 
-    db_path = args.db or "data/djia.db"
+    db_path = args.db or "db/djia.db"
     store = TrackStore(db_path)
     track = store.get_track(args.track_id)
 
@@ -327,7 +329,7 @@ def cmd_export_traktor(args):
     """Export to Traktor NML format."""
     print_section("Traktor Export")
 
-    db_path = args.db or "data/djia.db"
+    db_path = args.db or "db/djia.db"
     store = TrackStore(db_path)
     all_tracks = store.get_all_tracks()
 
@@ -394,7 +396,7 @@ Examples:
     analyze_parser = subparsers.add_parser('analyze', help='Analyze audio library or track')
     analyze_parser.add_argument('--data-dir', help='Data directory (default: data/)')
     analyze_parser.add_argument('--track', help='Analyze single track by path')
-    analyze_parser.add_argument('--db', help='Database path (default: data/djia.db)')
+    analyze_parser.add_argument('--db', help='Database path (default: db/djia.db)')
     analyze_parser.add_argument('--skip-existing', action='store_true',
                                 help='Skip already-analyzed tracks')
     analyze_parser.add_argument('--workers', type=int, default=os.cpu_count(),
@@ -405,14 +407,14 @@ Examples:
 
     # List tracks command
     list_parser = subparsers.add_parser('list-tracks', help='List all analyzed tracks')
-    list_parser.add_argument('--db', help='Database path (default: data/djia.db)')
+    list_parser.add_argument('--db', help='Database path (default: db/djia.db)')
     list_parser.add_argument('--limit', type=int, default=100, help='Max tracks to show')
     list_parser.set_defaults(func=cmd_list_tracks)
 
     # Find similar command
     similar_parser = subparsers.add_parser('find-similar', help='Find similar tracks')
     similar_parser.add_argument('track_id', type=int, help='Track ID to find matches for')
-    similar_parser.add_argument('--db', help='Database path (default: data/djia.db)')
+    similar_parser.add_argument('--db', help='Database path (default: db/djia.db)')
     similar_parser.add_argument('--top-k', type=int, default=5, help='Number of results')
     similar_parser.set_defaults(func=cmd_find_similar)
 
@@ -421,7 +423,7 @@ Examples:
     playlist_parser.add_argument('start_id', type=int, help='Starting track ID')
     playlist_parser.add_argument('end_id', type=int, help='Ending track ID')
     playlist_parser.add_argument('steps', type=int, nargs='?', default=5, help='Number of steps')
-    playlist_parser.add_argument('--db', help='Database path (default: data/djia.db)')
+    playlist_parser.add_argument('--db', help='Database path (default: db/djia.db)')
     playlist_parser.set_defaults(func=cmd_generate_playlist)
 
     # Generate setlist command
@@ -431,7 +433,7 @@ Examples:
                                 help='Number of tracks in the set (default: 28)')
     setlist_parser.add_argument('--output', default='results/setlist_5phase.md',
                                 help='Output markdown path')
-    setlist_parser.add_argument('--db', help='Database path (default: data/djia.db)')
+    setlist_parser.add_argument('--db', help='Database path (default: db/djia.db)')
     setlist_parser.add_argument('--skip-mix-sheets', action='store_true',
                                 help='Skip audio-based mix points (much faster)')
     setlist_parser.set_defaults(func=cmd_generate_setlist)
@@ -440,7 +442,7 @@ Examples:
     spectrogram_parser = subparsers.add_parser(
         'spectrogram', help='Regenerate the .npy spectrogram for an already-analyzed track')
     spectrogram_parser.add_argument('track_id', type=int, help='Track ID to compute a spectrogram for')
-    spectrogram_parser.add_argument('--db', help='Database path (default: data/djia.db)')
+    spectrogram_parser.add_argument('--db', help='Database path (default: db/djia.db)')
     spectrogram_parser.add_argument('--spectrogram-dir', default=DEFAULT_SPECTROGRAM_DIR,
                                     help=f'Output directory (default: {DEFAULT_SPECTROGRAM_DIR})')
     spectrogram_parser.set_defaults(func=cmd_spectrogram)
@@ -449,7 +451,7 @@ Examples:
     traktor_parser = subparsers.add_parser('export-traktor', help='Export to Traktor NML')
     traktor_parser.add_argument('nml_path', nargs='?', default='djia_export.nml',
                                 help='Output NML file path')
-    traktor_parser.add_argument('--db', help='Database path (default: data/djia.db)')
+    traktor_parser.add_argument('--db', help='Database path (default: db/djia.db)')
     traktor_parser.add_argument('--traktor-input', default='Collection.nml',
                                 help='Path to Traktor Collection.nml (optional, for hot cues)')
     traktor_parser.set_defaults(func=cmd_export_traktor)

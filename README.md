@@ -121,7 +121,7 @@ python -m src.cli analyze --skip-existing
 python -m src.cli analyze --workers 8
 ```
 
-**Output:** Analyzed tracks stored in `data/djia.db`
+**Output:** Analyzed tracks stored in `db/djia.db`
 
 ### 2. List Analyzed Tracks
 
@@ -186,7 +186,7 @@ Analyze audio library or single track.
 python -m src.cli analyze [OPTIONS]
   --data-dir PATH       Directory to scan (default: data/)
   --track PATH          Analyze single track by path
-  --db PATH             Database path (default: data/djia.db)
+  --db PATH             Database path (default: db/djia.db)
   --skip-existing       Skip already-analyzed tracks
   --workers N           Parallel worker processes (default: os.cpu_count(); use 1 for the
                         old sequential behavior; ignored with --track)
@@ -197,7 +197,7 @@ List all analyzed tracks with features.
 
 ```bash
 python -m src.cli list-tracks [OPTIONS]
-  --db PATH             Database path (default: data/djia.db)
+  --db PATH             Database path (default: db/djia.db)
   --limit N             Max tracks to show (default: 100)
 ```
 
@@ -206,7 +206,7 @@ Find tracks similar to a given track.
 
 ```bash
 python -m src.cli find-similar TRACK_ID [OPTIONS]
-  --db PATH             Database path (default: data/djia.db)
+  --db PATH             Database path (default: db/djia.db)
   --top-k N             Number of results (default: 5)
 ```
 
@@ -215,7 +215,7 @@ Generate an optimal DJ playlist.
 
 ```bash
 python -m src.cli generate-playlist START_ID END_ID [STEPS] [OPTIONS]
-  --db PATH             Database path (default: data/djia.db)
+  --db PATH             Database path (default: db/djia.db)
   # Example: generate-playlist 1 10 5  → 5-track path from track 1 to 10
 ```
 
@@ -226,7 +226,7 @@ Generate a data-driven 5-phase setlist with mix sheets.
 python -m src.cli generate-setlist [OPTIONS]
   --tracks N            Number of tracks in the set (default: 28)
   --output PATH         Output markdown path (default: results/setlist_5phase.md)
-  --db PATH             Database path (default: data/djia.db)
+  --db PATH             Database path (default: db/djia.db)
   --skip-mix-sheets     Skip audio-based mix points (fast; phase plan only)
   # Phase quotas scale with --tracks: warm-up 20%, build 29%, peak 36%, comeback 15%,
   # breakdown fixed at 1-2 tracks. Mix points cache to results/mix_points_cache.json.
@@ -237,7 +237,7 @@ Export library to Traktor NML format.
 
 ```bash
 python -m src.cli export-traktor [NML_PATH] [OPTIONS]
-  --db PATH             Database path (default: data/djia.db)
+  --db PATH             Database path (default: db/djia.db)
   # Example: export-traktor traktor_library.nml
 ```
 
@@ -246,7 +246,7 @@ Regenerate and save the `.npy` log-magnitude spectrogram for an already-analyzed
 
 ```bash
 python -m src.cli spectrogram TRACK_ID [OPTIONS]
-  --db PATH             Database path (default: data/djia.db)
+  --db PATH             Database path (default: db/djia.db)
   --spectrogram-dir PATH  Output directory (default: data/spectrograms)
   # Example: spectrogram 1
 ```
@@ -259,7 +259,7 @@ python -m src.cli spectrogram TRACK_ID [OPTIONS]
 from src.orchestrator import Orchestrator
 
 # Initialize
-orchestrator = Orchestrator(db_path="data/djia.db")
+orchestrator = Orchestrator(db_path="db/djia.db")
 
 # Analyze library (workers=1 is sequential; workers>1 fans compute out to a ProcessPoolExecutor)
 result = orchestrator.analyze_library("data/", workers=4)
@@ -315,7 +315,7 @@ print(f"Playlist: {playlist}")  # [1, 3, 7, 5, 9, 6, 4, 10]
 ```python
 from src.database.store import TrackStore
 
-store = TrackStore("data/djia.db")
+store = TrackStore("db/djia.db")
 
 # Get track by ID
 track = store.get_track(1)
@@ -460,7 +460,7 @@ Read via `os.getenv()`. Never commit secrets.
 
 ### Custom Database Path
 The database path is set per call, not via env var — pass `--db` on the CLI or `db_path` to the
-`Orchestrator` / `TrackStore` constructor (default `data/djia.db`):
+`Orchestrator` / `TrackStore` constructor (default `db/djia.db`):
 ```python
 orchestrator = Orchestrator(db_path="/path/to/database.db")
 ```

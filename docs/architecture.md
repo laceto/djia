@@ -87,32 +87,37 @@ them consistent.
   comeback). Pipeline: `phase_quotas` (proportional track counts per phase) → `assign_phases`
   (global greedy affinity matching — strongest track/phase fits claim slots first) →
   `order_setlist` (greedy transition-chaining within/across phases, same BPM/key/mood/energy
-  weights as `transition_mapper`) → `render_report` (markdown phase plan + per-transition mix
-  sheets using cached element-onset mix points). Entry point: `generate_setlist(db_path, n_tracks,
-  output_path, with_mix_sheets)`.
+  weights as `transition_mapper`, plus a groove/swing term applied as a multiplicative penalty
+  rather than a competing weight — no-op when either track's `swing_score` is missing) →
+  `render_report` (markdown phase plan + per-transition mix sheets using cached element-onset mix
+  points). Entry point: `generate_setlist(db_path, n_tracks, output_path, with_mix_sheets)` — falls
+  back to a timestamped output filename if the primary path is locked, instead of raising.
 
 ## Data store & export
 
-- `database/schema.py` + `database/store.py` — SQLite (`TrackStore`); default DB is `data/djia.db`.
+- `database/schema.py` + `database/store.py` — SQLite (`TrackStore`); default DB is `db/djia.db`.
   `insert_features` persists `swing_score`/Camelot key plus 7 density/onset/timbre columns
   (`spectral_flatness`, `crest_factor`, `onset_strength_mean/std`, `beat_strength`,
   `zero_crossing_rate`, `roughness`) on the `features` table; `replace_segments` persists
   phrasing-engine structure segments to the `segments` table (idempotent per `method` —
   re-analysis replaces rather than duplicates). All are merged into the features dict by
-  `orchestrator.py`'s `_add_tonality`/`_add_swing`/`_add_density` (best-effort, called from both
-  `analyze_library` and `analyze_single_track`) before `insert_features` during `analyze`, so
+  `dsp/worker.py`'s `_add_tonality`/`_add_swing`/`_add_density` (best-effort, called from
+  `analyze_one_track` — the shared compute-only pipeline both `Orchestrator.analyze_library` and
+  `Orchestrator.analyze_single_track` run per file) before `insert_features` during `analyze`, so
   tracks analyzed before a given feature shipped have `NULL`/zero values until re-analyzed.
-  Note: `orchestrator.py` calls `groove_engine`/`mood_engine`/two standalone `curation_engine`
+  Note: `dsp/worker.py` calls `groove_engine`/`mood_engine`/two standalone `curation_engine`
   functions directly for the DB-persisted path — it does **not** run the full
   `curation_engine.analyze_curation` (danceability/energy_type/semantic_tags/complexity_score are
   only computed via the standalone `extractor.extract_track_features` path, not persisted to the DB
-  through `analyze`).
+  through `analyze`). `Orchestrator.analyze_single_track` persists exactly like `analyze_library`
+  (registers/reuses the track's `track_id`, runs `analyze_one_track`, writes through the same
+  `_persist_result` path) — it is not a preview-only/dry-run method.
 - **Parallel analyze (`workers>1`)**: `Orchestrator.analyze_library` can fan out per-track compute
   (audio load through mood classification) to a `ProcessPoolExecutor`, dispatching the module-level
   `analyze_one_track` (`src/dsp/worker.py`). DB writes remain exclusively serial in the main process —
   every `insert_features`/`replace_segments`/`insert_mood` call happens only after a worker's result
   comes back, for any `workers` value. This invariant must not be violated by future changes: a worker
-  process must never open its own connection to `data/djia.db`.
+  process must never open its own connection to `db/djia.db`.
 - `matching/similarity.py` — cosine similarity over feature vectors, filterable by BPM/key/mood.
 - `traktor/exporter.py` — writes Traktor NML with BPM, key, and auto hot cues.
 - `djuced/exporter.py` — writes `DJIA …`-prefixed hot cues directly into DJUCED's own

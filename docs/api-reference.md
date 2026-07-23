@@ -36,10 +36,10 @@ Public entry points for programmatic use. Import the package from the repo root.
 
 ## Database (`src/database/`)
 
-- **`schema.init_db(db_path="data/djia.db") -> Connection`** — create schema.
-- **`schema.get_connection(db_path="data/djia.db") -> Connection`** — connection with
+- **`schema.init_db(db_path="db/djia.db") -> Connection`** — create schema.
+- **`schema.get_connection(db_path="db/djia.db") -> Connection`** — connection with
   `sqlite3.Row` factory.
-- **`store.TrackStore(db_path)`** — CRUD over tracks/features/mood/segments (default `data/djia.db`).
+- **`store.TrackStore(db_path)`** — CRUD over tracks/features/mood/segments (default `db/djia.db`).
 
 ## Matching (`src/matching/`)
 
@@ -54,6 +54,12 @@ Public entry points for programmatic use. Import the package from the repo root.
   phase assignment from measured mood/energy/brightness/BPM, transition-optimized ordering, and a
   markdown report with element-onset mix sheets per transition. Pure core: `build_setlist(tracks, n)`;
   its `camelot_score(a, b)` scores Camelot codes ('7A'), unlike `transition_mapper`'s note-name scorer.
+  `transition_score(a, b, ascending=False)` blends BPM 35% / key 30% / mood 20% / energy 15%, then
+  applies a groove/swing compatibility term (`swing_score`, from the groove engine) as a
+  **multiplicative** penalty rather than a competing weight — same swing is a no-op (factor 1.0),
+  full clash floors the score at `GROOVE_PENALTY_FLOOR` (0.7); either track missing `swing_score`
+  is also a no-op. If `output_path` is locked (e.g. open elsewhere), the write falls back to a
+  timestamped filename instead of raising.
 - **`stem_separator`** — Demucs stems (Drums/Bass/Vocals/Melody), on-disk cached.
 - **`classifier`** — 6-dimension mood classification.
 - **`segmentation`** — structural detection (drop/breakdown/outro) with confidence.
@@ -83,11 +89,16 @@ Public entry points for programmatic use. Import the package from the repo root.
 
 ## Orchestration
 
-- **`orchestrator.Orchestrator(db_path="data/djia.db", segment_preset="minimal", bars_per_phrase=16, spectrogram_dir=DEFAULT_SPECTROGRAM_DIR)`**
+- **`orchestrator.Orchestrator(db_path="db/djia.db", segment_preset="minimal", bars_per_phrase=16, spectrogram_dir=DEFAULT_SPECTROGRAM_DIR)`**
   — ties ingestion → DSP → AI → DB; drives the CLI.
 - **`Orchestrator.analyze_library(data_dir="data", skip_existing=False, workers=1) -> dict`** —
   `workers<=1` runs the per-track compute sequentially in-process; `workers>1` fans it out across a
   `ProcessPoolExecutor` (via `dsp.worker.analyze_one_track`). All DB writes stay serial in the main
   process regardless of `workers`. Returns `{'analyzed', 'skipped', 'errors'}`.
+- **`Orchestrator.analyze_single_track(file_path) -> dict | None`** — analyzes one file through the
+  same worker pipeline as `analyze_library` (`dsp.worker.analyze_one_track`) and **persists** it:
+  registers the track (or reuses its `track_id` if already in the DB), writes features/segments/mood,
+  and returns the feature dict plus `track_id`. Returns `None` if the file doesn't exist or analysis
+  fails. Backs `cli.py`'s `analyze --track PATH`.
 
 Data shapes returned by these APIs are documented in `docs/schemas.md`.
