@@ -20,6 +20,15 @@ torch>=2.0.0  # Required by Demucs
 # Optional: Advanced mood classification (requires special dependencies)
 # essentia>=2.1.0  # For TensorFlow-based mood models (optional, with fallback)
 
+# Optional: S-KEY deep-learning key detection (much better than the chroma template
+# for electronic music). When installed, mood_engine uses it automatically and reports
+# a real confidence; otherwise it falls back to the built-in chroma method.
+# Not on PyPI yet — install the package from GitHub, then these deps:
+#   git clone https://github.com/deezer/skey && pip install --no-deps ./skey
+# torchaudio>=2.7.0  # torch itself is already required above (Demucs)
+# einops>=0.8.0
+# nnAudio==0.3.3
+
 # Web Dashboard (optional)
 streamlit>=1.28.0
 
