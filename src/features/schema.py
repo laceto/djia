@@ -64,9 +64,10 @@ class MoodResult:
     key: str                       # musical key (e.g., "A minor")
     camelot_key: str               # Camelot notation (e.g., "7A")
     brightness: float              # 0.0 (dark) to 1.0 (bright)
-    key_confidence: float           # 0.0-1.0 confidence in key detection
+    key_confidence: float           # confidence in key detection; interpret via key_source
     zero_crossing_rate: float = 0.0  # waveform sign-change rate; higher = noisier/acid
     roughness: float = 0.0            # 0-1 Plomp-Levelt-style timbral roughness
+    key_source: str = "chroma"        # "chroma" (Krumhansl template) or "skey" (S-KEY model)
 
 
 @dataclass

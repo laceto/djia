@@ -72,10 +72,11 @@ class Orchestrator:
         """Detect musical key/Camelot/timbral roughness/ZCR and merge into the features dict
         (best-effort)."""
         try:
-            tonality = analyze_tonality(y, sr)
+            tonality = analyze_tonality(y, sr, file_path=str(file_path))
             features['key'] = tonality.key
             features['camelot_key'] = tonality.camelot_key
             features['key_confidence'] = tonality.key_confidence
+            features['key_source'] = tonality.key_source
             features['zero_crossing_rate'] = tonality.zero_crossing_rate
             features['roughness'] = tonality.roughness
         except Exception as e:

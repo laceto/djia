@@ -24,6 +24,7 @@ from src.dsp.mood_engine import (
     analyze_mood,
     detect_key_from_chroma,
     convert_to_camelot,
+    skey_label_to_key_camelot,
     compute_zero_crossing_rate,
     compute_roughness,
 )
@@ -415,6 +416,69 @@ class TestCamelotConversion:
             code = convert_to_camelot(note, key_type)
             assert code[-1] in ("A", "B")
             assert 1 <= int(code[:-1]) <= 12
+
+
+class TestSkeyKeyBackend:
+    """Test the optional S-KEY key backend and its label mapping.
+
+    The label->key/Camelot mapping is pure and always tested; the end-to-end
+    inference test is skipped unless the optional `skey` package and a test
+    track are both present.
+    """
+
+    def test_label_mapping(self):
+        """S-KEY labels map to repo key names + correct (post-fix) Camelot codes."""
+        assert skey_label_to_key_camelot("C# minor") == ("C#/Db minor", "12A")
+        assert skey_label_to_key_camelot("Bb Major") == ("A#/Bb major", "6B")
+        assert skey_label_to_key_camelot("A Major") == ("A major", "11B")
+        assert skey_label_to_key_camelot("F# minor") == ("F#/Gb minor", "11A")
+        assert skey_label_to_key_camelot("C Major") == ("C major", "8B")
+        assert skey_label_to_key_camelot("A minor") == ("A minor", "8A")
+
+    def test_label_mapping_all_24_valid(self):
+        """Every S-KEY label produces a valid repo key string and Camelot code."""
+        notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B"]
+        for note in notes:
+            for mode in ("Major", "minor"):
+                name, camelot = skey_label_to_key_camelot(f"{note} {mode}")
+                assert mode.lower() in name
+                assert camelot[-1] in ("A", "B")
+                assert 1 <= int(camelot[:-1]) <= 12
+
+    def test_bad_label_raises(self):
+        """A malformed label is rejected rather than silently mismapped."""
+        with pytest.raises((ValueError, KeyError)):
+            skey_label_to_key_camelot("H diminished")
+
+    def test_chroma_fallback_without_file_path(self):
+        """Without a file_path, analyze_mood uses the chroma backend (no S-KEY)."""
+        # Synthetic tone — no audio file or optional deps needed.
+        t = np.linspace(0, 2.0, int(22050 * 2.0), endpoint=False)
+        y = (0.5 * np.sin(2 * np.pi * 220.0 * t)).astype(np.float32)
+        mood = analyze_mood(y, 22050)
+        assert mood.key_source == "chroma"
+        assert mood.camelot_key[-1] in ("A", "B")
+
+    def test_prefer_skey_false_forces_chroma(self):
+        """prefer_skey=False keeps the chroma backend even if a file_path is given."""
+        t = np.linspace(0, 2.0, int(22050 * 2.0), endpoint=False)
+        y = (0.5 * np.sin(2 * np.pi * 220.0 * t)).astype(np.float32)
+        mood = analyze_mood(y, 22050, file_path="whatever.mp3", prefer_skey=False)
+        assert mood.key_source == "chroma"
+
+    def test_skey_end_to_end(self):
+        """When skey + a test track are available, analyze_mood uses it and reports
+        a real 0-1 confidence."""
+        pytest.importorskip("skey")
+        if not Path(TEST_TRACKS[0]).exists():
+            pytest.skip("no test track available")
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=60)
+        mood = analyze_mood(y, sr, file_path=str(TEST_TRACKS[0]))
+        assert mood.key_source == "skey"
+        assert 0.0 <= mood.key_confidence <= 1.0
+        parts = mood.key.split()
+        assert parts[-1] in ("major", "minor")
+        assert mood.camelot_key[-1] in ("A", "B")
 
 
 class TestCurationEngine:

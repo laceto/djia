@@ -1,5 +1,6 @@
 """Mood Engine (Step 3) — Extract tonality: key, camelot, brightness, confidence."""
 
+import logging
 import numpy as np
 import librosa
 from typing import Tuple
@@ -108,6 +109,79 @@ def convert_to_camelot(note: str, key_type: str) -> str:
     camelot_pos = ((camelot_pos - 1) % 12) + 1
 
     return f"{int(camelot_pos)}{camelot_type}"
+
+
+# --- Optional S-KEY (deep-learning) key backend ------------------------------
+# S-KEY (Kong et al., ICASSP 2025 — https://github.com/deezer/skey) is a trained
+# ChromaNet model that far outperforms the Krumhansl chroma template above on
+# electronic music. It is an OPTIONAL dependency (needs `skey` + torch, which are
+# NOT in requirements.txt): when the package is absent, analyze_mood() silently
+# falls back to the chroma method, so nothing here is load-bearing.
+
+# S-KEY spells pitch classes as sharps (plus "Bb"); map them to this module's
+# NOTE_NAMES entries so convert_to_camelot() and the stored key string stay consistent.
+_SKEY_NOTE_TO_REPO = {
+    "C": "C", "C#": "C#/Db", "D": "D", "D#": "D#/Eb", "E": "E", "F": "F",
+    "F#": "F#/Gb", "G": "G", "G#": "G#/Ab", "A": "A", "Bb": "A#/Bb", "B": "B",
+}
+
+# Cache the loaded model components per (checkpoint, device) so a library analysis
+# doesn't rebuild the network for every track.
+_skey_cache: dict = {}
+
+
+def skey_label_to_key_camelot(label: str) -> Tuple[str, str]:
+    """Convert an S-KEY label (e.g. "C# minor", "Bb Major") to this repo's
+    (key_name, camelot_key) conventions — e.g. ("C#/Db minor", "12A").
+
+    Pure string/lookup logic with no torch dependency, so it is unit-testable
+    without the optional S-KEY package installed.
+    """
+    note_tok, mode_tok = label.rsplit(" ", 1)
+    mode = mode_tok.lower()  # "Major"/"minor" -> "major"/"minor"
+    if mode not in ("major", "minor"):
+        raise ValueError(f"Unrecognized S-KEY mode in label {label!r}")
+    repo_note = _SKEY_NOTE_TO_REPO[note_tok]
+    return f"{repo_note} {mode}", convert_to_camelot(repo_note, mode)
+
+
+def detect_key_skey(file_path: str, device: str = "cpu") -> Tuple[str, str, float]:
+    """Detect key with the S-KEY model, returning (key_name, camelot_key, confidence)
+    in this repo's conventions. `confidence` is the softmax probability of the
+    predicted class (a real 0-1 value, unlike the chroma method's near-constant score).
+
+    Raises on any failure (missing package, load error, inference error) — callers
+    are expected to catch and fall back to the chroma method.
+    """
+    import torch
+    from skey.key_detection import (
+        DEFAULT_CHECKPOINT_PATH,
+        key_map,
+        load_audio,
+        load_checkpoint,
+        load_model_components,
+    )
+
+    cache_key = (str(DEFAULT_CHECKPOINT_PATH), device)
+    if cache_key not in _skey_cache:
+        ckpt = load_checkpoint(DEFAULT_CHECKPOINT_PATH)
+        d = torch.device(device)
+        hcqt, chromanet, crop_fn = load_model_components(ckpt, d)
+        _skey_cache[cache_key] = (hcqt, chromanet, crop_fn, ckpt["audio"]["sr"], d)
+    hcqt, chromanet, crop_fn, sr, d = _skey_cache[cache_key]
+
+    batch = load_audio(str(file_path), sr).to(d)
+    with torch.no_grad():
+        cropped = crop_fn(hcqt(batch.unsqueeze(0).to(d)), torch.zeros(1).to(d))
+        # ChromaNet already outputs a probability distribution over the 24 keys
+        # (softmax internally; the row sums to 1) — averaged over time crops here.
+        # Use it directly; do NOT re-softmax, which would flatten it toward uniform.
+        probs = torch.mean(chromanet(cropped), dim=0)
+        idx = int(probs.argmax())
+        confidence = float(probs[idx])
+
+    key_name, camelot_key = skey_label_to_key_camelot(key_map[idx])
+    return key_name, camelot_key, confidence
 
 
 def compute_brightness(y: np.ndarray, sr: int) -> float:
@@ -227,34 +301,55 @@ def compute_roughness(
     return float(np.tanh(np.mean(frame_roughness)))
 
 
-def analyze_mood(y: np.ndarray, sr: int) -> MoodResult:
+def analyze_mood(
+    y: np.ndarray,
+    sr: int,
+    file_path: str = None,
+    prefer_skey: bool = True,
+) -> MoodResult:
     """
     Complete mood analysis (key, camelot, brightness, confidence, ZCR, roughness).
+
+    Key detection uses the S-KEY deep-learning model when it is available and a
+    `file_path` is given (S-KEY reads and resamples the original file itself);
+    otherwise it falls back to the chroma template method on `y`. The returned
+    `MoodResult.key_source` records which path was taken, and `key_confidence`
+    must be interpreted accordingly (S-KEY: softmax probability; chroma: the
+    legacy near-constant correlation score).
 
     Args:
         y: Audio waveform
         sr: Sample rate
+        file_path: Original audio path; required to use the S-KEY backend.
+        prefer_skey: Try S-KEY first when available (default True). Set False to
+            force the chroma method (e.g. for reproducibility or offline runs).
 
     Returns:
         MoodResult with key, camelot, brightness, confidence, zero-crossing rate,
-        and timbral roughness
+        timbral roughness, and key_source.
     """
-    # Compute chromagram
-    chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
+    key_source = "chroma"
+    skey_result = None
+    if prefer_skey and file_path is not None:
+        try:
+            skey_result = detect_key_skey(file_path)
+        except Exception as e:
+            logging.getLogger(__name__).info(
+                f"S-KEY unavailable/failed for {file_path} ({e}); using chroma key detection"
+            )
 
-    # Detect key
-    key_note, key_type, key_confidence = detect_key_from_chroma(chroma)
+    if skey_result is not None:
+        key_name, camelot_key, key_confidence = skey_result
+        key_source = "skey"
+    else:
+        # Chroma template fallback
+        chroma = librosa.feature.chroma_cqt(y=y, sr=sr)
+        key_note, key_type, key_confidence = detect_key_from_chroma(chroma)
+        camelot_key = convert_to_camelot(key_note, key_type)
+        key_name = f"{key_note} {key_type}"
 
-    # Convert to Camelot
-    camelot_key = convert_to_camelot(key_note, key_type)
-
-    # Compute brightness
+    # Brightness and timbral character are always measured from the waveform
     brightness = compute_brightness(y, sr)
-
-    # Create full key name
-    key_name = f"{key_note} {key_type}"
-
-    # Timbral character
     zero_crossing_rate = compute_zero_crossing_rate(y)
     roughness = compute_roughness(y, sr)
 
@@ -265,4 +360,5 @@ def analyze_mood(y: np.ndarray, sr: int) -> MoodResult:
         key_confidence=key_confidence,
         zero_crossing_rate=zero_crossing_rate,
         roughness=roughness,
+        key_source=key_source,
     )
