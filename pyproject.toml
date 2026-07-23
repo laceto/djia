@@ -1,0 +1,72 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "djia"
+version = "0.1.0"
+description = "DJ Mixing Analytics — DSP feature-extraction pipeline for techno/house tracks (BPM, key, structure, mood, danceability) with similarity, playlists, and Traktor/DJUCED export."
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "laceto" }]
+
+# Core runtime dependencies (mirrors the uncommented core of requirements.txt).
+dependencies = [
+    # Audio processing
+    "librosa>=0.10.0",
+    "soundfile>=0.12.0",
+    "numpy>=1.26.0",
+    "scipy>=1.12.0",
+    "mutagen>=1.46.0",
+    # Data handling
+    "pandas>=2.1.0",
+    "matplotlib>=3.8.0",
+    "plotly>=5.18.0",
+    # Analysis & ML
+    "scikit-learn>=1.4.0",
+    # Stem separation (pulls in torch)
+    "demucs>=4.0.0",
+    "torch>=2.0.0",
+    # API & utilities
+    "openai>=1.4.0",
+    "python-dotenv>=1.0.0",
+    "tabulate>=0.9.0",
+    "tqdm>=4.65.0",
+]
+
+[project.optional-dependencies]
+# Deep-learning key detection (S-KEY / ChromaNet). Much better than the built-in
+# chroma template for electronic music; mood_engine uses it automatically when
+# importable and falls back to chroma otherwise. The `skey` package is NOT on PyPI
+# yet, so install it from GitHub in addition to this extra:
+#   pip install "djia[skey]"
+#   git clone https://github.com/deezer/skey && pip install --no-deps ./skey
+skey = [
+    "torchaudio>=2.7.0",
+    "einops>=0.8.0",
+    "nnAudio==0.3.3",
+]
+# Advanced mood classification (optional, with a rule-based fallback).
+essentia = ["essentia>=2.1.0"]
+# Streamlit dashboard.
+dashboard = ["streamlit>=1.28.0"]
+# Development / testing.
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "ruff>=0.1.0",
+]
+
+[project.scripts]
+djia = "src.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
