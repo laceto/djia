@@ -1,9 +1,19 @@
 """Track similarity matching module."""
 
-from .similarity import normalize_features, compute_similarity, find_similar_tracks
+from .similarity import (
+    fit_scaler,
+    transform_one,
+    compute_similarity,
+    camelot_penalty,
+    bpm_penalty,
+    find_similar_tracks,
+)
 
 __all__ = [
-    'normalize_features',
+    'fit_scaler',
+    'transform_one',
     'compute_similarity',
+    'camelot_penalty',
+    'bpm_penalty',
     'find_similar_tracks',
 ]

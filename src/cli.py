@@ -13,6 +13,7 @@ from .traktor.exporter import export_all_tracks
 from .ai import generate_playlist, playlist_summary
 from .ingestion.loader import AudioLoader
 from .dsp.spectrogram import compute_and_save_spectrogram, DEFAULT_SPECTROGRAM_DIR
+from .matching.similarity import find_similar_tracks
 
 
 def print_section(title: str):
@@ -128,7 +129,8 @@ def cmd_find_similar(args):
     """Find similar tracks."""
     print_section("Similar Tracks")
 
-    store = TrackStore(args.db or "db/djia.db")
+    db_path = args.db or "db/djia.db"
+    store = TrackStore(db_path)
     track = store.get_track(args.track_id)
 
     if not track:
@@ -137,55 +139,19 @@ def cmd_find_similar(args):
 
     print(f"Finding tracks similar to: {track['file_name']}\n")
 
-    # Get features of reference track
-    ref_features = store.get_track_features(args.track_id)
+    matches = find_similar_tracks(args.track_id, top_k=args.top_k, db_path=db_path)
 
-    if not ref_features:
-        print("Could not get features for reference track.")
-        return 1
-
-    # Find similar
-    all_tracks = store.get_all_tracks()
-    similar = []
-
-    for other_track in all_tracks:
-        if other_track['id'] == args.track_id:
-            continue
-
-        other_features = store.get_track_features(other_track['id'])
-        if not other_features:
-            continue
-
-        # Simple similarity: BPM and key match
-        bpm_diff = abs(ref_features.get('bpm', 0) - other_features.get('bpm', 0))
-        key_match = 1.0 if ref_features.get('key') == other_features.get('key') else 0.0
-
-        similarity = max(0, 1.0 - (bpm_diff / 30) + key_match) / 2
-
-        similar.append({
-            'id': other_track['id'],
-            'file_name': other_track['file_name'],
-            'duration': other_track.get('duration', 0),
-            'bpm': other_features.get('bpm'),
-            'key': other_features.get('key'),
-            'similarity': similarity,
-        })
-
-    # Sort by similarity
-    similar.sort(key=lambda x: x['similarity'], reverse=True)
-    similar = similar[:args.top_k]
-
-    if similar:
+    if matches:
         headers = ['ID', 'File', 'BPM', 'Key', 'Similarity']
         rows = [
             [
-                s['id'],
-                Path(s['file_name']).name[:20],
-                f"{s['bpm']:.1f}" if s['bpm'] else 'N/A',
-                s['key'] or 'N/A',
-                f"{s['similarity']:.3f}",
+                track_dict['id'],
+                Path(track_dict['file_name']).name[:20],
+                f"{track_dict['bpm']:.1f}" if track_dict.get('bpm') else 'N/A',
+                track_dict.get('camelot_key') or 'N/A',
+                f"{score:.3f}",
             ]
-            for s in similar
+            for track_dict, score in matches
         ]
         print(tabulate(rows, headers=headers, tablefmt='grid'))
     else:
