@@ -10,7 +10,7 @@ Demonstrates:
 from pathlib import Path
 from src.database.schema import init_db
 from src.database.store import TrackStore
-from src.matching.similarity import find_similar_tracks, normalize_features
+from src.matching.similarity import find_similar_tracks, fit_scaler, transform_one
 from src.traktor.exporter import export_all_tracks, parse_traktor_nml
 import numpy as np
 
@@ -174,17 +174,21 @@ def example_feature_normalization():
     for name, value in raw_features.items():
         print(f"  {name}: {value}")
 
-    # Normalize
-    print("\nNormalized Features (Z-score):")
-    normalized = normalize_features(features)
+    # Normalization is fit across the whole corpus (not this one track) —
+    # z-scoring a single row would leave every column with zero variance and
+    # collapse to an all-zero vector, so a population is required to scale against.
+    print("\nNormalized Features (Z-score, fit across the whole library):")
+    all_features = [store.get_track_features(t['id']) or {} for t in all_tracks]
+    scaler, corpus_means = fit_scaler(all_features)
+    normalized = transform_one(scaler, features, corpus_means)
 
     print(f"  Normalized vector shape: {normalized.shape}")
-    print(f"  Vector mean: {np.mean(normalized):.6f} (should be ~0)")
-    print(f"  Vector std: {np.std(normalized):.6f} (should be ~1)")
+    print("  This track's std devs from the library mean per feature:")
+    print(f"    {np.round(normalized, 2)}")
     print("\nNormalization ensures:")
     print("  • All features have equal weight in similarity")
     print("  • Large values (BPM) don't dominate small values (ratios)")
-    print("  • Cross-track comparisons are fair\n")
+    print("  • Cross-track comparisons are fair, relative to the whole library\n")
 
 
 def main():

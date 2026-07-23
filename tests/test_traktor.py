@@ -15,8 +15,11 @@ from src.traktor.exporter import (
     _ms_to_traktor_offset,
 )
 from src.matching.similarity import (
-    normalize_features,
+    fit_scaler,
+    transform_one,
     compute_similarity,
+    camelot_penalty,
+    bpm_penalty,
     find_similar_tracks,
 )
 from src.database.schema import init_db
@@ -177,9 +180,9 @@ class TestTraktorExport:
 class TestSimilarityEngine:
     """Tests for similarity computation."""
 
-    def test_normalize_features_basic(self):
-        """Test feature normalization."""
-        features = {
+    def _sample_corpus(self):
+        """A small synthetic corpus (3 tracks) with varying feature values."""
+        base = {
             'bpm': 128.0,
             'spectral_centroid_mean': 2500.0,
             'spectral_centroid_std': 100.0,
@@ -196,27 +199,71 @@ class TestSimilarityEngine:
             'rms_std': 0.02,
             'rms_peak': 0.3,
         }
+        return [
+            base,
+            {**base, 'bpm': 132.0, 'spectral_centroid_mean': 2700.0},
+            {**base, 'bpm': 118.0, 'spectral_centroid_mean': 2100.0},
+        ]
 
-        normalized = normalize_features(features)
+    def test_fit_scaler_transform_basic(self):
+        """Test corpus-wide normalization of a single track."""
+        corpus = self._sample_corpus()
+        scaler, corpus_means = fit_scaler(corpus)
+        normalized = transform_one(scaler, corpus[0], corpus_means)
 
         # Should be 1D array
         assert normalized.ndim == 1
         # Should have 15 features
         assert len(normalized) == 15
-        # Should be normalized (roughly zero mean)
-        assert abs(np.mean(normalized)) < 0.1
+        # A single row need not be zero-mean; the corpus as a whole is.
+        all_normalized = np.array([
+            transform_one(scaler, tf, corpus_means) for tf in corpus
+        ])
+        assert abs(np.mean(all_normalized)) < 0.1
 
-    def test_normalize_features_with_missing_values(self):
-        """Test normalization handles missing values."""
-        features = {
-            'bpm': 128.0,
-            'spectral_centroid_mean': 2500.0,
-            # Other features missing
-        }
+    def test_fit_scaler_distinguishes_tracks(self):
+        """Different tracks in the corpus should get different normalized vectors."""
+        corpus = self._sample_corpus()
+        scaler, corpus_means = fit_scaler(corpus)
 
-        normalized = normalize_features(features)
+        v0 = transform_one(scaler, corpus[0], corpus_means)
+        v1 = transform_one(scaler, corpus[1], corpus_means)
+
+        assert not np.allclose(v0, v1)
+        # A corpus-wide fit must not collapse every track to an all-zero vector
+        # (the historical bug: fitting StandardScaler on a single (1, N) row).
+        assert not np.allclose(v0, np.zeros_like(v0))
+
+    def test_fit_scaler_with_missing_values(self):
+        """Test normalization imputes missing values as the corpus mean."""
+        corpus = self._sample_corpus()
+        corpus[1] = {'bpm': 132.0, 'spectral_centroid_mean': 2700.0}  # rest missing
+
+        scaler, corpus_means = fit_scaler(corpus)
+        normalized = transform_one(scaler, corpus[1], corpus_means)
         assert normalized.ndim == 1
         assert len(normalized) == 15
+
+    def test_camelot_penalty_same_key(self):
+        assert camelot_penalty('7A', '7A') == 1.0
+
+    def test_camelot_penalty_unknown(self):
+        assert camelot_penalty(None, '7A') == 0.5
+        assert camelot_penalty('garbage', '7A') == 0.5
+
+    def test_camelot_penalty_distant_key(self):
+        assert camelot_penalty('7A', '1B') < camelot_penalty('7A', '8A')
+
+    def test_bpm_penalty_identical(self):
+        assert bpm_penalty(128.0, 128.0) == 1.0
+
+    def test_bpm_penalty_falls_off(self):
+        close = bpm_penalty(128.0, 130.0)
+        far = bpm_penalty(128.0, 160.0)
+        assert close > far
+
+    def test_bpm_penalty_missing(self):
+        assert bpm_penalty(None, 128.0) == 0.5
 
     def test_compute_similarity_identical(self):
         """Test similarity of identical vectors."""
