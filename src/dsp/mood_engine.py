@@ -1,9 +1,10 @@
 """Mood Engine (Step 3) — Extract tonality: key, camelot, brightness, confidence."""
 
 import logging
+import re
 import numpy as np
 import librosa
-from typing import Tuple
+from typing import Optional, Tuple
 from ..features.schema import MoodResult
 
 
@@ -152,6 +153,30 @@ def open_key_to_camelot(open_key: str) -> str:
         raise ValueError(f"Invalid Open Key code: {open_key!r}")
     camelot_num = ((num + 6) % 12) + 1
     return f"{camelot_num}{'A' if letter == 'm' else 'B'}"
+
+
+_CAMELOT_RE = re.compile(r"^(\d{1,2})([ABab])$")
+_OPEN_KEY_RE = re.compile(r"^(\d{1,2})([mMdD])$")
+
+
+def normalize_key_to_camelot(value) -> Optional[str]:
+    """Best-effort: normalize a key code to Camelot for cross-tool comparison.
+
+    Accepts a Camelot code ("12A", case-insensitive) or Open Key Notation
+    ("5m"/"8d", as DJUCED stores/displays). Returns the canonical Camelot code,
+    or None for empty/unrecognized values (e.g. musical spellings like "C#m",
+    which are intentionally left for the caller to flag rather than guess).
+    """
+    if value is None:
+        return None
+    s = str(value).strip()
+    m = _CAMELOT_RE.match(s)
+    if m and 1 <= int(m.group(1)) <= 12:
+        return f"{int(m.group(1))}{m.group(2).upper()}"
+    m = _OPEN_KEY_RE.match(s)
+    if m and 1 <= int(m.group(1)) <= 12:
+        return open_key_to_camelot(f"{int(m.group(1))}{m.group(2).lower()}")
+    return None
 
 
 # --- Optional S-KEY (deep-learning) key backend ------------------------------
