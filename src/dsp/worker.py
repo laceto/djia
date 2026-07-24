@@ -23,6 +23,7 @@ from .groove_engine import analyze_groove
 from .mood_engine import analyze_mood as analyze_tonality
 from .phrasing_engine import analyze_structure, create_phrase_locked_segments
 from .spectrogram import DEFAULT_SPECTROGRAM_DIR, compute_and_save_spectrogram
+from .stem_profile import compute_stem_profile
 
 logger = logging.getLogger(__name__)
 
@@ -120,6 +121,16 @@ def _add_density(features: Dict[str, Any], y, sr, file_path) -> None:
         )
     except Exception as e:
         logger.warning(f"Failed to measure spectral density for {file_path}: {e}")
+
+
+def _add_stem_profile(features: Dict[str, Any], y, sr, file_path) -> None:
+    """Measure model-free stem-proxy features (sub/bass energy ratios,
+    kick/perc/hat onset rates, vocal presence); merge into features (best-effort).
+    Approximates Demucs stem content without the network-gated model weights."""
+    try:
+        features.update(compute_stem_profile(y, sr))
+    except Exception as e:
+        logger.warning(f"Failed to compute stem profile for {file_path}: {e}")
 
 
 def _compute_segments(y, sr, bpm, file_path, segment_config: DSPConfig, bars_per_phrase: int):
@@ -231,6 +242,7 @@ def analyze_one_track(
         _add_tonality(features, y, sr, file_path)
         _add_swing(features, y, sr, file_path)
         _add_density(features, y, sr, file_path)
+        _add_stem_profile(features, y, sr, file_path)
 
         segment_config = get_config(segment_preset)
 

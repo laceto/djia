@@ -338,6 +338,52 @@ def cmd_export_traktor(args):
         return 1
 
 
+def cmd_cluster_library(args):
+    """Group similar tracks via hierarchical clustering over the feature vector."""
+    print_section("Track Clustering")
+
+    from .matching.clustering import cluster_library, describe_clusters
+
+    db_path = args.db or "db/djia.db"
+
+    try:
+        labels = cluster_library(
+            db_path=db_path,
+            n_clusters=args.n_clusters,
+            distance_threshold=args.distance_threshold,
+        )
+    except FileNotFoundError:
+        print(f"Database not found: {db_path}")
+        return 1
+
+    if not labels:
+        print("No analyzed tracks to cluster.")
+        return 1
+
+    summaries = describe_clusters(labels, db_path=db_path)
+    print(f"{len(labels)} tracks grouped into {len(summaries)} cluster(s)\n")
+
+    headers = ['Cluster', 'Size', 'BPM', 'Key', 'Mood', 'Sub', 'Vocal', 'Examples']
+    rows = []
+    for s in summaries:
+        bpm = (
+            f"{s['bpm_mean']:.0f}±{s['bpm_std']:.0f}"
+            if s['bpm_mean'] is not None else 'N/A'
+        )
+        rows.append([
+            s['cluster'],
+            s['size'],
+            bpm,
+            s['camelot_key'] or 'N/A',
+            s['dominant_mood'] or 'N/A',
+            f"{s['sub_ratio_mean']:.2f}" if s['sub_ratio_mean'] is not None else 'N/A',
+            f"{s['vocal_presence_mean']:.2f}" if s['vocal_presence_mean'] is not None else 'N/A',
+            ', '.join(str(e)[:18] for e in s['examples']),
+        ])
+    print(tabulate(rows, headers=headers, tablefmt='grid'))
+    return 0
+
+
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
@@ -351,6 +397,7 @@ Examples:
   python -m src.cli list-tracks                # Show all tracks
   python -m src.cli find-similar 1 --top-k 5   # Find tracks similar to ID 1
   python -m src.cli generate-playlist 1 10 5   # Create 5-track playlist from 1→10
+  python -m src.cli cluster-library --n-clusters 8   # Group similar tracks into 8 clusters
   python -m src.cli export-traktor out.nml     # Export to Traktor
   python -m src.cli spectrogram 1              # Save spectrogram .npy for track ID 1
         '''
@@ -412,6 +459,18 @@ Examples:
     spectrogram_parser.add_argument('--spectrogram-dir', default=DEFAULT_SPECTROGRAM_DIR,
                                     help=f'Output directory (default: {DEFAULT_SPECTROGRAM_DIR})')
     spectrogram_parser.set_defaults(func=cmd_spectrogram)
+
+    # Cluster library command
+    cluster_parser = subparsers.add_parser(
+        'cluster-library', help='Group similar tracks via hierarchical clustering')
+    cluster_parser.add_argument('--db', help='Database path (default: db/djia.db)')
+    cluster_group = cluster_parser.add_mutually_exclusive_group()
+    cluster_group.add_argument('--n-clusters', type=int, default=None,
+                               help='Cut the tree into exactly N clusters')
+    cluster_group.add_argument('--distance-threshold', type=float, default=None,
+                               help='Cut the tree at this cosine-distance level '
+                                    '(default when neither flag is given: 0.25)')
+    cluster_parser.set_defaults(func=cmd_cluster_library)
 
     # Export Traktor command
     traktor_parser = subparsers.add_parser('export-traktor', help='Export to Traktor NML')

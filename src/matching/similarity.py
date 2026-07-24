@@ -25,6 +25,15 @@ SIMILARITY_FEATURES = [
     'rms_mean',
     'rms_std',
     'rms_peak',
+    # Model-free stem-proxy features (src/dsp/stem_profile.py): low-end weight,
+    # the kick/perc/hat transient split, and vocal presence. Older DBs predating
+    # these columns store NULL -> imputed to the corpus mean by _raw_row.
+    'sub_ratio',
+    'bass_ratio',
+    'kick_rate',
+    'perc_rate',
+    'hat_rate',
+    'vocal_presence',
 ]
 
 

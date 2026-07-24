@@ -15,6 +15,7 @@ from src.traktor.exporter import (
     _ms_to_traktor_offset,
 )
 from src.matching.similarity import (
+    SIMILARITY_FEATURES,
     fit_scaler,
     transform_one,
     compute_similarity,
@@ -213,8 +214,9 @@ class TestSimilarityEngine:
 
         # Should be 1D array
         assert normalized.ndim == 1
-        # Should have 15 features
-        assert len(normalized) == 15
+        # One entry per similarity feature (tracks SIMILARITY_FEATURES, not a
+        # hardcoded count, so adding features doesn't silently stale this test).
+        assert len(normalized) == len(SIMILARITY_FEATURES)
         # A single row need not be zero-mean; the corpus as a whole is.
         all_normalized = np.array([
             transform_one(scaler, tf, corpus_means) for tf in corpus
@@ -242,7 +244,7 @@ class TestSimilarityEngine:
         scaler, corpus_means = fit_scaler(corpus)
         normalized = transform_one(scaler, corpus[1], corpus_means)
         assert normalized.ndim == 1
-        assert len(normalized) == 15
+        assert len(normalized) == len(SIMILARITY_FEATURES)
 
     def test_camelot_penalty_same_key(self):
         assert camelot_penalty('7A', '7A') == 1.0

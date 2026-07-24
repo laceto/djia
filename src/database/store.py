@@ -106,8 +106,9 @@ class TrackStore:
                  key, camelot_key, key_confidence, swing_score,
                  spectral_flatness, crest_factor, onset_strength_mean,
                  onset_strength_std, beat_strength, zero_crossing_rate, roughness,
+                 sub_ratio, bass_ratio, kick_rate, perc_rate, hat_rate, vocal_presence,
                  mfcc_vector)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 track_id,
                 features.get('tempo'),
@@ -136,6 +137,12 @@ class TrackStore:
                 features.get('beat_strength'),
                 features.get('zero_crossing_rate'),
                 features.get('roughness'),
+                features.get('sub_ratio'),
+                features.get('bass_ratio'),
+                features.get('kick_rate'),
+                features.get('perc_rate'),
+                features.get('hat_rate'),
+                features.get('vocal_presence'),
                 mfcc_vector,
             ))
 

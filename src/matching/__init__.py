@@ -8,6 +8,7 @@ from .similarity import (
     bpm_penalty,
     find_similar_tracks,
 )
+from .clustering import cluster_library, describe_clusters
 
 __all__ = [
     'fit_scaler',
@@ -16,4 +17,6 @@ __all__ = [
     'camelot_penalty',
     'bpm_penalty',
     'find_similar_tracks',
+    'cluster_library',
+    'describe_clusters',
 ]
