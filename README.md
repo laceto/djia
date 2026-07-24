@@ -16,6 +16,8 @@ DJIA analyzes your audio library to extract features, classify mood, detect stru
 - Mood classification (dark, hypnotic, euphoric, aggressive, industrial, minimal)
 - Track structure detection (drops, breakdowns, transitions)
 - Smart transition scoring based on BPM, key, mood, and energy
+- Model-free stem-proxy features (sub/bass weight, kick/perc/hat split, vocal presence) — no Demucs required
+- Hierarchical clustering to group similar tracks into crates
 - DJ playlist generation with optimal transitions
 - Element-onset detection (where new sound elements enter) with derived mix points
 - Traktor NML export for direct DJ software integration
@@ -41,8 +43,12 @@ Four ordered engines (Groove → Phrasing → Mood → Curation), orchestrated b
 - **Mood** — musical key (Camelot) + brightness
 - **Curation** — danceability, energy curve, semantic tags
 
+Plus a standalone **stem profile** (`stem_profile.py`, not one of the ordered engines): model-free
+stem-proxy features — sub/bass energy ratios, kick/perc/hat onset rates, and vocal presence,
+computed per track for the DB path without Demucs.
+
 **Modules:** `src/dsp/` (`extractor.py`, `groove_engine.py`, `phrasing_engine.py`,
-`mood_engine.py`, `curation_engine.py`, `config.py`). See `docs/architecture.md`.
+`mood_engine.py`, `curation_engine.py`, `stem_profile.py`, `config.py`). See `docs/architecture.md`.
 
 ### Phase 3: AI (Artificial Intelligence)
 - Deep learning mood classification (dark, hypnotic, euphoric, aggressive, industrial, minimal)
@@ -67,8 +73,10 @@ Four ordered engines (Groove → Phrasing → Mood → Curation), orchestrated b
 - Smart playlist generation with optimization
 - Data-driven 5-phase setlist generation (warm-up→build→peak→breakdown→comeback) with
   per-transition mix sheets
+- Similarity search and hierarchical clustering over the shared feature vector
 
-**Modules:** `src/ai/transition_mapper.py`, `src/ai/playlist_generator.py`, `src/ai/setlist_generator.py`
+**Modules:** `src/ai/transition_mapper.py`, `src/ai/playlist_generator.py`,
+`src/ai/setlist_generator.py`, `src/matching/similarity.py`, `src/matching/clustering.py`
 
 ### Optional: LangGraph Track Tuner
 A self-contained agent (`src/ai/track_tuner_*.py`) that iteratively tunes the phrasing parameters
@@ -137,7 +145,20 @@ python -m src.cli find-similar 1 --top-k 5
 # Find 5 tracks similar to track ID 1
 ```
 
-### 4. Generate a DJ Playlist
+### 4. Cluster Your Library
+
+```bash
+python -m src.cli cluster-library --n-clusters 8
+# Group tracks into 8 clusters of similar sound...
+python -m src.cli cluster-library --distance-threshold 0.25
+# ...or let the count fall out of a cosine-distance cut (default 0.25)
+```
+
+**Output:** A labeled per-cluster table — size, BPM mean/spread, modal Camelot key, dominant mood,
+mean sub-bass weight and vocal presence, and example tracks. Groups sub-heavy instrumentals apart
+from bright/vocal material using the same feature vector as `find-similar`.
+
+### 5. Generate a DJ Playlist
 
 ```bash
 python -m src.cli generate-playlist 1 10 5
@@ -149,7 +170,7 @@ python -m src.cli generate-playlist 1 10 5
 - BPM arc (start → end)
 - Average transition quality score
 
-### 5. Generate a Full Setlist
+### 6. Generate a Full Setlist
 
 ```bash
 python -m src.cli generate-setlist --tracks 28
@@ -161,14 +182,14 @@ top mood per phase) plus a mix sheet for every transition (beatmatch pitch %, bl
 swap / full-on timings from element-onset detection). Add `--skip-mix-sheets` to skip the audio
 loads for a fast phase-plan-only preview.
 
-### 6. Export to Traktor
+### 7. Export to Traktor
 
 ```bash
 python -m src.cli export-traktor djia_export.nml
 # Export library to Traktor NML format
 ```
 
-### 7. Regenerate a Spectrogram
+### 8. Regenerate a Spectrogram
 
 ```bash
 python -m src.cli spectrogram 1
@@ -217,6 +238,17 @@ Generate an optimal DJ playlist.
 python -m src.cli generate-playlist START_ID END_ID [STEPS] [OPTIONS]
   --db PATH             Database path (default: db/djia.db)
   # Example: generate-playlist 1 10 5  → 5-track path from track 1 to 10
+```
+
+#### `cluster-library`
+Group similar tracks via hierarchical (agglomerative) clustering over the feature vector.
+
+```bash
+python -m src.cli cluster-library [OPTIONS]
+  --db PATH                  Database path (default: db/djia.db)
+  --n-clusters N             Cut the tree into exactly N clusters
+  --distance-threshold D     Cut at cosine distance D (default 0.25 when neither flag given)
+  # --n-clusters and --distance-threshold are mutually exclusive
 ```
 
 #### `generate-setlist`
