@@ -27,6 +27,16 @@ class StemSeparator:
     DEFAULT_MODEL = 'htdemucs'
     CACHE_DIR = Path('results/stems')
 
+    # Demucs 4-stem models (htdemucs, mdx_extra, ...) emit sources named
+    # drums/bass/other/vocals. We expose Demucs' "other" (everything that isn't
+    # drums/bass/vocals — synths, pads, leads) as this project's "melody" stem.
+    DEMUCS_SOURCE_MAP = {
+        'drums': 'drums',
+        'bass': 'bass',
+        'vocals': 'vocals',
+        'other': 'melody',
+    }
+
     def __init__(self, cache_dir: Optional[Path] = None, model: str = DEFAULT_MODEL):
         """
         Initialize stem separator.
@@ -219,12 +229,20 @@ class StemSeparator:
             # Extract stems (Demucs returns [batch, stems, channels, samples])
             stems_output = stems_output[0].cpu().numpy()  # Remove batch dim
 
-            stems = {}
-            for i, stem_name in enumerate(self.STEM_NAMES):
-                if i < stems_output.shape[0]:
-                    stems[stem_name] = stems_output[i]
-                else:
-                    stems[stem_name] = np.zeros((2, stems_output.shape[-1]))
+            # Map Demucs output to stem names by the model's OWN source order,
+            # not by positional index into STEM_NAMES. htdemucs emits sources as
+            # [drums, bass, other, vocals]; indexing STEM_NAMES positionally put
+            # Demucs' "other" into "vocals" and the real vocals into "melody".
+            model_sources = list(getattr(self.demucs_model, 'sources', []))
+            stems = {
+                name: np.zeros((2, stems_output.shape[-1]))
+                for name in self.STEM_NAMES
+            }
+            for i, source in enumerate(model_sources):
+                if i >= stems_output.shape[0]:
+                    break
+                stem_name = self.DEMUCS_SOURCE_MAP.get(source, source)
+                stems[stem_name] = stems_output[i]
 
             # Normalize loudness
             if normalize:
