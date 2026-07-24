@@ -111,6 +111,49 @@ def convert_to_camelot(note: str, key_type: str) -> str:
     return f"{int(camelot_pos)}{camelot_type}"
 
 
+def camelot_to_open_key(camelot: str) -> str:
+    """Convert a Camelot code to Open Key Notation (used by DJUCED, Rekordbox "Open Key").
+
+    Open Key numbers the same wheel rotated -7 from Camelot, with letters
+    'm' (minor) / 'd' (major, "dur") instead of 'A' / 'B':
+      A minor  = 8A  -> 1m
+      C major  = 8B  -> 1d
+      C#/Db minor = 12A -> 5m   (this is DJUCED's "5m" for Pak Pak)
+
+    Args:
+        camelot: Camelot code like "12A" or "8B" (case-insensitive letter).
+
+    Returns:
+        Open Key code like "5m" or "1d".
+    """
+    camelot = camelot.strip()
+    num, letter = int(camelot[:-1]), camelot[-1].upper()
+    if letter not in ("A", "B") or not 1 <= num <= 12:
+        raise ValueError(f"Invalid Camelot code: {camelot!r}")
+    open_num = ((num - 8) % 12) + 1
+    return f"{open_num}{'m' if letter == 'A' else 'd'}"
+
+
+def open_key_to_camelot(open_key: str) -> str:
+    """Convert Open Key Notation (DJUCED, e.g. "5m") to a Camelot code (e.g. "12A").
+
+    Inverse of camelot_to_open_key: Camelot number = Open Key number + 7 (wheel-wrapped),
+    with 'm' -> 'A' (minor) and 'd' -> 'B' (major).
+
+    Args:
+        open_key: Open Key code like "5m" or "1d" (case-insensitive letter).
+
+    Returns:
+        Camelot code like "12A" or "8B".
+    """
+    open_key = open_key.strip()
+    num, letter = int(open_key[:-1]), open_key[-1].lower()
+    if letter not in ("m", "d") or not 1 <= num <= 12:
+        raise ValueError(f"Invalid Open Key code: {open_key!r}")
+    camelot_num = ((num + 6) % 12) + 1
+    return f"{camelot_num}{'A' if letter == 'm' else 'B'}"
+
+
 # --- Optional S-KEY (deep-learning) key backend ------------------------------
 # S-KEY (Kong et al., ICASSP 2025 — https://github.com/deezer/skey) is a trained
 # ChromaNet model that far outperforms the Krumhansl chroma template above on
