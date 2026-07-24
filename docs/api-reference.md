@@ -10,10 +10,13 @@ Public entry points for programmatic use. Import the package from the repo root.
   similarity matching.
 - **`config.get_config(preset) -> config`** — named presets: `default`, `minimal`, `house`,
   `techno`, `aggressive`.
-- **`config.custom_config(...) -> config`** — build a config from explicit phrasing params
-  (`novelty_threshold`, `min_segment_duration`, `breakdown_duration_threshold`).
-- **`phrasing_engine.analyze_structure(y, sr, bpm, novelty_threshold, min_segment_duration, breakdown_threshold, include_beats=True) -> PhrasingResult`**
-  — spectral-novelty segmentation; segment labels carry beat/bar ranges when `include_beats=True`.
+- **`config.custom_config(min_bars=4, thresh_frac=0.4, max_pads=None) -> config`** — build a config
+  from explicit phrasing params.
+- **`phrasing_engine.analyze_structure(y, sr, bpm, hop_length=512, min_bars=4, thresh_frac=0.4, max_pads=None, detect_elements=False, ...) -> PhrasingResult`**
+  — low-band (kick+bass) drop/breakdown segmentation. Hot cues sit at section starts; `max_pads=N`
+  limits them to N controller pads (intro, main drop and outro always kept). `detect_elements=True`
+  also returns element onsets. Helper functions: `compute_lowband_energy`, `smooth_lowband_energy`,
+  `detect_energy_sections`, `label_energy_sections`, `map_segments_to_hotcues(segments, max_pads)`.
 - **`phrasing_engine.create_phrase_locked_segments(duration, bpm, bars_per_phrase, include_beats=True) -> List[Segment]`**
   — alternative fixed-bar segmentation (every segment exactly N bars).
 - **`phrasing_engine.detect_element_onsets(y, sr, bpm, n_bands, threshold, min_sustain_bars) -> List[ElementOnset]`**
