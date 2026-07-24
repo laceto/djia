@@ -45,6 +45,13 @@ because of data dependencies:**
    entropy, 0=tonal/clean to 1=noise-like/saturated) and **crest factor** (`compute_crest_factor` —
    peak-to-average RMS ratio; high = punchy/dynamic, near 1 = compressed).
 
+Beyond the four ordered engines, `stem_profile.compute_stem_profile` derives **model-free
+stem-proxy features** (Demucs-independent) from one STFT + one HPSS: `sub_ratio`/`bass_ratio` (low-end
+energy shares), `kick_rate`/`perc_rate`/`hat_rate` (onset rates in the low/mid/high transient bands),
+and `vocal_presence` (harmonic energy in the vocal band). It is not part of the ordered pipeline;
+`dsp/worker.py` runs it per track for the DB-persisted `analyze` path (see Data store & export), and
+its columns feed the similarity/clustering vector.
+
 `extract_feature_vector(track)` flattens a `Track` into the numeric dict used for similarity matching.
 
 ## Config / preset system (`src/dsp/config.py`)
@@ -96,12 +103,14 @@ them consistent.
 ## Data store & export
 
 - `database/schema.py` + `database/store.py` — SQLite (`TrackStore`); default DB is `db/djia.db`.
-  `insert_features` persists `swing_score`/Camelot key plus 7 density/onset/timbre columns
+  `insert_features` persists `swing_score`/Camelot key plus the density/onset/timbre columns
   (`spectral_flatness`, `crest_factor`, `onset_strength_mean/std`, `beat_strength`,
-  `zero_crossing_rate`, `roughness`) on the `features` table; `replace_segments` persists
+  `zero_crossing_rate`, `roughness`) and the model-free stem-proxy columns (`sub_ratio`,
+  `bass_ratio`, `kick_rate`, `perc_rate`, `hat_rate`, `vocal_presence` — from `dsp/stem_profile.py`)
+  on the `features` table; `replace_segments` persists
   phrasing-engine structure segments to the `segments` table (idempotent per `method` —
   re-analysis replaces rather than duplicates). All are merged into the features dict by
-  `dsp/worker.py`'s `_add_tonality`/`_add_swing`/`_add_density` (best-effort, called from
+  `dsp/worker.py`'s `_add_tonality`/`_add_swing`/`_add_density`/`_add_stem_profile` (best-effort, called from
   `analyze_one_track` — the shared compute-only pipeline both `Orchestrator.analyze_library` and
   `Orchestrator.analyze_single_track` run per file) before `insert_features` during `analyze`, so
   tracks analyzed before a given feature shipped have `NULL`/zero values until re-analyzed.
@@ -119,6 +128,8 @@ them consistent.
   comes back, for any `workers` value. This invariant must not be violated by future changes: a worker
   process must never open its own connection to `db/djia.db`.
 - `matching/similarity.py` — cosine similarity over feature vectors, filterable by BPM/key/mood.
+- `matching/clustering.py` — hierarchical (agglomerative) clustering of the library over the same
+  normalized vectors (`cluster_library` / `describe_clusters`); powers the `cluster-library` CLI.
 - `traktor/exporter.py` — writes Traktor NML with BPM, key, and auto hot cues.
 - `djuced/exporter.py` — writes `DJIA …`-prefixed hot cues directly into DJUCED's own
   `DJUCED.db` (Hercules controllers), matched by fuzzy filename. Dry-run by default,

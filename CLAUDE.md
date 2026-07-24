@@ -45,7 +45,7 @@ src/
                 playlist_generator, setlist_generator, track_tuner_* (optional LangGraph agent)
   features/     schema.py — the Track dataclass, THE data contract
   database/     SQLite schema + store (TrackStore)
-  matching/     cosine similarity over feature vectors
+  matching/     cosine similarity + hierarchical clustering over feature vectors
   traktor/      NML exporter with hot cues
   djuced/       hot-cue exporter writing directly into DJUCED.db (Hercules)
   ingestion/    scanner + loader (librosa, 22,050 Hz mono)
