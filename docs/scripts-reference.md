@@ -9,8 +9,18 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-> LangGraph deps (`langgraph`, `langchain-core`) are **not** in `requirements.txt` — install them
-> separately if you use the Track Tuner.
+> Dependencies live in **`pyproject.toml`** (single source of truth); `requirements.txt` just
+> installs it editable with the dev+dashboard extras (`-e .[dev,dashboard]`).
+
+> **Optional: S-KEY key detection** (deep-learning, much better than the chroma template for
+> electronic music). Not on PyPI yet — install its deps via the extra, then the package from GitHub:
+> ```bash
+> pip install -e ".[skey]"
+> git clone https://github.com/deezer/skey && pip install --no-deps ./skey
+> ```
+> When installed, `analyze` uses it automatically (`key_source="skey"`); otherwise DJIA falls back
+> to the chroma method. LangGraph deps (`langgraph`, `langchain-core`) are likewise **not** bundled —
+> install separately if you use the Track Tuner.
 
 ## CLI (module form — always run from repo root)
 
@@ -25,7 +35,7 @@ python -m src.cli analyze --workers 8              # parallel analysis with 8 wo
 #   also: --db PATH   --skip-existing   --workers N (default: os.cpu_count(), min 1; workers<=1
 #         is the old sequential path; ignored/no-op with --track)
 
-# list-tracks
+# list-tracks — includes a "Camelot (Open Key)" column, e.g. 12A (5m)
 python -m src.cli list-tracks [--limit N] [--db PATH]      # --limit default 100
 
 # find-similar (track_id positional; no bpm-tolerance flag)
@@ -48,6 +58,13 @@ python -m src.cli export-traktor [out.nml] [--traktor-input Collection.nml] [--d
 # spectrogram (track_id positional) — regenerate the .npy spectrogram for an already-analyzed track
 python -m src.cli spectrogram <track_id> [--db PATH] [--spectrogram-dir data/spectrograms]
 #   e.g. spectrogram 1   → loads the track's audio and saves data/spectrograms/1.npy
+
+# crosscheck-djuced — compare DJIA's detected keys against the keys DJUCED has stored
+python -m src.cli crosscheck-djuced [--db PATH] [--djuced-input DJUCED.db] [--output report.md]
+#   --djuced-input: path to DJUCED.db (default ~/Documents/DJUCED/DJUCED.db); read-only
+#   matches tracks by normalized filename, normalizes both keys to Camelot (DJUCED's Open
+#   Key "5m" == Camelot "12A"), and flags match / DIFFERS / unreadable / not-in-DJUCED
+#   --output: also write a Markdown report (diffs highlighted)
 ```
 
 ## Direct DSP (no DB)

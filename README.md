@@ -38,7 +38,10 @@ Four ordered engines (Groove → Phrasing → Mood → Curation), orchestrated b
 - **Groove** — decimal BPM, beat grid, swing (runs first; BPM feeds everything downstream)
 - **Phrasing** — structural segments (intro/build/drop/breakdown/outro) + hot-cue positions,
   plus opt-in element-onset detection and mix-point derivation (`derive_mix_points`)
-- **Mood** — musical key (Camelot) + brightness
+- **Mood** — musical key (Camelot + Open Key, e.g. `12A (5m)`) + brightness. Key detection uses the
+  optional [S-KEY](https://github.com/deezer/skey) deep-learning model when installed (far better on
+  electronic music), else a built-in chroma fallback. `crosscheck-djuced` compares detected keys
+  against DJUCED's stored keys.
 - **Curation** — danceability, energy curve, semantic tags
 
 **Modules:** `src/dsp/` (`extractor.py`, `groove_engine.py`, `phrasing_engine.py`,
