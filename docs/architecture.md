@@ -95,7 +95,10 @@ them consistent.
 
 ## AI layer (`src/ai/`)
 
-- `stem_separator.py` — Demucs (Drums/Bass/Vocals/Melody) with on-disk caching; first run downloads ~1GB.
+- `stem_separator.py` — stems (Drums/Bass/Vocals/Melody) with on-disk caching; first run downloads the
+  model. Backend is auto-selected from the model name: `demucs` (default, ~1GB htdemucs) or
+  `audio-separator` (MelBand/BS Roformer; `pip install "djia[roformer]"`) — the preferred choice for
+  techno. Both share the same `{name: (channels, samples)}` output contract.
 - `classifier.py` — 6-dimension mood classification.
 - `segmentation.py` — structural detection (drop/breakdown/outro) with confidence.
 - `processor.py` — runs DSP on separated stems.

@@ -48,6 +48,11 @@ skey = [
 ]
 # Advanced mood classification (optional, with a rule-based fallback).
 essentia = ["essentia>=2.1.0"]
+# MelBand / BS Roformer + MDX-Net stem separation via the audio-separator package.
+# For techno, MelBand Roformer tends to separate kick, bass, and synth layers more
+# cleanly than HTDemucs. Select it by passing a Roformer model name to StemSeparator
+# (backend is auto-detected) or backend="audio-separator" explicitly.
+roformer = ["audio-separator>=0.18.0"]
 # Streamlit dashboard.
 dashboard = ["streamlit>=1.28.0"]
 # Development / testing.

@@ -16,3 +16,8 @@
 #
 # Essentia-based mood models (optional, with a rule-based fallback):
 #     pip install -e ".[essentia]"
+#
+# MelBand / BS Roformer stem separation via audio-separator (cleaner kick/bass/synth
+# separation on techno than HTDemucs). Pass a Roformer model name to StemSeparator
+# (backend auto-detected) or backend="audio-separator":
+#     pip install -e ".[roformer]"

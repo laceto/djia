@@ -88,7 +88,12 @@ Public entry points for programmatic use. Import the package from the repo root.
   full clash floors the score at `GROOVE_PENALTY_FLOOR` (0.7); either track missing `swing_score`
   is also a no-op. If `output_path` is locked (e.g. open elsewhere), the write falls back to a
   timestamped filename instead of raising.
-- **`stem_separator`** — Demucs stems (Drums/Bass/Vocals/Melody), on-disk cached.
+- **`stem_separator`** — stems (Drums/Bass/Vocals/Melody), on-disk cached. Two backends behind one
+  `separate_stems(...) -> {name: (channels, samples)}` contract: `demucs` (default) and
+  `audio-separator` (MelBand/BS Roformer, MDX-Net; `pip install "djia[roformer]"`). The backend is
+  auto-selected from the model name (names containing `roformer`, or `*.ckpt/.onnx/.pth`, use
+  audio-separator) or forced via `StemSeparator(model=..., backend=...)`. For techno, MelBand
+  Roformer separates kick/bass/synth more cleanly than HTDemucs.
 - **`classifier`** — 6-dimension mood classification.
 - **`segmentation`** — structural detection (drop/breakdown/outro) with confidence.
 
