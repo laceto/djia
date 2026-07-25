@@ -74,6 +74,107 @@ def load_djuced_library(db_path: str = DEFAULT_DJUCED_DB) -> List[Dict[str, str]
     ]
 
 
+def load_djuced_keys(db_path: str = DEFAULT_DJUCED_DB) -> List[Dict[str, str]]:
+    """
+    Load (absolutepath, filename, norm, key_raw) for every DJUCED track.
+
+    Like `load_djuced_library` but also returns DJUCED's stored musical key.
+    The `key` column's presence and format varies by DJUCED version, so it is
+    read defensively: the column is detected via PRAGMA and `key_raw` is None
+    when it is absent. Interpreting the string (Open Key vs Camelot) is left to
+    `mood_engine.normalize_key_to_camelot`.
+
+    Returns:
+        List of dicts with keys: absolutepath, filename, norm, key_raw.
+    """
+    conn = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    try:
+        cols = {row[1] for row in conn.execute("PRAGMA table_info(tracks)")}
+        has_key = "key" in cols
+        select = "SELECT absolutepath, filename" + (", key" if has_key else "")
+        select += " FROM tracks WHERE absolutepath IS NOT NULL"
+        rows = conn.execute(select).fetchall()
+    finally:
+        conn.close()
+
+    out = []
+    for row in rows:
+        ap, fn = row[0], row[1]
+        key_raw = row[2] if has_key and len(row) > 2 else None
+        out.append({
+            "absolutepath": ap,
+            "filename": fn or Path(ap).name,
+            "norm": normalize_track_name(fn or Path(ap).name),
+            "key_raw": key_raw,
+        })
+    return out
+
+
+def crosscheck_keys(
+    djia_tracks: List[Dict],
+    djuced_library: List[Dict[str, str]],
+) -> List[Dict]:
+    """
+    Compare each DJIA track's detected key against DJUCED's stored key.
+
+    Both sides are normalized to Camelot (via mood_engine.normalize_key_to_camelot)
+    before comparison, so DJUCED's Open Key strings ("5m") line up with DJIA's
+    Camelot codes ("12A"). Tracks are paired with DJUCED by the same filename
+    matching used for cue export.
+
+    Args:
+        djia_tracks: dicts with 'file_name', 'key', and 'camelot_key'.
+        djuced_library: output of `load_djuced_keys`.
+
+    Returns:
+        One row per DJIA track, each a dict with: file_name, djia_key,
+        djia_camelot, djuced_key_raw, djuced_camelot, and status — one of
+        "match", "diff", "no_djuced_match", or "unreadable" (DJUCED key present
+        but not a recognized Camelot/Open Key string).
+    """
+    from ..dsp.mood_engine import normalize_key_to_camelot
+
+    by_abspath = {t["absolutepath"]: t for t in djuced_library}
+    results = []
+
+    for tr in djia_tracks:
+        file_name = tr.get("file_name", "")
+        djia_camelot = normalize_key_to_camelot(tr.get("camelot_key"))
+        row = {
+            "file_name": file_name,
+            "djia_key": tr.get("key"),
+            "djia_camelot": djia_camelot,
+            "djuced_key_raw": None,
+            "djuced_camelot": None,
+            "status": "no_djuced_match",
+        }
+
+        abs_paths = match_djuced_tracks(file_name, djuced_library)
+        # First matched copy that actually carries a key value.
+        matched = next(
+            (by_abspath[p] for p in abs_paths
+             if p in by_abspath and by_abspath[p].get("key_raw") not in (None, "")),
+            None,
+        )
+        if matched is None and abs_paths:
+            # Matched a track, but it has no stored key.
+            row["status"] = "no_djuced_key"
+        elif matched is not None:
+            row["djuced_key_raw"] = matched["key_raw"]
+            djuced_camelot = normalize_key_to_camelot(matched["key_raw"])
+            row["djuced_camelot"] = djuced_camelot
+            if djuced_camelot is None:
+                row["status"] = "unreadable"
+            elif djia_camelot is None:
+                row["status"] = "no_djia_key"
+            else:
+                row["status"] = "match" if djuced_camelot == djia_camelot else "diff"
+
+        results.append(row)
+
+    return results
+
+
 def match_djuced_tracks(file_name: str, library: List[Dict[str, str]]) -> List[str]:
     """
     Find every DJUCED `absolutepath` for a DJIA track filename.

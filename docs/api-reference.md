@@ -10,6 +10,22 @@ Public entry points for programmatic use. Import the package from the repo root.
   similarity matching.
 - **`config.get_config(preset) -> config`** — named presets: `default`, `minimal`, `house`,
   `techno`, `aggressive`.
+- **`mood_engine.analyze_mood(y, sr, file_path=None, prefer_skey=True) -> MoodResult`** —
+  key/Camelot/brightness/roughness. When the optional `skey` package is installed **and** a
+  `file_path` is given, key detection uses the S-KEY deep-learning model (much better on
+  electronic music; `MoodResult.key_source == "skey"`, `key_confidence` is a real softmax
+  probability); otherwise it falls back to the chroma template (`key_source == "chroma"`).
+  Pass `prefer_skey=False` to force chroma.
+- **`mood_engine.convert_to_camelot(note, key_type) -> str`** — musical key → Camelot code
+  (e.g. `"F#/Gb", "minor" -> "11A"`). **`camelot_to_open_key("12A") -> "5m"`** and
+  **`open_key_to_camelot("5m") -> "12A"`** convert between Camelot and Open Key Notation
+  (what DJUCED / Rekordbox "Open Key" display). **`normalize_key_to_camelot(value) -> str|None`**
+  best-effort-parses a Camelot or Open Key string to Camelot (None if unrecognized), used for
+  cross-tool key comparison.
+- **`mood_engine.detect_key_skey(file_path, device="cpu") -> (key, camelot, confidence)`** —
+  run the S-KEY model directly (raises if `skey`/torch missing; callers catch and fall back).
+  **`skey_label_to_key_camelot("C# minor") -> ("C#/Db minor", "12A")`** maps S-KEY labels to
+  this repo's conventions (pure, no torch).
 - **`config.custom_config(min_bars=4, thresh_frac=0.4, max_pads=None) -> config`** — build a config
   from explicit phrasing params.
 - **`phrasing_engine.analyze_structure(y, sr, bpm, hop_length=512, min_bars=4, thresh_frac=0.4, max_pads=None, detect_elements=False, ...) -> PhrasingResult`**
@@ -84,6 +100,12 @@ Public entry points for programmatic use. Import the package from the repo root.
   real write; only DJIA-named cues are ever replaced. Close DJUCED before writing.
 - **`exporter.match_djuced_tracks(file_name, library)`** / **`load_djuced_library(db_path)`** —
   filename-normalized matching between DJIA's library and DJUCED's.
+- **`exporter.load_djuced_keys(db_path) -> list`** — like `load_djuced_library` but also returns
+  DJUCED's stored `key_raw` per track (PRAGMA-detected column; `None` when absent).
+  **`exporter.crosscheck_keys(djia_tracks, djuced_library) -> list`** — compares each DJIA
+  track's Camelot key against DJUCED's (both normalized to Camelot), returning per-track
+  `status`: `match` / `diff` / `unreadable` / `no_djuced_key` / `no_djuced_match`. Drives the
+  `crosscheck-djuced` CLI command.
 
 ## Traktor export (`src/traktor/`)
 

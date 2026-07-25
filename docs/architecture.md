@@ -44,6 +44,12 @@ because of data dependencies:**
    rate** (`compute_zero_crossing_rate`) and **timbral roughness** (`compute_roughness` — a pragmatic
    Sethares/Plomp-Levelt pairwise-dissonance approximation over each frame's loudest spectral peaks,
    tanh-squashed to 0-1: smooth/consonant vs. rough/dissonant).
+   **Key backend:** by default a Krumhansl chroma-template match (weak on electronic music — near-constant
+   confidence). If the optional **S-KEY** deep-learning model (`skey` package) is installed and a
+   `file_path` reaches `analyze_mood`, it is used instead and `MoodResult.key_source` becomes `"skey"`
+   with a real softmax confidence; otherwise the chroma method runs and `key_source` is `"chroma"`.
+   Camelot codes convert to/from DJUCED's **Open Key Notation** via `camelot_to_open_key` /
+   `open_key_to_camelot` (12A ↔ 5m).
 4. **Curation** (`curation_engine.py`) → danceability, energy curve, semantic tags. Consumes BPM,
    swing, brightness. Also computes **spectral flatness** (`compute_spectral_flatness` — Wiener
    entropy, 0=tonal/clean to 1=noise-like/saturated) and **crest factor** (`compute_crest_factor` —

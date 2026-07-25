@@ -6,7 +6,9 @@ import pytest
 
 from src.djuced.exporter import (
     CUE_PREFIX,
+    crosscheck_keys,
     export_mix_cues,
+    load_djuced_keys,
     load_djuced_library,
     match_djuced_tracks,
     normalize_track_name,
@@ -150,3 +152,64 @@ class TestExportMixCues:
         assert report["unknown.mp3"]["matched"] == []
         # a timestamped backup landed next to the DB
         assert list(tmp_path.glob("DJUCED.db.djia-backup-*"))
+
+
+@pytest.fixture
+def djuced_db_with_keys(tmp_path):
+    """DJUCED.db clone whose tracks table carries a `key` column (Open Key strings)."""
+    db = tmp_path / "DJUCED.db"
+    conn = sqlite3.connect(db)
+    conn.execute(
+        "CREATE TABLE tracks (id INTEGER PRIMARY KEY, filename TEXT, "
+        "absolutepath TEXT, key TEXT)"
+    )
+    conn.executemany(
+        "INSERT INTO tracks (filename, absolutepath, key) VALUES (?, ?, ?)",
+        [
+            ("2000_and_one-pak_pak.mp3", "/m/2000_and_one-pak_pak.mp3", "5m"),   # -> 12A
+            ("some_track.mp3", "/m/some_track.mp3", "8A"),                       # Camelot form
+            ("weird.mp3", "/m/weird.mp3", "C#m"),                                # musical -> unreadable
+            ("nokey.mp3", "/m/nokey.mp3", None),                                 # no key
+        ],
+    )
+    conn.commit()
+    conn.close()
+    return str(db)
+
+
+class TestDjucedKeyCrosscheck:
+    def test_load_keys_reads_key_column(self, djuced_db_with_keys):
+        lib = load_djuced_keys(djuced_db_with_keys)
+        keys = {t["filename"]: t["key_raw"] for t in lib}
+        assert keys["2000_and_one-pak_pak.mp3"] == "5m"
+        assert keys["nokey.mp3"] is None
+
+    def test_load_keys_without_key_column(self, djuced_db):
+        """Falls back gracefully to key_raw=None when the schema has no key column."""
+        lib = load_djuced_keys(djuced_db)
+        assert lib and all(t["key_raw"] is None for t in lib)
+
+    def test_crosscheck_statuses(self, djuced_db_with_keys):
+        lib = load_djuced_keys(djuced_db_with_keys)
+        djia = [
+            {"file_name": "2000_and_one-pak_pak.mp3", "key": "C#/Db minor", "camelot_key": "12A"},
+            {"file_name": "some_track.mp3", "key": "A#/Bb minor", "camelot_key": "3A"},
+            {"file_name": "weird.mp3", "key": "C#/Db minor", "camelot_key": "12A"},
+            {"file_name": "nokey.mp3", "key": "C major", "camelot_key": "8B"},
+            {"file_name": "not_in_djuced.mp3", "key": "D minor", "camelot_key": "7A"},
+        ]
+        status = {r["file_name"]: r["status"] for r in crosscheck_keys(djia, lib)}
+        assert status["2000_and_one-pak_pak.mp3"] == "match"   # 12A == open-key 5m
+        assert status["some_track.mp3"] == "diff"              # 3A != 8A
+        assert status["weird.mp3"] == "unreadable"             # "C#m" not Camelot/Open Key
+        assert status["nokey.mp3"] == "no_djuced_key"
+        assert status["not_in_djuced.mp3"] == "no_djuced_match"
+
+    def test_crosscheck_normalizes_djuced_open_key(self, djuced_db_with_keys):
+        """DJUCED's Open Key '5m' is recognized as Camelot 12A on the DJUCED side."""
+        lib = load_djuced_keys(djuced_db_with_keys)
+        row = next(r for r in crosscheck_keys(
+            [{"file_name": "2000_and_one-pak_pak.mp3", "key": "C#/Db minor", "camelot_key": "12A"}],
+            lib,
+        ))
+        assert row["djuced_camelot"] == "12A"

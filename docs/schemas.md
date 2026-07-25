@@ -31,7 +31,10 @@ Component results:
   `brightness: float` (0=dark, 1=bright), `key_confidence: float`,
   `zero_crossing_rate: float` (waveform sign-change rate; higher = noisier/acid-ish),
   `roughness: float` (0-1, Plomp-Levelt-style timbral roughness — smooth/consonant vs.
-  rough/dissonant).
+  rough/dissonant), `key_source: str` — which backend produced the key: `"skey"` (the
+  optional S-KEY deep-learning model; `key_confidence` is then a real softmax probability)
+  or `"chroma"` (the built-in Krumhansl template; `key_confidence` is its legacy
+  near-constant correlation score). Interpret `key_confidence` according to `key_source`.
 - **`CurationResult`** — `danceability: float`, `energy_curve: np.ndarray`, `energy_type: str`
   ("flat"|"dynamic"|"gradual"), `semantic_tags: List[str]`, `complexity_score: float`,
   `spectral_flatness: float` (0=tonal/clean, 1=noise-like/saturated — Wiener entropy),

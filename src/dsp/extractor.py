@@ -86,8 +86,9 @@ def extract_track_features(
         max_pads=config.phrasing.max_pads,
     )
 
-    # Step 3: Mood Engine (independent)
-    mood = analyze_mood(y, sr)
+    # Step 3: Mood Engine (independent). Pass file_path so the S-KEY backend can
+    # read the original file when installed; falls back to chroma otherwise.
+    mood = analyze_mood(y, sr, file_path=str(file_path))
 
     # Step 4: Curation Engine (uses BPM, swing, brightness)
     curation = analyze_curation(

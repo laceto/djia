@@ -23,6 +23,10 @@ from src.dsp.groove_engine import (
 from src.dsp.mood_engine import (
     analyze_mood,
     detect_key_from_chroma,
+    convert_to_camelot,
+    camelot_to_open_key,
+    open_key_to_camelot,
+    skey_label_to_key_camelot,
     compute_zero_crossing_rate,
     compute_roughness,
 )
@@ -343,6 +347,187 @@ class TestMoodEngine:
         """Silence has no spectral peaks to be dissonant -> roughness is 0."""
         silence = np.zeros(22050 * 2, dtype=np.float32)
         assert compute_roughness(silence, 22050) == 0.0
+
+
+class TestCamelotConversion:
+    """Test key -> Camelot mapping against the standard Camelot / Mixed In Key wheel.
+
+    The wheel is anchored at position 8 (C major = 8B, A minor = 8A) and advances one
+    number per perfect fifth. A regression here previously rotated every code 7 steps
+    (e.g. F#/Gb minor read '4A' instead of the correct '11A').
+    """
+
+    # (note_name, key_type) -> canonical Camelot code, for all 24 keys.
+    EXPECTED = {
+        # Minor keys (A side) — walk the circle of fifths from A minor = 8A
+        ("A", "minor"): "8A",
+        ("E", "minor"): "9A",
+        ("B", "minor"): "10A",
+        ("F#/Gb", "minor"): "11A",
+        ("C#/Db", "minor"): "12A",
+        ("G#/Ab", "minor"): "1A",
+        ("D#/Eb", "minor"): "2A",
+        ("A#/Bb", "minor"): "3A",
+        ("F", "minor"): "4A",
+        ("C", "minor"): "5A",
+        ("G", "minor"): "6A",
+        ("D", "minor"): "7A",
+        # Major keys (B side) — walk the circle of fifths from C major = 8B
+        ("C", "major"): "8B",
+        ("G", "major"): "9B",
+        ("D", "major"): "10B",
+        ("A", "major"): "11B",
+        ("E", "major"): "12B",
+        ("B", "major"): "1B",
+        ("F#/Gb", "major"): "2B",
+        ("C#/Db", "major"): "3B",
+        ("G#/Ab", "major"): "4B",
+        ("D#/Eb", "major"): "5B",
+        ("A#/Bb", "major"): "6B",
+        ("F", "major"): "7B",
+    }
+
+    def test_all_24_keys(self):
+        """Every key maps to its canonical Camelot code."""
+        for (note, key_type), expected in self.EXPECTED.items():
+            assert convert_to_camelot(note, key_type) == expected, (
+                f"{note} {key_type} -> {convert_to_camelot(note, key_type)}, expected {expected}"
+            )
+
+    def test_anchor_keys(self):
+        """The two anchor keys sit at position 8."""
+        assert convert_to_camelot("C", "major") == "8B"
+        assert convert_to_camelot("A", "minor") == "8A"
+
+    def test_pak_pak_regression(self):
+        """F#/Gb minor is 11A (the reported '4A' was the rotated-by-7 bug)."""
+        assert convert_to_camelot("F#/Gb", "minor") == "11A"
+
+    def test_relative_major_minor_share_number(self):
+        """Relative major/minor pairs share a wheel number, differing only in letter."""
+        pairs = [("C", "major", "A", "minor"), ("C#/Db", "major", "A#/Bb", "minor"),
+                 ("G", "major", "E", "minor"), ("A", "major", "F#/Gb", "minor")]
+        for maj_note, _, min_note, _ in pairs:
+            maj = convert_to_camelot(maj_note, "major")
+            minor = convert_to_camelot(min_note, "minor")
+            assert maj[:-1] == minor[:-1] and maj[-1] == "B" and minor[-1] == "A"
+
+    def test_output_format(self):
+        """Every code is 'NA'/'NB' with N in 1-12."""
+        for note, key_type in self.EXPECTED:
+            code = convert_to_camelot(note, key_type)
+            assert code[-1] in ("A", "B")
+            assert 1 <= int(code[:-1]) <= 12
+
+
+class TestOpenKeyConversion:
+    """Test Camelot <-> Open Key Notation (DJUCED / Rekordbox 'Open Key')."""
+
+    # Canonical anchors across the wheel.
+    CASES = [
+        ("8A", "1m"),   # A minor
+        ("8B", "1d"),   # C major
+        ("12A", "5m"),  # C#/Db minor  -> DJUCED's reading of Pak Pak
+        ("3B", "8d"),   # Db major (Beatport's reading)
+        ("1A", "6m"),   # G#/Ab minor  (wheel wrap)
+        ("11A", "4m"),  # F#/Gb minor  (old chroma guess)
+        ("7B", "12d"),  # F major
+    ]
+
+    def test_camelot_to_open_key(self):
+        for camelot, open_key in self.CASES:
+            assert camelot_to_open_key(camelot) == open_key
+
+    def test_open_key_to_camelot(self):
+        for camelot, open_key in self.CASES:
+            assert open_key_to_camelot(open_key) == camelot
+
+    def test_djuced_pak_pak_anchor(self):
+        """C#/Db minor: 12A (Camelot) <-> 5m (DJUCED Open Key)."""
+        assert camelot_to_open_key("12A") == "5m"
+        assert open_key_to_camelot("5m") == "12A"
+
+    def test_round_trip_all_24(self):
+        """Every Camelot code survives a round trip through Open Key."""
+        for n in range(1, 13):
+            for letter in ("A", "B"):
+                code = f"{n}{letter}"
+                assert open_key_to_camelot(camelot_to_open_key(code)) == code
+
+    def test_case_insensitive(self):
+        assert camelot_to_open_key("12a") == "5m"
+        assert open_key_to_camelot("5M") == "12A"
+
+    def test_invalid_raises(self):
+        for bad in ("13A", "0B", "8C", "AA"):
+            with pytest.raises((ValueError, IndexError)):
+                camelot_to_open_key(bad)
+        for bad in ("13m", "0d", "5x"):
+            with pytest.raises((ValueError, IndexError)):
+                open_key_to_camelot(bad)
+
+
+class TestSkeyKeyBackend:
+    """Test the optional S-KEY key backend and its label mapping.
+
+    The label->key/Camelot mapping is pure and always tested; the end-to-end
+    inference test is skipped unless the optional `skey` package and a test
+    track are both present.
+    """
+
+    def test_label_mapping(self):
+        """S-KEY labels map to repo key names + correct (post-fix) Camelot codes."""
+        assert skey_label_to_key_camelot("C# minor") == ("C#/Db minor", "12A")
+        assert skey_label_to_key_camelot("Bb Major") == ("A#/Bb major", "6B")
+        assert skey_label_to_key_camelot("A Major") == ("A major", "11B")
+        assert skey_label_to_key_camelot("F# minor") == ("F#/Gb minor", "11A")
+        assert skey_label_to_key_camelot("C Major") == ("C major", "8B")
+        assert skey_label_to_key_camelot("A minor") == ("A minor", "8A")
+
+    def test_label_mapping_all_24_valid(self):
+        """Every S-KEY label produces a valid repo key string and Camelot code."""
+        notes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "Bb", "B"]
+        for note in notes:
+            for mode in ("Major", "minor"):
+                name, camelot = skey_label_to_key_camelot(f"{note} {mode}")
+                assert mode.lower() in name
+                assert camelot[-1] in ("A", "B")
+                assert 1 <= int(camelot[:-1]) <= 12
+
+    def test_bad_label_raises(self):
+        """A malformed label is rejected rather than silently mismapped."""
+        with pytest.raises((ValueError, KeyError)):
+            skey_label_to_key_camelot("H diminished")
+
+    def test_chroma_fallback_without_file_path(self):
+        """Without a file_path, analyze_mood uses the chroma backend (no S-KEY)."""
+        # Synthetic tone — no audio file or optional deps needed.
+        t = np.linspace(0, 2.0, int(22050 * 2.0), endpoint=False)
+        y = (0.5 * np.sin(2 * np.pi * 220.0 * t)).astype(np.float32)
+        mood = analyze_mood(y, 22050)
+        assert mood.key_source == "chroma"
+        assert mood.camelot_key[-1] in ("A", "B")
+
+    def test_prefer_skey_false_forces_chroma(self):
+        """prefer_skey=False keeps the chroma backend even if a file_path is given."""
+        t = np.linspace(0, 2.0, int(22050 * 2.0), endpoint=False)
+        y = (0.5 * np.sin(2 * np.pi * 220.0 * t)).astype(np.float32)
+        mood = analyze_mood(y, 22050, file_path="whatever.mp3", prefer_skey=False)
+        assert mood.key_source == "chroma"
+
+    def test_skey_end_to_end(self):
+        """When skey + a test track are available, analyze_mood uses it and reports
+        a real 0-1 confidence."""
+        pytest.importorskip("skey")
+        if not Path(TEST_TRACKS[0]).exists():
+            pytest.skip("no test track available")
+        y, sr = librosa.load(TEST_TRACKS[0], sr=22050, duration=60)
+        mood = analyze_mood(y, sr, file_path=str(TEST_TRACKS[0]))
+        assert mood.key_source == "skey"
+        assert 0.0 <= mood.key_confidence <= 1.0
+        parts = mood.key.split()
+        assert parts[-1] in ("major", "minor")
+        assert mood.camelot_key[-1] in ("A", "B")
 
 
 class TestCurationEngine:

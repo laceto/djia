@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import List
 from tabulate import tabulate
@@ -14,6 +15,17 @@ from .ai import generate_playlist, playlist_summary
 from .ingestion.loader import AudioLoader
 from .dsp.spectrogram import compute_and_save_spectrogram, DEFAULT_SPECTROGRAM_DIR
 from .matching.similarity import find_similar_tracks
+from .dsp.mood_engine import camelot_to_open_key
+
+
+def format_camelot(camelot) -> str:
+    """Render a Camelot code with its DJUCED/Open Key equivalent, e.g. '12A (5m)'."""
+    if not camelot or camelot == "N/A":
+        return "N/A"
+    try:
+        return f"{camelot} ({camelot_to_open_key(camelot)})"
+    except (ValueError, IndexError):
+        return str(camelot)
 
 
 def print_section(title: str):
@@ -25,7 +37,7 @@ def print_section(title: str):
 
 def format_features_table(tracks_data: List[dict]) -> str:
     """Format track features for display."""
-    headers = ['ID', 'File', 'BPM', 'Key', 'Duration', 'Mood']
+    headers = ['ID', 'File', 'BPM', 'Key', 'Camelot (Open Key)', 'Duration', 'Mood']
     rows = []
 
     for track in tracks_data:
@@ -35,6 +47,7 @@ def format_features_table(tracks_data: List[dict]) -> str:
         if isinstance(bpm, float):
             bpm = f"{bpm:.1f}"
         key = track.get('key', 'N/A')
+        camelot = format_camelot(track.get('camelot'))
         duration = track.get('duration', 0)
         if isinstance(duration, (int, float)):
             duration = f"{duration:.0f}s"
@@ -45,7 +58,7 @@ def format_features_table(tracks_data: List[dict]) -> str:
         else:
             mood_str = "N/A"
 
-        rows.append([track_id, file_name, bpm, key, duration, mood_str])
+        rows.append([track_id, file_name, bpm, key, camelot, duration, mood_str])
 
     return tabulate(rows, headers=headers, tablefmt='grid')
 
@@ -65,6 +78,12 @@ def cmd_analyze(args):
             print(f"Track: {result['file_name']}")
             print(f"  Duration: {result['duration']:.1f}s")
             print(f"  BPM: {result.get('tempo', 'N/A')}")
+            key = result.get('key', 'N/A')
+            camelot = format_camelot(result.get('camelot_key'))
+            source = result.get('key_source', 'chroma')
+            conf = result.get('key_confidence')
+            conf_str = f", conf {conf:.2f}" if isinstance(conf, (int, float)) else ""
+            print(f"  Key: {key}  |  Camelot: {camelot}  |  via {source}{conf_str}")
             print(f"  RMS Mean: {result.get('rms_mean', 'N/A')}")
             if result.get('mood'):
                 print(f"  Mood: {result['mood']}")
@@ -116,6 +135,7 @@ def cmd_list_tracks(args):
             'duration': track.get('duration', 0),
             'tempo': features.get('bpm') if features else 'N/A',
             'key': features.get('key') if features else 'N/A',
+            'camelot': features.get('camelot_key') if features else 'N/A',
             'mood': mood if mood else {},
         })
 
@@ -291,6 +311,86 @@ def cmd_spectrogram(args):
     return 0
 
 
+def cmd_crosscheck_djuced(args):
+    """Compare DJIA's detected keys against the keys DJUCED has stored."""
+    from .djuced.exporter import DEFAULT_DJUCED_DB, crosscheck_keys, load_djuced_keys
+
+    print_section("DJUCED Key Cross-Check")
+
+    store = TrackStore(args.db or "db/djia.db")
+    djia_tracks = store.get_all_tracks_with_features()
+    if not djia_tracks:
+        print("No analyzed tracks in the DJIA database.")
+        return 1
+
+    djuced_path = args.djuced_input or DEFAULT_DJUCED_DB
+    try:
+        library = load_djuced_keys(djuced_path)
+    except Exception as e:
+        print(f"Could not read DJUCED database at {djuced_path}: {e}")
+        print("Pass the path with --djuced-input (close DJUCED first isn't needed for read-only).")
+        return 1
+
+    rows = crosscheck_keys(djia_tracks, library)
+
+    # Diffs first, then unmatched, then matches — the diffs are the point.
+    order = {"diff": 0, "unreadable": 1, "no_djia_key": 2,
+             "no_djuced_key": 3, "no_djuced_match": 4, "match": 5}
+    rows.sort(key=lambda r: (order.get(r["status"], 9), r["file_name"]))
+
+    label = {
+        "match": "✓ match", "diff": "✗ DIFFERS", "unreadable": "? DJUCED key format",
+        "no_djia_key": "? no DJIA key", "no_djuced_key": "– no DJUCED key",
+        "no_djuced_match": "– not in DJUCED",
+    }
+
+    def cam(c):
+        return format_camelot(c) if c else "—"
+
+    table = [
+        [
+            Path(r["file_name"]).name[:32],
+            cam(r["djia_camelot"]),
+            (f"{r['djuced_key_raw']} -> {cam(r['djuced_camelot'])}"
+             if r["djuced_key_raw"] else "—"),
+            label.get(r["status"], r["status"]),
+        ]
+        for r in rows
+    ]
+    print(tabulate(table, headers=["File", "DJIA", "DJUCED", "Status"], tablefmt="grid"))
+
+    counts = Counter(r["status"] for r in rows)
+    print(
+        f"\n{counts.get('match', 0)} match · {counts.get('diff', 0)} differ · "
+        f"{counts.get('no_djuced_match', 0)} not in DJUCED · "
+        f"{counts.get('unreadable', 0)} unreadable DJUCED key"
+    )
+
+    if args.output:
+        _write_crosscheck_report(args.output, rows, label, djuced_path)
+        print(f"\nReport written to: {args.output}")
+
+    return 0
+
+
+def _write_crosscheck_report(path: str, rows: List[dict], label: dict, djuced_path: str):
+    """Write the cross-check as a Markdown table (diffs highlighted)."""
+    Path(path).parent.mkdir(parents=True, exist_ok=True)
+    diffs = [r for r in rows if r["status"] == "diff"]
+    with open(path, "w") as f:
+        f.write("# DJIA ↔ DJUCED key cross-check\n\n")
+        f.write(f"DJUCED database: `{djuced_path}`\n\n")
+        f.write(f"**{len(diffs)} disagreement(s)** out of {len(rows)} track(s).\n\n")
+        f.write("| File | DJIA (Camelot / Open Key) | DJUCED (raw → Camelot) | Status |\n")
+        f.write("|---|---|---|---|\n")
+        for r in rows:
+            djia = format_camelot(r["djia_camelot"]) if r["djia_camelot"] else "—"
+            duc = (f"{r['djuced_key_raw']} → {r['djuced_camelot'] or '?'}"
+                   if r["djuced_key_raw"] else "—")
+            f.write(f"| {Path(r['file_name']).name} | {djia} | {duc} "
+                    f"| {label.get(r['status'], r['status'])} |\n")
+
+
 def cmd_export_traktor(args):
     """Export to Traktor NML format."""
     print_section("Traktor Export")
@@ -421,6 +521,17 @@ Examples:
     traktor_parser.add_argument('--traktor-input', default='Collection.nml',
                                 help='Path to Traktor Collection.nml (optional, for hot cues)')
     traktor_parser.set_defaults(func=cmd_export_traktor)
+
+    # DJUCED key cross-check command
+    crosscheck_parser = subparsers.add_parser(
+        'crosscheck-djuced',
+        help="Compare DJIA's detected keys against the keys DJUCED has stored")
+    crosscheck_parser.add_argument('--db', help='DJIA database path (default: db/djia.db)')
+    crosscheck_parser.add_argument('--djuced-input',
+                                   help='Path to DJUCED.db (default: ~/Documents/DJUCED/DJUCED.db)')
+    crosscheck_parser.add_argument('--output',
+                                   help='Optional Markdown report path (e.g. results/key_crosscheck.md)')
+    crosscheck_parser.set_defaults(func=cmd_crosscheck_djuced)
 
     # Parse and execute
     args = parser.parse_args()
