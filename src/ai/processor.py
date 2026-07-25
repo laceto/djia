@@ -20,17 +20,20 @@ class AIProcessor:
         self,
         stem_model: str = 'htdemucs',
         cache_stems: bool = True,
-        normalize_stems: bool = True
+        normalize_stems: bool = True,
+        stem_backend: str = 'auto'
     ):
         """
         Initialize AI processor.
 
         Args:
-            stem_model: Demucs model for stem separation.
+            stem_model: Model for stem separation (Demucs model, or an
+                audio-separator model filename such as a MelBand Roformer .ckpt).
             cache_stems: Whether to cache separated stems.
             normalize_stems: Whether to normalize stem loudness.
+            stem_backend: 'auto', 'demucs', or 'audio-separator'.
         """
-        self.stem_separator = StemSeparator(model=stem_model)
+        self.stem_separator = StemSeparator(model=stem_model, backend=stem_backend)
         self.mood_classifier = MoodClassifier()
         self.segmenter = StructureSegmenter()
         self.cache_stems = cache_stems
@@ -242,7 +245,8 @@ def process_with_stems(
     audio_path: str,
     features_dict: Optional[Dict[str, Any]] = None,
     sr: int = 22050,
-    stem_model: str = 'htdemucs'
+    stem_model: str = 'htdemucs',
+    stem_backend: str = 'auto'
 ) -> Dict[str, Any]:
     """
     Convenience function for Phase 3 AI processing.
@@ -251,10 +255,11 @@ def process_with_stems(
         audio_path: Path to audio file.
         features_dict: Optional Phase 2 features dict.
         sr: Sample rate.
-        stem_model: Demucs model.
+        stem_model: Stem separation model (Demucs model or audio-separator filename).
+        stem_backend: 'auto', 'demucs', or 'audio-separator'.
 
     Returns:
         Enhanced features dict with AI results.
     """
-    processor = AIProcessor(stem_model=stem_model)
+    processor = AIProcessor(stem_model=stem_model, stem_backend=stem_backend)
     return processor.process_with_stems(audio_path, features_dict=features_dict, sr=sr)

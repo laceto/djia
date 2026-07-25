@@ -231,6 +231,61 @@ class TestStemSeparator:
             # Check that it's been normalized (not zero)
             assert np.max(np.abs(audio)) > 0
 
+    def test_backend_defaults_to_demucs(self):
+        """A Demucs model name (or the default) resolves to the demucs backend."""
+        assert StemSeparator(model='htdemucs').backend == 'demucs'
+        assert StemSeparator(model='mdx_extra').backend == 'demucs'
+
+    def test_backend_autodetects_roformer(self):
+        """Roformer / audio-separator model names select the audio-separator backend."""
+        assert StemSeparator(model='mel_band_roformer.ckpt').backend == 'audio-separator'
+        assert StemSeparator(model='MelBandRoformer').backend == 'audio-separator'
+        assert StemSeparator(model='some_model.onnx').backend == 'audio-separator'
+
+    def test_backend_explicit_override(self):
+        """An explicit backend overrides model-name inference."""
+        assert StemSeparator(model='htdemucs', backend='audio-separator').backend == 'audio-separator'
+        assert StemSeparator(model='MelBandRoformer', backend='demucs').backend == 'demucs'
+
+    def test_backend_rejects_unknown(self):
+        """An unknown backend name is rejected."""
+        with pytest.raises(ValueError):
+            StemSeparator(backend='nonsense')
+
+    def test_track_hash_depends_on_model(self):
+        """Different models must not share a path-keyed cache entry."""
+        a = StemSeparator(model='htdemucs')._get_track_hash('song.wav')
+        b = StemSeparator(model='MelBandRoformer')._get_track_hash('song.wav')
+        assert a != b
+
+    def test_map_source_name(self):
+        """Backend source labels fold into the four canonical stem names."""
+        m = StemSeparator._map_source_name
+        assert m('Drums') == 'drums'
+        assert m('song_(Bass)_Model') == 'bass'
+        assert m('song_(Vocals)_Model') == 'vocals'
+        assert m('other') == 'melody'
+        assert m('song_(Instrumental)_Model') == 'melody'
+
+    def test_assemble_stems_zero_fills_and_aligns(self):
+        """Missing stems are zero-filled; present stems share a common length."""
+        separator = StemSeparator()
+        raw = {
+            'drums': np.ones((2, 100)),
+            'bass': np.ones(80),  # mono, shorter — should be widened and padded
+        }
+        stems = separator._assemble_stems(raw)
+
+        assert set(stems.keys()) == set(StemSeparator.STEM_NAMES)
+        for audio in stems.values():
+            assert audio.shape == (2, 100)
+        # vocals/melody were absent -> all zeros
+        assert not np.any(stems['vocals'])
+        assert not np.any(stems['melody'])
+        # bass was mono length 80 -> widened to stereo, padded to 100
+        assert np.array_equal(stems['bass'][:, :80], np.ones((2, 80)))
+        assert not np.any(stems['bass'][:, 80:])
+
 
 # Tests for AIProcessor
 class TestAIProcessor:
