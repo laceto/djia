@@ -58,8 +58,10 @@ data/ results/ db/  gitignored — never commit tracks, .db, or NML
 ```
 
 Root holds only: `pyproject.toml`/`requirements.txt`, `CLAUDE.md`, the `*-rules.md` files,
-`README.md`, and the two current reference guides (`PARAMETER_REFERENCE.md`,
-`LANGGRAPH_TRACK_TUNER_README.md`). Older phase/tuning docs are archived under `docs/archive/`.
+`README.md`, the two current reference guides (`PARAMETER_REFERENCE.md`,
+`LANGGRAPH_TRACK_TUNER_README.md`), and standalone analysis scripts
+(`demo_capabilities.py` — full 5-phase tour; `detect_structure.py` — drop/breakdown bars).
+Older phase/tuning docs are archived under `docs/archive/`.
 
 ## Reference Docs (load only what your task requires)
 

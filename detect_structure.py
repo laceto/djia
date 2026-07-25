@@ -31,43 +31,19 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+# Single source of truth for structure detection lives in the DSP engine.
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+from src.dsp.phrasing_engine import (  # noqa: E402
+    compute_lowband_energy,
+    smooth_lowband_energy,
+    detect_energy_sections,
+)
+
 
 def detect_bpm(y, sr):
     onset_env = librosa.onset.onset_strength(y=y, sr=sr)
     bpm, _ = librosa.beat.beat_track(onset_envelope=onset_env, sr=sr)
     return float(np.atleast_1d(bpm)[0])
-
-
-def low_band_energy(y, sr, hop=512, fmin=20, fmax=150):
-    """Mean magnitude in the kick+bass band per STFT frame."""
-    S = np.abs(librosa.stft(y, hop_length=hop))
-    freqs = librosa.fft_frequencies(sr=sr)
-    band = np.where((freqs >= fmin) & (freqs <= fmax))[0]
-    energy = S[band, :].mean(axis=0)
-    times = librosa.frames_to_time(np.arange(len(energy)), sr=sr, hop_length=hop)
-    return energy, times, hop
-
-
-def find_sections(energy, times, spb, hop, sr, min_bars=4, thresh_frac=0.4):
-    """Return [(is_drop, t_start, t_end), ...] for sections >= min_bars long."""
-    # smooth over ~1 bar
-    win = max(1, int(spb / (hop / sr)))
-    energy_s = np.convolve(energy, np.ones(win) / win, mode="same")
-
-    on = energy_s > (thresh_frac * energy_s.max())
-
-    # collapse consecutive equal states into raw sections
-    raw = []
-    state, start = on[0], 0
-    for i in range(1, len(on)):
-        if on[i] != state:
-            raw.append((bool(state), times[start], times[i]))
-            state, start = on[i], i
-    raw.append((bool(state), times[start], times[-1]))
-
-    # drop sections shorter than min_bars (merge into nothing — just filter)
-    min_len = min_bars * spb
-    return [s for s in raw if (s[1] is not None and (s[2] - s[1]) >= min_len)], energy_s
 
 
 def to_bar(t, spb):
@@ -103,11 +79,15 @@ def main():
     y, sr = librosa.load(args.audio, sr=22050)
     dur = librosa.get_duration(y=y, sr=sr)
     bpm = detect_bpm(y, sr)
-    spb = (60.0 / bpm) * 4.0
+    hop = 512
 
-    energy, times, hop = low_band_energy(y, sr)
-    sections, energy_s = find_sections(energy, times, spb, hop, sr,
-                                       min_bars=args.min_bars, thresh_frac=args.thresh)
+    # Structure comes from the DSP engine (same code the Traktor hot cues use).
+    energy = compute_lowband_energy(y, sr, hop_length=hop)
+    sections = detect_energy_sections(energy, sr, bpm, hop_length=hop,
+                                      min_bars=args.min_bars, thresh_frac=args.thresh)
+    # Smoothed envelope + bar length from the engine, for the plot / bar math.
+    energy_s, spb = smooth_lowband_energy(energy, sr, bpm, hop_length=hop)
+    times = librosa.frames_to_time(np.arange(len(energy)), sr=sr, hop_length=hop)
 
     print(f"Track   : {os.path.basename(args.audio)}")
     print(f"BPM     : {bpm:.2f}   sec/bar: {spb:.3f}   total bars: ~{int(dur/spb)}")

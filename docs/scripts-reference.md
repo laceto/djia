@@ -57,6 +57,27 @@ python -m src.cli spectrogram <track_id> [--db PATH] [--spectrogram-dir data/spe
 python -m src.dsp.extractor "path/to.mp3"
 ```
 
+## Standalone analysis scripts (repo root)
+
+Two self-contained scripts run the real DSP/AI code without the DB or CLI. Both write to `results/`
+(gitignored) and are headless-safe (plots saved as PNGs; nothing opens a window unless `--show`).
+
+```bash
+# detect_structure.py — breakdown/drop structure reported in BAR numbers
+python detect_structure.py [track.mp3] [--phrase 8] [--min-bars 4] [--thresh 0.4] [--pads 4] [--no-plot]
+#   --phrase N : snap reported bars to an N-bar phrase grid (0 = raw)
+#   --min-bars : merge sections shorter than N bars
+#   --thresh   : kick-on threshold as a fraction of peak low-band energy
+#   --pads N   : also print an N-pad hot-cue mapping (intro, main drop, outro always kept)
+#   writes results/structure_bars.txt + results/plots/structure_bars.png
+#   Uses src.dsp.phrasing_engine (same code as the Traktor hot-cue export) — single source of truth.
+
+# demo_capabilities.py — end-to-end tour of all 5 phases on one track
+python demo_capabilities.py [track.mp3] [--show]
+#   ingestion → 4 DSP engines → mood classifier → SQLite + similarity + Traktor NML → transitions/playlist
+#   mirrors console output to results/demo_report.txt; plots to results/plots/*.png
+```
+
 ## Tests / lint
 
 See `testing-rules.md`:
