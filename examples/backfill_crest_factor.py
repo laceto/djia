@@ -7,7 +7,7 @@ need to be re-analyzed to get it.
 """
 import sqlite3
 
-DB_PATH = "data/djia.db"
+DB_PATH = "db/djia.db"
 
 conn = sqlite3.connect(DB_PATH)
 cur = conn.execute(

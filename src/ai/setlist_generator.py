@@ -36,6 +36,13 @@ ASCENDING_PHASES = {"warmup", "build", "comeback"}
 TRANSITION_WEIGHTS = {"bpm": 0.35, "key": 0.30, "mood": 0.20, "energy": 0.15}
 ENERGY_DIRECTION_BONUS = 0.06
 
+# Groove/swing is applied as a multiplicative penalty on top of the weighted
+# blend above, not a 5th competing weight (mirrors the Pairing notebook's
+# groove_score, but as a modifier rather than a share of the total). Unknown
+# swing on either track applies no penalty (factor 1.0, same as not having the
+# term at all); a full swing clash floors the score at GROOVE_PENALTY_FLOOR.
+GROOVE_PENALTY_FLOOR = 0.7
+
 PHASE_STRATEGY = {
     "warmup": ("32-48 bars", "warm lows, restrained highs — let grooves breathe"),
     "build": ("16-32 bars", "push high-mids gradually, layer percussion"),
@@ -49,13 +56,13 @@ PHASE_STRATEGY = {
 # Library loading
 # ---------------------------------------------------------------------------
 
-def load_library(db_path: str = "data/djia.db") -> List[Dict]:
+def load_library(db_path: str = "db/djia.db") -> List[Dict]:
     """
     Load every fully-analyzed track (has BPM) as a flat dict.
 
     Returns dicts with: id, file_name, file_path, title, artist, duration,
-    bpm, camelot_key, rms_mean, brightness (spectral centroid), and the six
-    mood dimensions.
+    bpm, camelot_key, rms_mean, brightness (spectral centroid), swing_score,
+    and the six mood dimensions.
     """
     conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
@@ -63,7 +70,7 @@ def load_library(db_path: str = "data/djia.db") -> List[Dict]:
         rows = conn.execute(
             """
             SELECT t.id, t.file_name, t.file_path, t.title, t.artist, t.duration,
-                   f.bpm, f.camelot_key, f.rms_mean,
+                   f.bpm, f.camelot_key, f.rms_mean, f.swing_score,
                    f.spectral_centroid_mean AS brightness,
                    m.dark, m.hypnotic, m.euphoric, m.aggressive, m.industrial, m.minimal
             FROM tracks t
@@ -250,6 +257,19 @@ def _mood_vec(track: Dict) -> Optional[Dict[str, float]]:
     return vec or None
 
 
+def _groove_score(a: Dict, b: Dict) -> Optional[float]:
+    """
+    Swing compatibility (0-1); None when either track lacks a stored
+    swing_score (0=straight/stiff grid, 1=loose/swung). Same groove -> 1.0;
+    a straight track against a heavily swung one -> hats flam during a long
+    blend, so the score falls off linearly and hits 0 at a 0.5 gap.
+    """
+    sa, sb = a.get("swing_score"), b.get("swing_score")
+    if sa is None or sb is None:
+        return None
+    return max(0.0, 1.0 - abs(float(sa) - float(sb)) / 0.5)
+
+
 def transition_score(a: Dict, b: Dict, ascending: bool = False) -> float:
     """Blended a->b transition quality (0-1), notebook-compatible weights."""
     score = (
@@ -258,6 +278,9 @@ def transition_score(a: Dict, b: Dict, ascending: bool = False) -> float:
         + TRANSITION_WEIGHTS["mood"] * _calculate_mood_continuity(_mood_vec(a), _mood_vec(b))
         + TRANSITION_WEIGHTS["energy"] * _calculate_energy_arc(a.get("rms_mean"), b.get("rms_mean"))
     )
+    groove = _groove_score(a, b)
+    if groove is not None:
+        score *= GROOVE_PENALTY_FLOOR + (1 - GROOVE_PENALTY_FLOOR) * groove
     if ascending:
         ra, rb = a.get("rms_mean"), b.get("rms_mean")
         if ra is not None and rb is not None and rb >= ra:
@@ -490,7 +513,7 @@ def render_report(
 
 
 def generate_setlist(
-    db_path: str = "data/djia.db",
+    db_path: str = "db/djia.db",
     n_tracks: int = 28,
     output_path: str = "results/setlist_5phase.md",
     with_mix_sheets: bool = True,
@@ -508,7 +531,19 @@ def generate_setlist(
     report = render_report(setlist, mix_points_fn=fn)
 
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
-    with open(output_path, "w", encoding="utf-8") as f:
-        f.write(report)
+    try:
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(report)
+    except PermissionError:
+        # the file is open elsewhere (e.g. a viewer) - write a timestamped
+        # copy instead of dying
+        from datetime import datetime
+
+        stem = Path(output_path)
+        output_path = str(
+            stem.with_name(f"{stem.stem}_{datetime.now():%Y%m%d-%H%M%S}{stem.suffix}")
+        )
+        with open(output_path, "w", encoding="utf-8") as f:
+            f.write(report)
     logger.info(f"Wrote {n_tracks}-track 5-phase setlist to {output_path}")
     return output_path

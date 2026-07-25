@@ -54,7 +54,7 @@ src/
   main.py, audio_analysis.py, mixing_metrics.py, structure_detection.py   LEGACY — do not extend
 tests/          pytest suite (one file per subsystem)
 docs/           reference documentation (see table below)
-data/ results/  gitignored — never commit tracks, .db, or NML
+data/ results/ db/  gitignored — never commit tracks, .db, or NML
 ```
 
 Root holds only: `pyproject.toml`/`requirements.txt`, `CLAUDE.md`, the `*-rules.md` files,
@@ -78,5 +78,5 @@ Root holds only: `pyproject.toml`/`requirements.txt`, `CLAUDE.md`, the `*-rules.
 2. Load the rule file for that task
 3. Load only the reference docs the task actually requires — do not load all docs
 4. Always-true, no rule file needed: run the CLI as a module from repo root (`python -m src.cli ...`);
-   `data/` + `results/` are gitignored; LangGraph deps are NOT in `requirements.txt`
+   `data/` + `results/` + `db/` are gitignored; LangGraph deps are NOT in `requirements.txt`
 5. If unsure which category fits, ask — do not guess

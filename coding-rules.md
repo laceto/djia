@@ -26,12 +26,15 @@ How to write code in this repo. Read before adding or changing any Python in `sr
   `spectral_flatness`/`crest_factor` → curation engine (alongside `spectral_flux`/`complexity_score`);
   `onset_strength_mean/std`/`beat_strength` → groove engine (alongside BPM/swing, reusing the
   onset envelope already computed there); `zero_crossing_rate`/`roughness` → mood engine (alongside
-  key/brightness). `orchestrator.py`'s `_add_density`/`_add_swing`/`_add_tonality` call these
-  directly for the DB-persisted `analyze` CLI path; `extractor.extract_track_features` picks them
-  up automatically via the engine results for the standalone/no-DB path.
+  key/brightness). `dsp/worker.py`'s `_add_density`/`_add_swing`/`_add_tonality` call these
+  directly for the DB-persisted `analyze` CLI path (both `--track` and library scans);
+  `extractor.extract_track_features` picks them up automatically via the engine results for the
+  standalone/no-DB path.
 - `analyze_one_track` in `src/dsp/worker.py` is the single source of truth for "what happens to one
-  track" during `analyze_library` — `workers=1` and `workers>1` both call it (there's no separate
-  inline per-file loop anymore). Add new per-track DSP/AI steps there, not in `Orchestrator`.
+  track" during `analyze` — `Orchestrator.analyze_library` (`workers=1` and `workers>1`) and
+  `Orchestrator.analyze_single_track` (`--track`) all call it; there's no separate per-file
+  compute logic in `Orchestrator` anymore. Add new per-track DSP/AI steps there, not in
+  `Orchestrator`.
 
 ### Segmentation / tuning
 

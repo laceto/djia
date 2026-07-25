@@ -109,7 +109,7 @@ def _add_missing_columns(conn: sqlite3.Connection, table: str, columns: dict) ->
             logger.info(f"Migrated {table}: added column {name}")
 
 
-def init_db(db_path: str = "data/djia.db") -> sqlite3.Connection:
+def init_db(db_path: str = "db/djia.db") -> sqlite3.Connection:
     """
     Initialize database with schema.
 
@@ -159,7 +159,7 @@ def init_db(db_path: str = "data/djia.db") -> sqlite3.Connection:
         raise
 
 
-def get_connection(db_path: str = "data/djia.db") -> sqlite3.Connection:
+def get_connection(db_path: str = "db/djia.db") -> sqlite3.Connection:
     """
     Get or create database connection.
 

@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class TrackStore:
     """Database operations for tracks and features."""
 
-    def __init__(self, db_path: str = "data/djia.db"):
+    def __init__(self, db_path: str = "db/djia.db"):
         """Initialize store with database path."""
         self.db_path = db_path
         # Ensure database is initialized
