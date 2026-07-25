@@ -14,10 +14,6 @@ right context. The data contract for everything is the `Track` dataclass in `src
 → READ: `coding-rules.md`
 → ALSO READ: `docs/architecture.md` for how the AI layer consumes DSP output
 
-**CODING (LangGraph Track Tuner)** — Modifying `src/ai/track_tuner_*.py`
-→ READ: `coding-rules.md` (LangGraph Track Tuner section)
-→ ALSO READ: `LANGGRAPH_TRACK_TUNER_README.md` (scoring rubric) + `PARAMETER_REFERENCE.md`
-
 **TESTING** — Writing tests or running the suite
 → READ: `testing-rules.md`
 
@@ -42,7 +38,7 @@ right context. The data contract for everything is the `Track` dataclass in `src
 src/
   dsp/          core pipeline: extractor + groove/phrasing/mood/curation engines, config.py
   ai/           stem_separator, classifier, segmentation, processor, transition_mapper,
-                playlist_generator, setlist_generator, track_tuner_* (optional LangGraph agent)
+                playlist_generator, setlist_generator
   features/     schema.py — the Track dataclass, THE data contract
   database/     SQLite schema + store (TrackStore)
   matching/     cosine similarity over feature vectors
@@ -58,8 +54,7 @@ data/ results/ db/  gitignored — never commit tracks, .db, or NML
 ```
 
 Root holds only: `pyproject.toml`/`requirements.txt`, `CLAUDE.md`, the `*-rules.md` files,
-`README.md`, the two current reference guides (`PARAMETER_REFERENCE.md`,
-`LANGGRAPH_TRACK_TUNER_README.md`), and standalone analysis scripts
+`README.md`, the current reference guide (`PARAMETER_REFERENCE.md`), and standalone analysis scripts
 (`demo_capabilities.py` — full 5-phase tour; `detect_structure.py` — drop/breakdown bars).
 Older phase/tuning docs are archived under `docs/archive/`.
 
@@ -67,12 +62,11 @@ Older phase/tuning docs are archived under `docs/archive/`.
 
 | File | Contents |
 |---|---|
-| `docs/architecture.md` | Data flow, engine order + dependencies, config/preset system, tuner flow, AI layer |
+| `docs/architecture.md` | Data flow, engine order + dependencies, config/preset system, AI layer |
 | `docs/schemas.md` | `Track` dataclass + component results, SQLite table schema |
-| `docs/api-reference.md` | Public entry points: extract_track_features, TrackStore, similarity, tuner, orchestrator |
+| `docs/api-reference.md` | Public entry points: extract_track_features, TrackStore, similarity, orchestrator |
 | `docs/scripts-reference.md` | All CLI commands with flags, env setup, `.env` config |
 | `PARAMETER_REFERENCE.md` | What each phrasing/segmentation parameter does (current) |
-| `LANGGRAPH_TRACK_TUNER_README.md` | Track Tuner scoring rubric (current) |
 
 ## Instructions
 
@@ -80,5 +74,5 @@ Older phase/tuning docs are archived under `docs/archive/`.
 2. Load the rule file for that task
 3. Load only the reference docs the task actually requires — do not load all docs
 4. Always-true, no rule file needed: run the CLI as a module from repo root (`python -m src.cli ...`);
-   `data/` + `results/` + `db/` are gitignored; LangGraph deps are NOT in `requirements.txt`
+   `data/` + `results/` + `db/` are gitignored
 5. If unsure which category fits, ask — do not guess

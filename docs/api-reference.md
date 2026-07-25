@@ -83,15 +83,6 @@ Public entry points for programmatic use. Import the package from the repo root.
 - **`classifier`** — 6-dimension mood classification.
 - **`segmentation`** — structural detection (drop/breakdown/outro) with confidence.
 
-## Track Tuner (`src/ai/track_tuner_graph.py`) — optional, LangGraph
-
-- **`run_single_track(path, preset, max_iterations)`** — tune one track's phrasing params until
-  quality ≥ 0.70 or `max_iterations`.
-- **`run_batch_tracks(paths, preset)`** — batch version.
-
-> Import tuner entry points directly from `src.ai.track_tuner_graph` — `src/ai/__init__.py` does not
-> re-export them, and their deps are not in `requirements.txt`.
-
 ## DJUCED export (`src/djuced/`)
 
 - **`exporter.export_mix_cues(track_cues, db_path=DEFAULT_DJUCED_DB, dry_run=True) -> report`**

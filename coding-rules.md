@@ -45,18 +45,6 @@ How to write code in this repo. Read before adding or changing any Python in `sr
 - Named presets (`default`, `minimal`, `house`, `techno`, `aggressive`) trade segment count vs.
   length. See `PARAMETER_REFERENCE.md` for what each parameter does.
 
-## LangGraph Track Tuner (`src/ai/track_tuner_*.py`)
-
-- Optional, self-contained agent. Nodes are pure `(state, config) -> dict` and emit
-  `[NodeName]`-prefixed `AIMessage`s for tracing — keep that pattern for new nodes.
-- State is a `TypedDict` with `operator.add` / `add_messages` reducers in `track_tuner_state.py`.
-- The preset dicts here (`DEFAULT_CONFIGS` in `track_tuner_state.py`) **mirror `dsp/config.py`** —
-  if you change one, change the other to keep them consistent.
-- LangGraph deps are **not** in `requirements.txt` and `src/ai/__init__.py` deliberately does not
-  import these modules. Import them directly from `src.ai.track_tuner_graph`. See
-  `debugging-rules.md`.
-- Scoring rubric lives in `evaluate_quality`; full rubric in `LANGGRAPH_TRACK_TUNER_README.md`.
-
 ## Legacy — do not extend
 
 `src/main.py`, `audio_analysis.py`, `mixing_metrics.py`, `structure_detection.py` are an earlier

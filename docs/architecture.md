@@ -1,8 +1,7 @@
 # Architecture
 
-The system is a **DSP feature-extraction pipeline** with a database/export layer on top, plus an
-**optional LangGraph agent** for auto-tuning segmentation parameters. Everything hangs off the
-`Track` dataclass in `src/features/schema.py` (see `docs/schemas.md`).
+The system is a **DSP feature-extraction pipeline** with a database/export layer on top. Everything
+hangs off the `Track` dataclass in `src/features/schema.py` (see `docs/schemas.md`).
 
 ## Data flow
 
@@ -67,24 +66,6 @@ count vs. length — lower `thresh_frac` + smaller `min_bars` = more, shorter se
 via `get_config(preset)` or build one with `custom_config(min_bars, thresh_frac, max_pads)`, then
 pass it as the `config=` arg to `extract_track_features`. Parameter meanings are documented in
 `PARAMETER_REFERENCE.md`.
-
-## LangGraph Track Tuner (`src/ai/track_tuner_*.py`) — optional, self-contained
-
-An agent that iteratively tunes the phrasing params per track until segmentation quality is "good"
-(≥0.70) or `max_iterations` is hit. Flow:
-
-```
-load_track → initialize_config → analyze_track → evaluate_quality
-           → (suggest_tuning → analyze_track)* → finalize
-```
-
-State is a `TypedDict` with `operator.add` / `add_messages` reducers (`track_tuner_state.py`); nodes
-are pure `(state, config) -> dict` and emit `[NodeName]`-prefixed `AIMessage`s for tracing. Entry
-points: `run_single_track(path, preset, max_iterations)` and `run_batch_tracks(paths, preset)`.
-Quality scoring lives in `evaluate_quality`; full rubric in `LANGGRAPH_TRACK_TUNER_README.md`.
-
-The preset dicts here (`DEFAULT_CONFIGS` in `track_tuner_state.py`) mirror `dsp/config.py` — keep
-them consistent.
 
 ## AI layer (`src/ai/`)
 

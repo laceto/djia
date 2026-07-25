@@ -19,8 +19,7 @@ pip install -r requirements.txt
 > git clone https://github.com/deezer/skey && pip install --no-deps ./skey
 > ```
 > When installed, `analyze` uses it automatically (`key_source="skey"`); otherwise DJIA falls back
-> to the chroma method. LangGraph deps (`langgraph`, `langchain-core`) are likewise **not** bundled —
-> install separately if you use the Track Tuner.
+> to the chroma method.
 
 ## CLI (module form — always run from repo root)
 

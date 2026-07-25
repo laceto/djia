@@ -9,7 +9,7 @@ DJIA analyzes your audio library to extract features, classify mood, detect stru
 > **Working on the code?** Start at `CLAUDE.md` — it is a task router that points you to the right
 > rule file (`coding-rules.md`, `testing-rules.md`, `debugging-rules.md`) and reference docs under
 > `docs/` (`architecture.md`, `schemas.md`, `api-reference.md`, `scripts-reference.md`). Segmentation
-> tuning lives in `PARAMETER_REFERENCE.md`; the LangGraph Track Tuner in `LANGGRAPH_TRACK_TUNER_README.md`.
+> tuning lives in `PARAMETER_REFERENCE.md`.
 
 **Key Features:**
 - Automatic audio feature extraction (BPM, spectral analysis, harmonic content)
@@ -72,11 +72,6 @@ Four ordered engines (Groove → Phrasing → Mood → Curation), orchestrated b
   per-transition mix sheets
 
 **Modules:** `src/ai/transition_mapper.py`, `src/ai/playlist_generator.py`, `src/ai/setlist_generator.py`
-
-### Optional: LangGraph Track Tuner
-A self-contained agent (`src/ai/track_tuner_*.py`) that iteratively tunes the phrasing parameters
-per track until segmentation quality is good. Its deps (`langgraph`, `langchain-core`) are **not** in
-`requirements.txt` — install separately. See `LANGGRAPH_TRACK_TUNER_README.md`.
 
 ## Installation
 
@@ -527,8 +522,7 @@ djia/
 │   │   ├── segmentation.py          # Phase 3: structural detection
 │   │   ├── transition_mapper.py     # Phase 5A: transition scoring
 │   │   ├── playlist_generator.py    # Phase 5B: playlist generation
-│   │   ├── setlist_generator.py     # Phase 5C: 5-phase setlist + mix sheets
-│   │   └── track_tuner_*.py         # optional LangGraph Track Tuner
+│   │   └── setlist_generator.py     # Phase 5C: 5-phase setlist + mix sheets
 │   ├── database/              # Phase 4: schema.py, store.py (SQLite)
 │   ├── matching/similarity.py # Phase 4: cosine similarity
 │   ├── traktor/exporter.py    # Phase 4: Traktor NML export
