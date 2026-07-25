@@ -526,6 +526,35 @@ def compute_lowband_energy(
     return S[band, :].mean(axis=0)
 
 
+def smooth_lowband_energy(
+    energy: np.ndarray,
+    sr: int,
+    bpm: float,
+    hop_length: int = 512,
+) -> Tuple[np.ndarray, float]:
+    """
+    Smooth the low-band energy envelope over ~1 bar.
+
+    Shared by :func:`detect_energy_sections` (for thresholding) and by external
+    visualisations, so the displayed curve matches the curve the detector uses.
+
+    Args:
+        energy: Low-band energy envelope (from compute_lowband_energy)
+        sr: Sample rate
+        bpm: Track BPM (sets the ~1-bar smoothing window)
+        hop_length: Hop length used for the energy envelope
+
+    Returns:
+        (energy_smoothed, seconds_per_bar)
+    """
+    spb = (60.0 / bpm) * 4.0 if bpm > 0 else 2.0
+    if len(energy) == 0:
+        return energy, spb
+    win = max(1, int(spb / (hop_length / sr)))
+    energy_s = np.convolve(energy, np.ones(win) / win, mode="same")
+    return energy_s, spb
+
+
 def detect_energy_sections(
     energy: np.ndarray,
     sr: int,
@@ -559,11 +588,9 @@ def detect_energy_sections(
 
     times = librosa.frames_to_time(np.arange(n), sr=sr, hop_length=hop_length)
     end_time = float(times[-1]) if n > 1 else 0.0
-    spb = (60.0 / bpm) * 4.0 if bpm > 0 else 2.0
 
-    # Smooth over ~1 bar
-    win = max(1, int(spb / (hop_length / sr)))
-    energy_s = np.convolve(energy, np.ones(win) / win, mode="same")
+    # Smooth over ~1 bar (shared with visualisations)
+    energy_s, spb = smooth_lowband_energy(energy, sr, bpm, hop_length)
 
     peak = float(energy_s.max()) if energy_s.size else 0.0
     if peak <= 0:

@@ -1,364 +1,151 @@
 # Parameter Reference Card
 
-The current, authoritative reference for segmentation tuning and behavior. Covers the three tunable
-parameters, how detection works, beat/bar labels, and phrase-locking.
+The current, authoritative reference for segmentation tuning and behavior. Covers the tunable
+phrasing parameters, how detection works, hot-cue mapping, element onsets, and bar helpers.
 
-## How segmentation works (spectral novelty)
+## How segmentation works (low-band energy)
 
-Segments come from **spectral novelty analysis** — measuring frame-to-frame change in the frequency
-content and treating peaks as structural boundaries. Pipeline in `phrasing_engine.analyze_structure`:
+Structure comes from **kick+bass (low-band) energy** — for four-on-the-floor techno/house the low
+end carries the arrangement: it is present during **drops** and falls away during **breakdowns**.
+This is far more reliable than generic spectral novelty, which over-segments steady material.
+Pipeline in `phrasing_engine.analyze_structure`:
 
-1. **Novelty curve** — STFT (512-sample hop, ~23.2 ms @ 22,050 Hz) → per-frame normalized magnitude
-   → spectral flux (L2 norm of frame differences) → novelty curve in 0–1.
-2. **Peak detection** — `scipy.signal.find_peaks` with height = `novelty_threshold` and minimum
-   spacing = `min_segment_duration`. Peaks become boundaries.
-3. **Segments** — boundaries (plus 0.0 s start and track end) become labeled time ranges.
-4. **Auto-labeling** — rule-based: first short section → `intro`, last short → `outro`, short
-   mid-track (< `breakdown_duration_threshold`) → `breakdown`, first-half → `build`, second-half →
-   `drop`. Confidence is currently a fixed 0.8.
+1. **Low-band envelope** — `compute_lowband_energy`: STFT (512-sample hop, ~23.2 ms @ 22,050 Hz),
+   keep only the 20–150 Hz bins, average per frame.
+2. **Smooth + threshold** — `smooth_lowband_energy` averages over ~1 bar; frames above
+   `thresh_frac × peak` are "kick on". `off→on` starts a **drop**, `on→off` starts a **breakdown**
+   (`detect_energy_sections`).
+3. **Merge + label** — sections shorter than `min_bars` are merged into the previous one so blips
+   don't fragment the structure; sections stay contiguous and cover the whole track.
+   `label_energy_sections` labels them `intro` (first kick-off), `outro` (last kick-off),
+   `breakdown` (mid kick-off), `drop` (kick-on). Confidence is a fixed 0.85.
+4. **Hot cues** — `map_segments_to_hotcues` places one cue at each section **start** (the point a DJ
+   jumps to).
 
-Lower `novelty_threshold` and shorter `min_segment_duration` = more, shorter segments. This is why a
-minimal track like Marrakech yields 94 segments at defaults but ~8 with the `minimal` preset.
+Lower `thresh_frac` and smaller `min_bars` = more, shorter sections (more drop/breakdown
+transitions). This replaces the old spectral-novelty model, which produced dozens of spurious
+"breakdown" labels on minimal tracks.
 
 ## Three Tunable Parameters
 
-### 1. `novelty_threshold` (0.0 to 1.0)
+All three live in `PhrasingConfig` (`src/dsp/config.py`) and are passed straight to
+`analyze_structure`.
 
-**Controls:** Sensitivity of spectral change detection
+### 1. `min_bars` (bars, integer)
+
+**Controls:** minimum section length; shorter sections are merged into the previous one.
 
 ```
-0.3  ├─── AGGRESSIVE (detects every change)
-     │    → Many segments (100+)
-     │    → Use: Complex breakdowns, drum & bass
-     │
-0.45 ├─── TECHNO (good for structured tracks)
-     │    → Moderate segments (15-30)
-     │    → Use: Progressive, techno, house
-     │
-0.5  ├─── DEFAULT (balanced)
-     │    → Medium segments (10-20)
-     │    → Use: General purpose
-     │
-0.55 ├─── HOUSE (less sensitive)
-     │    → Fewer segments (8-15)
-     │    → Use: Tech house, deep house
-     │
-0.65 ├─── MINIMAL (conservative)
-     │    → Very few segments (5-10)
-     │    → Use: Minimal, ambient, hypnotic
-     │
-0.7+ └─── ULTRA-CONSERVATIVE (only major changes)
-         → Minimal segments (3-8)
-         → Use: Ambient, very minimal tracks
+2   ├─── AGGRESSIVE — keeps short sections (more, shorter drops/breakdowns)
+4   ├─── DEFAULT / TECHNO — balanced
+6   ├─── HOUSE — fewer, longer sections
+8   └─── MINIMAL / CONSERVATIVE — forces long sections (few boundaries)
 ```
 
-**For Marrakech:** Use **0.65** or higher
+### 2. `thresh_frac` (0.0 to 1.0)
+
+**Controls:** the kick-on threshold as a fraction of peak low-band energy.
+
+```
+0.30 ├─── AGGRESSIVE — much of the track reads as "kick on"; many transitions
+0.35 ├─── TECHNO
+0.40 ├─── DEFAULT — balanced
+0.45 ├─── HOUSE
+0.50 └─── MINIMAL / CONSERVATIVE — only clear, loud drops register
+```
+
+Lower = more sensitive (catches partial kick sections as drops). Higher = only full-energy drops
+count, so more of the track reads as breakdown.
+
+### 3. `max_pads` (integer or `None`)
+
+**Controls:** how many hot cues / physical performance pads to emit.
+
+- `None` (default) — one cue per structural section, labelled by type (intro→Pad 1, main drop→Pad 4,
+  later drops→Pad 3, breakdown→Pad 2, outro→Pad 1).
+- `N` (e.g. **4** for a 4-pad controller) — keep the **N most important** sections and re-label them
+  `Pad 1..N` in chronological order. The **intro**, the **first (main) drop** and the **outro** are
+  always kept; remaining slots go to the longest drops/breakdowns. Because pads are numbered by time,
+  the outro naturally takes the last pad.
 
 ---
 
-### 2. `min_segment_duration` (seconds)
+## Presets
 
-**Controls:** Minimum gap required between detected boundaries
+`get_config(preset)` returns a `DSPConfig`; the phrasing block trades off `min_bars` / `thresh_frac`:
 
-```
-4.0  ├─── AGGRESSIVE (allows short gaps)
-     │    → Short, many segments
-     │    → Use: Fast-paced, complex tracks
-     │
-6.0  ├─── TECHNO (moderate gap)
-     │    → Medium segments
-     │    → Use: Progressive, techno
-     │
-8.0  ├─── DEFAULT (balanced gap)
-     │    → Standard segments
-     │    → Use: General purpose
-     │
-10.0 ├─── HOUSE (larger gap)
-     │    → Fewer, longer segments
-     │    → Use: House, tech house
-     │
-12.0 ├─── MINIMAL (conservative gap)
-     │    → Long segments
-     │    → Use: Minimal, hypnotic
-     │
-16.0 └─── ULTRA-CONSERVATIVE (large gap)
-         → Very long segments only
-         → Use: Ambient, minimal
-```
+| Preset | `min_bars` | `thresh_frac` | Character |
+|---|---|---|---|
+| `default` | 4 | 0.40 | Balanced |
+| `techno` | 4 | 0.35 | Slightly more sensitive |
+| `house` | 6 | 0.45 | Fewer, longer sections |
+| `minimal` | 8 | 0.50 | Very few boundaries |
+| `aggressive` | 2 | 0.30 | Many short drop/breakdown transitions |
 
-**For Marrakech:** Use **12.0** or higher
+`max_pads` defaults to `None` in every preset; set it via `custom_config(max_pads=4)` or by editing
+`PhrasingConfig`.
 
 ---
 
-### 3. `breakdown_duration_threshold` (seconds)
+## Code Usage
 
-**Controls:** Which segments get labeled "breakdown"
+### Using presets
+```python
+from src.dsp.config import get_config
+from src.dsp.extractor import extract_track_features
 
-```
-16   ├─── AGGRESSIVE (any short section = breakdown)
-     │    → Many "breakdown" labels (5-10+)
-     │    → Use: Tracks with lots of short sections
-     │
-20   ├─── TECHNO (moderate threshold)
-     │    → Some "breakdown" labels (2-4)
-     │    → Use: Progressive, techno
-     │
-24   ├─── DEFAULT (balanced)
-     │    → Few "breakdown" labels (1-3)
-     │    → Use: General purpose
-     │
-28   ├─── HOUSE (conservative)
-     │    → Few "breakdown" labels (1-2)
-     │    → Use: House, deep house
-     │
-32   ├─── MINIMAL (very conservative)
-     │    → Almost no "breakdown" labels (0-1)
-     │    → Use: Minimal, hypnotic, ambient
-     │
-40+  └─── ULTRA-CONSERVATIVE (very long sections)
-         → Minimal "breakdown" labels (0)
-         → Use: Very minimal, ambient
+config = get_config("minimal")  # or "house", "techno", "aggressive", "default"
+track = extract_track_features("data/track.mp3", config=config)
 ```
 
-**For Marrakech:** Use **32.0** or higher
+### Custom configuration
+```python
+from src.dsp.config import custom_config
+from src.dsp.extractor import extract_track_features
 
----
-
-## Preset Combinations
-
-### Minimal (House, Ambient, Hypnotic)
-```
-novelty_threshold: 0.65
-min_segment_duration: 12.0
-breakdown_duration_threshold: 32.0
-→ Result: 5-10 segments, 0-1 breakdowns
+config = custom_config(min_bars=8, thresh_frac=0.5, max_pads=4)
+track = extract_track_features("data/track.mp3", config=config)
 ```
 
-### House (Deep House, Tech House)
-```
-novelty_threshold: 0.55
-min_segment_duration: 10.0
-breakdown_duration_threshold: 28.0
-→ Result: 8-15 segments, 1-2 breakdowns
+### Direct function call
+```python
+from src.dsp.phrasing_engine import analyze_structure
+import librosa
+
+y, sr = librosa.load("data/track.mp3", sr=22050)
+phrasing = analyze_structure(y, sr, bpm=123, min_bars=4, thresh_frac=0.4, max_pads=4)
+for cue in phrasing.cue_points:
+    print(cue.label, round(cue.time, 2), cue.type)
 ```
 
-### Techno (Progressive, Modern Techno)
-```
-novelty_threshold: 0.45
-min_segment_duration: 6.0
-breakdown_duration_threshold: 20.0
-→ Result: 15-30 segments, 2-4 breakdowns
-```
-
-### Aggressive (Complex, Drum & Bass)
-```
-novelty_threshold: 0.3
-min_segment_duration: 4.0
-breakdown_duration_threshold: 16.0
-→ Result: 30-100+ segments, 5-10+ breakdowns
-```
-
-### Default (Balanced)
-```
-novelty_threshold: 0.5
-min_segment_duration: 8.0
-breakdown_duration_threshold: 24.0
-→ Result: 10-20 segments, 1-3 breakdowns
+### From the CLI helper
+```bash
+# bar-level structure with 8-bar phrase snapping, limited to a 4-pad controller
+python detect_structure.py data/track.mp3 --phrase 8 --pads 4
 ```
 
 ---
 
 ## Quick Decision Tree
 
-### "My track has too many segments"
-```
-Is novelty_threshold < 0.5?
-  YES → Increase to 0.6
-        Is it still too many?
-          YES → Increase to 0.7
-  NO → Increase min_segment_duration from 8 to 12
-```
+**Too many sections / breakdowns** → raise `thresh_frac` (0.4 → 0.5) and/or `min_bars` (4 → 8).
 
-### "My track has too many 'breakdown' labels"
-```
-Increase breakdown_duration_threshold:
-  24 → 28 → 32 → 40
-```
+**Missing a real drop** → lower `thresh_frac` (0.4 → 0.3).
 
-### "I'm missing a major drop"
-```
-Decrease novelty_threshold:
-  0.5 → 0.4 → 0.3
-```
+**Sections too short / choppy** → raise `min_bars` (4 → 8).
 
-### "Segments are too short"
-```
-Increase min_segment_duration:
-  8.0 → 12.0 → 16.0
-```
+**More cues than my controller has pads** → set `max_pads` to the pad count (e.g. 4).
 
----
+| Change | Effect |
+|--------|--------|
+| ↑ `thresh_frac` | Fewer drops, more of the track reads as breakdown |
+| ↓ `thresh_frac` | More drop/breakdown transitions |
+| ↑ `min_bars` | Longer, fewer sections |
+| ↓ `min_bars` | Shorter, more sections |
+| set `max_pads=N` | Exactly N hot cues, most important sections |
 
-## Parameter Interaction
-
-| Change | Effect | When to Use |
-|--------|--------|------------|
-| ↑ `novelty_threshold` | Fewer segments | Track has too many false peaks |
-| ↓ `novelty_threshold` | More segments | Missing major structural points |
-| ↑ `min_segment_duration` | Longer, fewer segments | Segments too short/crowded |
-| ↓ `min_segment_duration` | Shorter, more segments | Need to capture fast changes |
-| ↑ `breakdown_duration_threshold` | Fewer "breakdown" labels | Too many false "breakdown" labels |
-| ↓ `breakdown_duration_threshold` | More "breakdown" labels | Short sections not labeled as breakdowns |
-
----
-
-## Real-World Examples
-
-### Example 1: Hermanez - Marrakech (Minimal House)
-
-**Problem:**
-- Default → 94 segments, 89 breakdowns ❌
-
-**Solution:**
-```python
-config = custom_config(
-    novelty_threshold=0.65,
-    min_segment_duration=12.0,
-    breakdown_duration_threshold=32.0
-)
-```
-
-**Result:** 8 segments, 1 breakdown ✅
-
----
-
-### Example 2: Typical Progressive House (8 min)
-
-**Expected:** 8-12 segments, 1-2 breakdowns
-
-**Use:**
-```python
-config = get_config("house")
-# or
-config = custom_config(
-    novelty_threshold=0.55,
-    min_segment_duration=10.0,
-    breakdown_duration_threshold=28.0
-)
-```
-
----
-
-### Example 3: Complex Techno (6 min)
-
-**Expected:** 15-25 segments, 2-4 breakdowns
-
-**Use:**
-```python
-config = get_config("techno")
-# or
-config = custom_config(
-    novelty_threshold=0.45,
-    min_segment_duration=6.0,
-    breakdown_duration_threshold=20.0
-)
-```
-
----
-
-## Code Usage
-
-### Using Presets
-```python
-from src.dsp.config import get_config
-from src.dsp.extractor import extract_track_features
-
-config = get_config("minimal")  # or "house", "techno", "aggressive"
-track = extract_track_features("data/track.mp3", config=config)
-```
-
-### Custom Configuration
-```python
-from src.dsp.config import custom_config
-from src.dsp.extractor import extract_track_features
-
-config = custom_config(
-    novelty_threshold=0.65,
-    min_segment_duration=12.0,
-    breakdown_duration_threshold=32.0
-)
-track = extract_track_features("data/track.mp3", config=config)
-```
-
-### Direct Function Call
-```python
-from src.dsp.phrasing_engine import analyze_structure
-import librosa
-
-y, sr = librosa.load("data/track.mp3", sr=22050)
-phrasing = analyze_structure(
-    y, sr,
-    bpm=120,
-    novelty_threshold=0.65,
-    min_segment_duration=12.0,
-    breakdown_threshold=32.0
-)
-```
-
----
-
-## Validation Checklist
-
-After tuning, verify:
-- ✅ Segment count is reasonable (5-30 for 6-min track)
-- ✅ Hot cues land on **real** structural points (not false positives)
-- ✅ No more than 3 "breakdown" labels per track (unless track actually has many)
-- ✅ Intro/outro are correctly labeled
-- ✅ Major drops are detected (not missing)
-- ✅ Steady sections don't have false boundaries
-
----
-
-## Performance Impact
-
-| Parameter | Impact on Speed |
-|-----------|-----------------|
-| `novelty_threshold` | None (post-processing only) |
-| `min_segment_duration` | None (peak detection parameter) |
-| `breakdown_duration_threshold` | None (labeling only) |
-
-**Conclusion:** Tuning parameters has **zero performance impact**. Analyze freely!
-
----
-
-## When to Retune
-
-- ❌ Different audio codec (MP3 vs WAV) → No change needed
-- ❌ Different sample rate (44.1kHz vs 22.05kHz) → No change needed
-- ✅ Different genre → Retune
-- ✅ Different production style → Retune
-- ✅ Your preference changes → Retune
-
----
-
-## Save Your Settings
-
-Once you find good parameters, add them to `src/dsp/config.py`:
-
-```python
-PRESETS["my_minimal"] = DSPConfig(
-    phrasing=PhrasingConfig(
-        novelty_threshold=0.65,
-        min_segment_duration=12.0,
-        breakdown_duration_threshold=32.0,
-    )
-)
-```
-
-Then use everywhere:
-```python
-config = get_config("my_minimal")
-```
+Tuning has **zero performance impact** — the envelope is computed once; the parameters only affect
+thresholding, merging, and labelling.
 
 ---
 
@@ -389,53 +176,56 @@ points = derive_mix_points(onsets, bpm=126, duration=360.0)
 
 ---
 
-## Beat & bar labels
+## Bar helpers & snapping
 
-Segment labels include **beat ranges** aligned to groups of 4 beats (one 4/4 bar), so cues land on
-bar boundaries and match Traktor/Serato beat-grid conventions. Instead of `breakdown: 10.5s–20.3s`
-you get `breakdown (beats 40-80)`.
+Cue times can be converted to bars and snapped to phrase boundaries so they match Traktor/Serato
+beat grids. Helpers in `phrasing_engine.py`:
 
-- **Time → beat:** `beat = round(time_seconds * bpm / 60)`
-- **Bar grouping:** `group = (beat // 4) * 4`
-- Enabled by default; pass `include_beats=False` to `analyze_structure` for plain labels
-  (`intro`, `drop`, …).
-
-Helpers in `phrasing_engine.py`: `time_to_beat(seconds, bpm)`, `beat_to_bar_group(beat, group=4)`,
-`time_to_bar(seconds, bpm)`, `bar_to_time(bar, bpm)`.
+- **Time → beat:** `time_to_beat(seconds, bpm)` = `round(seconds * bpm / 60)`
+- **Time → bar:** `time_to_bar(seconds, bpm)` (1 bar = 4 beats); inverse `bar_to_time(bar, bpm)`
+- **Bar grouping:** `beat_to_bar_group(beat, beats_per_group=4)`
+- **Snap to phrase:** `snap_to_bar_boundary(time, bpm, bars_per_phrase=16)`
 
 Quick reference: `1 bar = 4 beats`, `8 bars = 32 beats` (typical intro/outro),
-`32 bars = 128 beats` (major structural boundary). At 126 BPM, `time_seconds = beats * 60 / bpm`
-(e.g. 128 beats ≈ 61 s). If beat ranges look wrong, verify `track.groove.bpm` — phrasing uses
-whatever the groove engine detected.
+`32 bars = 128 beats` (major boundary). At 126 BPM, `seconds = beats * 60 / bpm` (128 beats ≈ 61 s).
+If bar numbers look wrong, verify `track.groove.bpm` — phrasing uses whatever the groove engine
+detected. `detect_structure.py --phrase N` applies this snapping to the reported bars.
 
 ---
 
-## Phrase-locking vs. spectral detection
+## Low-band detection vs. phrase-locking
 
 Two segmentation strategies are available:
 
-| | Spectral detection (default) | Phrase-locked |
+| | Low-band detection (default) | Phrase-locked |
 |---|---|---|
-| Boundaries | Real structural changes | Fixed N-bar phrases (8/16/32) |
+| Boundaries | Real drop/breakdown transitions | Fixed N-bar phrases (8/16/32) |
 | Segment length | Variable | Exactly N bars |
 | Cue spacing | Irregular | Perfectly regular |
 | Reflects the track | ✅ | ❌ |
 | DJ-predictable | ⚠️ | ✅ |
 
-- **Spectral** (`analyze_structure`) — use for real structure / non-standard tracks (e.g. minimal
-  house). Requires parameter tuning.
+- **Low-band** (`analyze_structure`) — real structure; the default and what feeds the Traktor export.
 - **Phrase-locked** (`create_phrase_locked_segments(duration, bpm, bars_per_phrase, include_beats)`)
   — forces every segment to N bars. Predictable but ignores actual morphology.
-- **Hybrid (recommended for most DJ workflows):** run spectral detection, then snap cue points to
-  the nearest bar with `snap_to_bar_boundary(time, bpm, bars_per_phrase=16)` — real structure **and**
-  beat-grid-aligned cues.
+- **Hybrid:** run `analyze_structure`, then snap cue points to the nearest bar with
+  `snap_to_bar_boundary(time, bpm, bars_per_phrase=16)` — real structure **and** grid-aligned cues.
 
 ```python
 from src.dsp.phrasing_engine import analyze_structure, snap_to_bar_boundary
 
-phrasing = analyze_structure(y, sr, bpm=126, include_beats=True)
+phrasing = analyze_structure(y, sr, bpm=126)
 snapped = [(c.label, snap_to_bar_boundary(c.time, bpm=126, bars_per_phrase=16))
            for c in phrasing.cue_points]
 ```
 
-A comparison script lives in `test_phrase_locking.py`.
+---
+
+## Validation Checklist
+
+After tuning, verify:
+- ✅ Section count is reasonable (a handful of drops/breakdowns for a 6–9 min track, not dozens)
+- ✅ Hot cues land on **real** drops/breakdowns (not false positives)
+- ✅ Intro and (if present) outro are correctly labelled
+- ✅ Major drops are detected (not missing)
+- ✅ With `max_pads=N`, exactly N cues emit and the outro takes the last pad

@@ -29,13 +29,17 @@ because of data dependencies:**
    envelope already needed for beat tracking; transient hardness/kick punch) and **beat strength**
    (`compute_beat_strength` — 0-1, tempogram-based: how dominant the detected tempo's periodicity is
    vs. any other periodicity in the track).
-2. **Phrasing** (`phrasing_engine.py`) → structural segments (intro/build/drop/breakdown/outro) +
-   hot-cue positions. Takes BPM and the tunable phrasing params. Segments carry beat/bar ranges when
-   `include_beats=True`. `time_to_bar(seconds, bpm)` is the shared time↔bar conversion.
-   Also hosts **element-onset detection** (`detect_element_onsets` — per-band additive novelty
-   marking where new sound elements enter; opt-in via `analyze_structure(detect_elements=True)` or
-   direct call) and `derive_mix_points(onsets, bpm, duration)` which turns onsets into named
-   mix points (mix_in / bass_in / full_on / mix_out) for DJ use.
+2. **Phrasing** (`phrasing_engine.py`) → structural segments (intro/drop/breakdown/outro) +
+   hot-cue positions. Structure is detected from **kick+bass (20–150 Hz) low-band energy**:
+   `compute_lowband_energy` → `smooth_lowband_energy` → `detect_energy_sections` (kick-on = drop,
+   kick-off = breakdown) → `label_energy_sections` → `map_segments_to_hotcues`. Takes BPM and the
+   tunable phrasing params (`min_bars`, `thresh_frac`, `max_pads`). `time_to_bar(seconds, bpm)` is the
+   shared time↔bar conversion. Also hosts **element-onset detection** (`detect_element_onsets` —
+   per-band additive novelty marking where new sound elements enter; opt-in via
+   `analyze_structure(detect_elements=True)` or direct call) and
+   `derive_mix_points(onsets, bpm, duration)` which turns onsets into named mix points
+   (mix_in / bass_in / full_on / mix_out) for DJ use. `create_phrase_locked_segments` remains as an
+   alternative fixed-N-bar strategy.
 3. **Mood** (`mood_engine.py`) → Camelot key + brightness. Independent. Also computes **zero-crossing
    rate** (`compute_zero_crossing_rate`) and **timbral roughness** (`compute_roughness` — a pragmatic
    Sethares/Plomp-Levelt pairwise-dissonance approximation over each frame's loudest spectral peaks,
@@ -55,12 +59,14 @@ because of data dependencies:**
 
 ## Config / preset system (`src/dsp/config.py`)
 
-Segmentation behavior is driven entirely by three phrasing parameters: `novelty_threshold` (peak
-sensitivity), `min_segment_duration`, `breakdown_duration_threshold`. Named presets (`default`,
-`minimal`, `house`, `techno`, `aggressive`) trade off segment count vs. length — lower threshold +
-shorter min duration = more, shorter segments. Get a config via `get_config(preset)` or build one
-with `custom_config(...)`, then pass it as the `config=` arg to `extract_track_features`. Parameter
-meanings are documented in `PARAMETER_REFERENCE.md`.
+Segmentation behavior is driven by three phrasing parameters: `min_bars` (minimum section length;
+shorter sections merge into the previous), `thresh_frac` (kick-on threshold as a fraction of peak
+low-band energy), and `max_pads` (limit hot cues to a controller's pad count, `None` = one per
+section). Named presets (`default`, `minimal`, `house`, `techno`, `aggressive`) trade off section
+count vs. length — lower `thresh_frac` + smaller `min_bars` = more, shorter sections. Get a config
+via `get_config(preset)` or build one with `custom_config(min_bars, thresh_frac, max_pads)`, then
+pass it as the `config=` arg to `extract_track_features`. Parameter meanings are documented in
+`PARAMETER_REFERENCE.md`.
 
 ## LangGraph Track Tuner (`src/ai/track_tuner_*.py`) — optional, self-contained
 
