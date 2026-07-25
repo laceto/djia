@@ -67,8 +67,12 @@ Default DB: `db/djia.db`. Foreign keys ON; `ON DELETE CASCADE` from `tracks`.
   (0=straight, 1=swung, from the groove engine), `spectral_flatness` (curation engine),
   `crest_factor` (curation engine — derivable from `rms_mean`/`rms_peak`, so backfillable without
   re-analysis), `onset_strength_mean`/`onset_strength_std`/`beat_strength` (groove engine),
-  `zero_crossing_rate`/`roughness` (mood engine). These 7 columns are NULL on tracks analyzed
-  before this feature shipped — see `debugging-rules.md`.
+  `zero_crossing_rate`/`roughness` (mood engine), and the model-free stem-proxy columns
+  `sub_ratio`/`bass_ratio` (STFT power share in 20-60 Hz / 60-250 Hz),
+  `kick_rate`/`perc_rate`/`hat_rate` (onsets-per-second in the low/mid/high transient bands) and
+  `vocal_presence` (HPSS-harmonic share in the 200-3500 Hz vocal band), all from `dsp/stem_profile.py`.
+  These later columns are NULL on tracks analyzed before a given feature shipped — see
+  `debugging-rules.md`.
 - **`mood`** — `track_id` UNIQUE FK + 6 mood dimensions: `dark`, `hypnotic`, `euphoric`,
   `aggressive`, `industrial`, `minimal`.
 - **`segments`** — `track_id` FK, `segment_type`, `start_time`, `end_time`, `confidence`,

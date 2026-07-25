@@ -51,6 +51,12 @@ python -m src.cli generate-setlist [--tracks 28] [--output results/setlist_5phas
 #   --skip-mix-sheets: skip the audio loads (fast; transitions lose the deck timings)
 #   mix points are cached in results/mix_points_cache.json — first run is slow, reruns instant
 
+# cluster-library — group similar tracks via hierarchical (agglomerative) clustering
+python -m src.cli cluster-library [--n-clusters N | --distance-threshold D] [--db PATH]
+#   cuts the dendrogram into N clusters, or wherever cosine distance exceeds D
+#   (default 0.25 when neither flag is given); prints a labeled per-cluster summary
+#   (size, BPM mean/spread, modal key, dominant mood, mean sub_ratio/vocal_presence)
+
 # export-traktor (output nml_path positional, default djia_export.nml)
 python -m src.cli export-traktor [out.nml] [--traktor-input Collection.nml] [--db PATH]
 #   --traktor-input: existing Traktor Collection.nml to source hot cues from

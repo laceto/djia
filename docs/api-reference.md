@@ -62,7 +62,16 @@ Public entry points for programmatic use. Import the package from the repo root.
 
 ## Matching (`src/matching/`)
 
-- **`similarity`** — cosine similarity over feature vectors; filter by BPM / key / mood.
+- **`similarity`** — cosine similarity over the corpus-normalized feature vector
+  (`SIMILARITY_FEATURES`); filter by BPM / key / mood. The vector includes the model-free
+  stem-proxy features (`sub_ratio`, `bass_ratio`, `kick_rate`, `perc_rate`, `hat_rate`,
+  `vocal_presence`), so similarity is sensitive to low-end weight, the kick/perc/hat split, and
+  vocal presence.
+- **`clustering.cluster_library(db_path, method="average", n_clusters=None, distance_threshold=None) -> {track_id: label}`**
+  — hierarchical (agglomerative) clustering over cosine distance of the same normalized vectors; cut
+  the dendrogram by `n_clusters` or `distance_threshold` (defaults to 0.25 when neither is given).
+  `describe_clusters(labels, db_path)` summarizes each cluster (size, BPM mean/spread, modal Camelot
+  key, dominant mood, mean `sub_ratio`/`vocal_presence`, example titles).
 
 ## AI layer (`src/ai/`)
 
