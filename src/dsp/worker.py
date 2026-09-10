@@ -24,6 +24,7 @@ from .mood_engine import analyze_mood as analyze_tonality
 from .phrasing_engine import analyze_structure, create_phrase_locked_segments
 from .spectrogram import DEFAULT_SPECTROGRAM_DIR, compute_and_save_spectrogram
 from .stem_profile import compute_stem_profile
+from .sub_engine import compute_sub_profile
 
 logger = logging.getLogger(__name__)
 
@@ -97,17 +98,20 @@ def _add_tonality(features: Dict[str, Any], y, sr, file_path) -> None:
         logger.warning(f"Failed to detect key for {file_path}: {e}")
 
 
-def _add_swing(features: Dict[str, Any], y, sr, file_path) -> None:
+def _add_swing(features: Dict[str, Any], y, sr, file_path):
     """Measure swing, onset strength, and beat strength; merge into features
-    (best-effort)."""
+    (best-effort). Returns the GrooveResult (or None) so later steps can reuse the
+    beat grid instead of re-tracking the tempo."""
     try:
         groove = analyze_groove(y, sr)
         features['swing_score'] = groove.swing_score
         features['onset_strength_mean'] = groove.onset_strength_mean
         features['onset_strength_std'] = groove.onset_strength_std
         features['beat_strength'] = groove.beat_strength
+        return groove
     except Exception as e:
         logger.warning(f"Failed to measure swing for {file_path}: {e}")
+        return None
 
 
 def _add_density(features: Dict[str, Any], y, sr, file_path) -> None:
@@ -132,6 +136,18 @@ def _add_stem_profile(features: Dict[str, Any], y, sr, file_path) -> None:
         features.update(compute_stem_profile(y, sr))
     except Exception as e:
         logger.warning(f"Failed to compute stem profile for {file_path}: {e}")
+
+
+def _add_sub_profile(features: Dict[str, Any], y, sr, file_path, beat_times=None) -> None:
+    """Measure sub-bass character (presence, fundamental, rumble, pump); merge into
+    features (best-effort). Complements `_add_stem_profile`'s sub_ratio: that says how
+    much low end there is, this says what kind."""
+    try:
+        features.update(compute_sub_profile(
+            y, sr, bpm=features.get('bpm'), beat_times=beat_times,
+        ))
+    except Exception as e:
+        logger.warning(f"Failed to compute sub profile for {file_path}: {e}")
 
 
 def _compute_segments(y, sr, bpm, file_path, segment_config: DSPConfig, bars_per_phrase: int):
@@ -213,7 +229,7 @@ def analyze_one_track(
         Dict with keys:
             "error": None on success, else a string describing what went wrong.
             "features": merged feature dict (audio_analysis + tonality + swing +
-                density), or None on failure.
+                density + stem/sub profile), or None on failure.
             "segments_spectral": list of segment dicts (spectral method).
             "segments_phrase": list of segment dicts (phrase-locked grid method).
             "mood_scores": dict of mood confidence scores, or None.
@@ -241,9 +257,13 @@ def analyze_one_track(
 
         # Detect musical key (Camelot), timbre, swing, and density; merge into features
         _add_tonality(features, y, sr, file_path)
-        _add_swing(features, y, sr, file_path)
+        groove = _add_swing(features, y, sr, file_path)
         _add_density(features, y, sr, file_path)
         _add_stem_profile(features, y, sr, file_path)
+        _add_sub_profile(
+            features, y, sr, file_path,
+            beat_times=groove.beat_times if groove is not None else None,
+        )
 
         segment_config = get_config(segment_preset)
 

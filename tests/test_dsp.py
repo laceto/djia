@@ -36,6 +36,14 @@ from src.dsp.curation_engine import (
     compute_spectral_flatness,
     compute_crest_factor,
 )
+from src.dsp.sub_engine import (
+    compute_sub_profile,
+    sub_tags,
+    PUMP_DEPTH_MIN,
+    PUMP_PHASE_MAX,
+    RUMBLE_MIN,
+    SUB_PROFILE_KEYS,
+)
 from src.dsp.worker import analyze_one_track
 from src.dsp.spectrogram import (
     compute_spectrogram,
@@ -812,6 +820,164 @@ class TestWorkerAnalyzeOneTrack:
                 assert "start_time" in seg
                 assert "end_time" in seg
                 assert "confidence" in seg
+
+
+# --- Sub-engine fixtures -----------------------------------------------------
+# Synthetic low ends with known ground truth: the only way to assert that "rumble"
+# means rumble and not "a sub the detector mis-measured".
+
+SUB_SR_TEST = 22050
+SUB_BPM = 128.0
+SUB_BEAT = 60.0 / SUB_BPM
+SUB_NOTE_HZ = 41.203  # E1
+
+
+def _sub_time(duration: float = 24.0) -> np.ndarray:
+    return np.arange(int(duration * SUB_SR_TEST)) / SUB_SR_TEST
+
+
+def _beat_decay(t: np.ndarray, tau: float) -> np.ndarray:
+    """Exponential decay retriggered on every beat."""
+    return np.exp(-(t % SUB_BEAT) / tau)
+
+
+def _synth_kick(t: np.ndarray, fundamental: float = 55.0) -> np.ndarray:
+    rs = np.random.RandomState(0)
+    pitch = fundamental * (1 + 6 * np.exp(-(t % SUB_BEAT) / 0.02))  # pitch drop
+    body = np.sin(2 * np.pi * np.cumsum(pitch) / SUB_SR_TEST) * _beat_decay(t, 0.09)
+    click = rs.randn(t.size) * np.exp(-(t % SUB_BEAT) / 0.004)
+    return 0.9 * body + 0.05 * click
+
+
+def _synth_hats(t: np.ndarray) -> np.ndarray:
+    rs = np.random.RandomState(1)
+    return 0.06 * rs.randn(t.size) * np.exp(-((t + SUB_BEAT / 2) % (SUB_BEAT / 2)) / 0.01)
+
+
+def _band_noise(t: np.ndarray, low: float, high: float) -> np.ndarray:
+    rs = np.random.RandomState(2)
+    spectrum = np.fft.rfft(rs.randn(t.size))
+    freqs = np.fft.rfftfreq(t.size, 1 / SUB_SR_TEST)
+    spectrum[(freqs < low) | (freqs > high)] = 0
+    noise = np.fft.irfft(spectrum, t.size)
+    return noise / (np.abs(noise).max() + 1e-12)
+
+
+def _highpass(x: np.ndarray, cutoff: float) -> np.ndarray:
+    spectrum = np.fft.rfft(x)
+    freqs = np.fft.rfftfreq(x.size, 1 / SUB_SR_TEST)
+    spectrum[freqs < cutoff] = 0
+    return np.fft.irfft(spectrum, x.size)
+
+
+def _normalize(x: np.ndarray) -> np.ndarray:
+    return x / (np.abs(x).max() + 1e-12)
+
+
+class TestSubEngine:
+    """Test sub-bass character features (presence, fundamental, rumble, pump)."""
+
+    def test_profile_keys_contract(self):
+        """Every documented key comes back, even for a signal with no low end."""
+        t = _sub_time(4.0)
+        profile = compute_sub_profile(_normalize(_synth_hats(t)), SUB_SR_TEST, bpm=SUB_BPM)
+        assert set(profile) == set(SUB_PROFILE_KEYS)
+
+    def test_silence_returns_none(self):
+        """Silence yields all-None rather than raising or inventing a fundamental."""
+        profile = compute_sub_profile(np.zeros(SUB_SR_TEST * 2), SUB_SR_TEST, bpm=SUB_BPM)
+        assert all(value is None for value in profile.values())
+
+    def test_no_sub_detected(self):
+        """A high-passed mix reads as 'none' — no sub, no fitted pitch."""
+        t = _sub_time()
+        mix = _highpass(_synth_kick(t, 75.0) + 0.5 * np.sin(2 * np.pi * 110 * t), 80.0)
+        profile = compute_sub_profile(_normalize(mix + _synth_hats(t)), SUB_SR_TEST, bpm=SUB_BPM)
+        assert profile["sub_character"] == "none"
+        assert profile["sub_f0_hz"] is None
+        assert sub_tags(profile) == ["no-sub"]
+
+    def test_fundamental_and_note(self):
+        """A sub on E1 is resolved to within a few cents and named."""
+        t = _sub_time()
+        mix = _synth_kick(t) + 0.8 * np.sin(2 * np.pi * SUB_NOTE_HZ * t) + _synth_hats(t)
+        profile = compute_sub_profile(_normalize(mix), SUB_SR_TEST, bpm=SUB_BPM)
+        assert profile["sub_f0_hz"] == pytest.approx(SUB_NOTE_HZ, abs=0.5)
+        assert profile["sub_note"] == "E1"
+        assert profile["sub_f0_jitter_cents"] < 5.0
+        assert profile["sub_presence"] > 0.1
+
+    def test_steady_sub_is_neither_rumble_nor_pump(self):
+        """A held sub under a kick: tonal, and barely moving across the beat."""
+        t = _sub_time()
+        mix = _synth_kick(t) + 0.8 * np.sin(2 * np.pi * SUB_NOTE_HZ * t) + _synth_hats(t)
+        profile = compute_sub_profile(_normalize(mix), SUB_SR_TEST, bpm=SUB_BPM)
+        assert profile["rumble_score"] < RUMBLE_MIN
+        assert profile["pump_depth"] < PUMP_DEPTH_MIN
+        assert profile["sub_gap_ratio"] > 0.5
+        assert profile["sub_character"] == "sustained"
+
+    def test_sidechained_sub_is_pumped(self):
+        """A ducked sub bottoms out on the kick — depth high, phase near 0."""
+        t = _sub_time()
+        ducked = np.sin(2 * np.pi * SUB_NOTE_HZ * t) * (1 - 0.95 * _beat_decay(t, 0.13))
+        mix = _synth_kick(t) + 0.8 * ducked + _synth_hats(t)
+        profile = compute_sub_profile(_normalize(mix), SUB_SR_TEST, bpm=SUB_BPM)
+        assert profile["pump_depth"] > 0.5
+        assert profile["pump_phase"] <= PUMP_PHASE_MAX
+        assert profile["sub_character"] == "pumped"
+        assert "sub-pump" in sub_tags(profile)
+
+    def test_rumble_detected(self):
+        """Band-limited noise with a long beat-synced tail scores as rumble."""
+        t = _sub_time()
+        mix = _synth_kick(t) + 0.9 * _band_noise(t, 25.0, 75.0) * _beat_decay(t, 0.38)
+        profile = compute_sub_profile(_normalize(mix + _synth_hats(t)), SUB_SR_TEST, bpm=SUB_BPM)
+        assert profile["rumble_score"] >= RUMBLE_MIN
+        assert profile["sub_f0_jitter_cents"] > 10.0
+        assert profile["sub_character"] == "rumble"
+        assert "rumble" in sub_tags(profile)
+
+    def test_rumble_and_pump_separated_by_phase(self):
+        """Depth alone cannot tell a rumble tail from a sidechain; phase can."""
+        t = _sub_time()
+        ducked = np.sin(2 * np.pi * SUB_NOTE_HZ * t) * (1 - 0.95 * _beat_decay(t, 0.13))
+        pumped = compute_sub_profile(
+            _normalize(_synth_kick(t) + 0.8 * ducked + _synth_hats(t)), SUB_SR_TEST, bpm=SUB_BPM
+        )
+        rumble = compute_sub_profile(
+            _normalize(_synth_kick(t) + 0.9 * _band_noise(t, 25.0, 75.0) * _beat_decay(t, 0.38)),
+            SUB_SR_TEST, bpm=SUB_BPM,
+        )
+        assert pumped["pump_depth"] > 0.5 and rumble["pump_depth"] > 0.5
+        assert pumped["pump_phase"] < 0.25 < rumble["pump_phase"]
+
+    def test_offbeat_bassline(self):
+        """A sub playing between the kicks peaks at the half-beat, and is labeled so."""
+        t = _sub_time()
+        offbeat = np.exp(-((t + SUB_BEAT / 2) % SUB_BEAT) / 0.12)
+        mix = _synth_kick(t) + 0.8 * np.sin(2 * np.pi * SUB_NOTE_HZ * t) * offbeat
+        profile = compute_sub_profile(_normalize(mix + _synth_hats(t)), SUB_SR_TEST, bpm=SUB_BPM)
+        assert profile["pump_depth"] > PUMP_DEPTH_MIN
+        assert 0.375 <= profile["sub_peak_phase"] <= 0.625
+        assert profile["sub_character"] == "offbeat"
+        assert "offbeat-bass" in sub_tags(profile)
+
+    def test_beat_times_survive_tempo_drift(self):
+        """Folding on tracked beats beats folding on a fixed grid when tempo drifts."""
+        t = _sub_time(60.0)
+        # 0.4% tempo drift over the take — inaudible, but enough to smear a fixed grid.
+        beat_phase = np.cumsum(np.full(t.size, 1.0 / SUB_SR_TEST) * (1 + 0.004 * t / 60.0))
+        beat_phase = beat_phase / SUB_BEAT
+        ducked = np.sin(2 * np.pi * SUB_NOTE_HZ * t) * (
+            1 - 0.95 * np.exp(-(beat_phase % 1.0) * SUB_BEAT / 0.13)
+        )
+        beat_times = np.interp(np.arange(0, beat_phase[-1]), beat_phase, t)
+        mix = _normalize(_synth_kick(t) + 0.8 * ducked + _synth_hats(t))
+
+        with_beats = compute_sub_profile(mix, SUB_SR_TEST, bpm=SUB_BPM, beat_times=beat_times)
+        with_grid = compute_sub_profile(mix, SUB_SR_TEST, bpm=SUB_BPM)
+        assert with_beats["pump_depth"] > with_grid["pump_depth"]
 
 
 if __name__ == "__main__":

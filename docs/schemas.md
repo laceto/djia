@@ -71,6 +71,13 @@ Default DB: `db/djia.db`. Foreign keys ON; `ON DELETE CASCADE` from `tracks`.
   `sub_ratio`/`bass_ratio` (STFT power share in 20-60 Hz / 60-250 Hz),
   `kick_rate`/`perc_rate`/`hat_rate` (onsets-per-second in the low/mid/high transient bands) and
   `vocal_presence` (HPSS-harmonic share in the 200-3500 Hz vocal band), all from `dsp/stem_profile.py`.
+  Sub-bass *character* columns come from `dsp/sub_engine.py`: `sub_presence` (mean-square share of
+  20-75 Hz), `sub_f0_hz`/`sub_note` (the sub fundamental and its note name),
+  `sub_f0_jitter_cents`/`sub_flatness`/`sub_peak_share`/`sub_peak_crest_db` (how tonal that low end
+  is), `rumble_score` (0-1 noisy-wash blend of the three), `pump_depth`/`pump_phase`/
+  `sub_peak_phase`/`sub_gap_ratio` (the beat-folded sub envelope — how far it moves and where it
+  peaks/bottoms out, phase 0 = kick) and `sub_character` (TEXT: `none`/`rumble`/`pumped`/`offbeat`/
+  `sustained`).
   These later columns are NULL on tracks analyzed before a given feature shipped — see
   `debugging-rules.md`.
 - **`mood`** — `track_id` UNIQUE FK + 6 mood dimensions: `dark`, `hypnotic`, `euphoric`,

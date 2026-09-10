@@ -63,6 +63,26 @@ def format_features_table(tracks_data: List[dict]) -> str:
     return tabulate(rows, headers=headers, tablefmt='grid')
 
 
+def format_sub_line(features) -> str:
+    """One-line summary of the low end: character, fundamental, rumble/pump numbers."""
+    character = features.get('sub_character')
+    if not character:
+        return "Sub: N/A"
+    if character == 'none':
+        return "Sub: none"
+
+    parts = [f"Sub: {character}"]
+    if features.get('sub_note'):
+        parts.append(f"{features['sub_note']} ({features['sub_f0_hz']:.1f} Hz)")
+    if features.get('rumble_score') is not None:
+        parts.append(f"rumble {features['rumble_score']:.2f}")
+    if features.get('pump_depth') is not None:
+        phase = features.get('sub_peak_phase')
+        phase_str = f" @ peak {phase:.2f}" if phase is not None else ""
+        parts.append(f"pump {features['pump_depth']:.2f}{phase_str}")
+    return "  |  ".join(parts)
+
+
 def cmd_analyze(args):
     """Analyze a directory or single track."""
     print_section("DJIA Track Analysis")
@@ -85,6 +105,7 @@ def cmd_analyze(args):
             conf_str = f", conf {conf:.2f}" if isinstance(conf, (int, float)) else ""
             print(f"  Key: {key}  |  Camelot: {camelot}  |  via {source}{conf_str}")
             print(f"  RMS Mean: {result.get('rms_mean', 'N/A')}")
+            print(f"  {format_sub_line(result)}")
             if result.get('mood'):
                 print(f"  Mood: {result['mood']}")
             print(f"  Saved as track_id {result['track_id']} in {db_path}")
