@@ -68,8 +68,8 @@ much* low end but *what kind*: sub presence, the sub **fundamental** (`sub_f0_hz
 1 kHz, which buys ~1 Hz FFT bins in the bottom octave (the stored spectrogram's 10.8 Hz bins cannot
 resolve a semitone at 41 Hz), and folds the sub envelope over the *tracked beat times* with phase 0
 rolled onto the kick transient — phase is what separates a sidechained sub (bottoms out at the kick)
-from a rumble tail (bottoms out before the next one) from an offbeat bassline (peaks at the
-half-beat). Like the stem profile it sits outside the ordered pipeline and is run per track by
+from a rumble tail (bottoms out before the next one) from a kick-locked sub (peaks *on* the kick)
+from an offbeat bassline (peaks at the half-beat). Like the stem profile it sits outside the ordered pipeline and is run per track by
 `dsp/worker.py`; it consumes the groove engine's beat grid when available.
 
 `extract_feature_vector(track)` flattens a `Track` into the numeric dict used for similarity matching.

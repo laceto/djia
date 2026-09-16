@@ -65,6 +65,7 @@ SUB_PRESENCE_MIN = 0.01
 RUMBLE_MIN = 0.50
 PUMP_DEPTH_MIN = 0.35
 PUMP_PHASE_MAX = 0.25           # a sidechain bottoms out within the first quarter-beat
+ONBEAT_PHASE = 0.125            # a kick-locked sub peaks within an eighth-beat of the kick
 OFFBEAT_PHASE = (0.375, 0.625)  # an offbeat bassline peaks around the half-beat
 
 # rumble_score component anchors: (value scoring 0.0, value scoring 1.0). Calibrated
@@ -276,20 +277,34 @@ def _rumble_score(stats: Dict[str, Optional[float]]) -> Optional[float]:
 
 
 def _classify(presence: float, profile: Dict[str, Any]) -> str:
-    """Coarse label: none / rumble / pumped / offbeat / sustained."""
+    """Coarse label: none / rumble / pumped / onbeat / offbeat / syncopated / sustained.
+
+    Order matters. A sub that ducks *at* the kick is a sidechain whatever it does for the
+    rest of the beat, so that is tested first; everything else is named by where the sub
+    is loudest — on the kick (kick-locked), between kicks (offbeat), or elsewhere.
+    "sustained" means a low end that barely moves across the beat, so it is the fallback
+    only when the modulation is shallow.
+    """
     if presence < SUB_PRESENCE_MIN:
         return "none"
     rumble = profile.get("rumble_score")
     if rumble is not None and rumble >= RUMBLE_MIN:
         return "rumble"
+
     depth = profile.get("pump_depth")
-    if depth is not None and depth >= PUMP_DEPTH_MIN:
-        phase, peak_phase = profile.get("pump_phase"), profile.get("sub_peak_phase")
-        if phase is not None and phase <= PUMP_PHASE_MAX:
-            return "pumped"
-        if peak_phase is not None and OFFBEAT_PHASE[0] <= peak_phase <= OFFBEAT_PHASE[1]:
-            return "offbeat"
-    return "sustained"
+    if depth is None or depth < PUMP_DEPTH_MIN:
+        return "sustained"
+
+    phase, peak_phase = profile.get("pump_phase"), profile.get("sub_peak_phase")
+    if phase is not None and phase <= PUMP_PHASE_MAX:
+        return "pumped"
+    if peak_phase is None:
+        return "sustained"
+    if peak_phase <= ONBEAT_PHASE or peak_phase >= 1.0 - ONBEAT_PHASE:
+        return "onbeat"
+    if OFFBEAT_PHASE[0] <= peak_phase <= OFFBEAT_PHASE[1]:
+        return "offbeat"
+    return "syncopated"
 
 
 def compute_sub_profile(
@@ -322,7 +337,9 @@ def compute_sub_profile(
             - ``pump_phase`` / ``sub_peak_phase``: beat phase (0-1, 0 = kick) of that
               minimum and maximum.
             - ``sub_gap_ratio``: mean sub level between kicks, relative to its peak.
-            - ``sub_character``: "none" | "rumble" | "pumped" | "offbeat" | "sustained".
+            - ``sub_character``: "none" | "rumble" | "pumped" (ducks at the kick) |
+              "onbeat" (loudest on the kick — sub and kick fused as one element) |
+              "offbeat" | "syncopated" | "sustained" (barely moves across the beat).
         Any feature that cannot be computed is ``None`` rather than raising.
     """
     profile = _empty_profile()
@@ -393,8 +410,12 @@ def sub_tags(profile: Dict[str, Any]) -> List[str]:
     tags = ["rumble" if character == "rumble" else "sub-bass"]
     if character == "pumped":
         tags.append("sub-pump")
+    elif character == "onbeat":
+        tags.append("kick-locked-sub")
     elif character == "offbeat":
         tags.append("offbeat-bass")
+    elif character == "syncopated":
+        tags.append("syncopated-bass")
     if profile.get("sub_note"):
         tags.append(f"sub-{profile['sub_note']}")
     return tags

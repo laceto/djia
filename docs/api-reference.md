@@ -65,12 +65,14 @@ Public entry points for programmatic use. Import the package from the repo root.
 - **`compute_sub_profile(y, sr, bpm=None, beat_times=None) -> dict`** — sub-bass *character*:
   `sub_presence`, `sub_f0_hz`/`sub_note`, `sub_f0_jitter_cents`, `sub_flatness`, `sub_peak_share`,
   `sub_peak_crest_db`, `rumble_score`, `pump_depth`, `pump_phase`, `sub_peak_phase`,
-  `sub_gap_ratio`, `sub_character` (`none`/`rumble`/`pumped`/`offbeat`/`sustained`). Keys are listed
+  `sub_gap_ratio`, `sub_character` (`none`/`rumble`/`pumped`/`onbeat`/`offbeat`/`syncopated`/
+  `sustained`). Keys are listed
   in `SUB_PROFILE_KEYS`; every value is `None` rather than an exception when it cannot be computed.
   Pass the groove engine's `beat_times` when you have them — folding on tracked beats instead of a
   fixed BPM grid is what keeps the pump metrics from smearing out over tempo drift.
 - **`sub_tags(profile) -> list[str]`** — semantic tags for a computed profile
-  (`no-sub`, `sub-bass`, `rumble`, `sub-pump`, `offbeat-bass`, `sub-<note>`).
+  (`no-sub`, `sub-bass`, `rumble`, `sub-pump`, `kick-locked-sub`, `offbeat-bass`,
+  `syncopated-bass`, `sub-<note>`).
 
 ## Matching (`src/matching/`)
 

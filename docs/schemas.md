@@ -76,8 +76,9 @@ Default DB: `db/djia.db`. Foreign keys ON; `ON DELETE CASCADE` from `tracks`.
   `sub_f0_jitter_cents`/`sub_flatness`/`sub_peak_share`/`sub_peak_crest_db` (how tonal that low end
   is), `rumble_score` (0-1 noisy-wash blend of the three), `pump_depth`/`pump_phase`/
   `sub_peak_phase`/`sub_gap_ratio` (the beat-folded sub envelope — how far it moves and where it
-  peaks/bottoms out, phase 0 = kick) and `sub_character` (TEXT: `none`/`rumble`/`pumped`/`offbeat`/
-  `sustained`).
+  peaks/bottoms out, phase 0 = kick) and `sub_character` (TEXT: `none`/`rumble`/`pumped` = ducks
+  at the kick/`onbeat` = loudest on the kick, sub and kick fused into one element/`offbeat`/
+  `syncopated`/`sustained` = barely moves across the beat).
   These later columns are NULL on tracks analyzed before a given feature shipped — see
   `debugging-rules.md`.
 - **`mood`** — `track_id` UNIQUE FK + 6 mood dimensions: `dark`, `hypnotic`, `euphoric`,

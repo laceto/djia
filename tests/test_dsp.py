@@ -39,6 +39,7 @@ from src.dsp.curation_engine import (
 from src.dsp.sub_engine import (
     compute_sub_profile,
     sub_tags,
+    ONBEAT_PHASE,
     PUMP_DEPTH_MIN,
     PUMP_PHASE_MAX,
     RUMBLE_MIN,
@@ -962,6 +963,36 @@ class TestSubEngine:
         assert 0.375 <= profile["sub_peak_phase"] <= 0.625
         assert profile["sub_character"] == "offbeat"
         assert "offbeat-bass" in sub_tags(profile)
+
+    def test_kick_locked_sub_is_onbeat(self):
+        """A sub hit with the kick and left to decay is 'onbeat', not 'sustained' —
+        it is the deepest-moving case of all, just moving in the opposite phase to a
+        sidechain."""
+        t = _sub_time()
+        mix = _synth_kick(t) + 0.8 * np.sin(2 * np.pi * SUB_NOTE_HZ * t) * _beat_decay(t, 0.16)
+        profile = compute_sub_profile(_normalize(mix + _synth_hats(t)), SUB_SR_TEST, bpm=SUB_BPM)
+        assert profile["pump_depth"] > PUMP_DEPTH_MIN
+        assert (profile["sub_peak_phase"] <= ONBEAT_PHASE
+                or profile["sub_peak_phase"] >= 1.0 - ONBEAT_PHASE)
+        assert profile["pump_phase"] > PUMP_PHASE_MAX  # not a sidechain
+        assert profile["sub_character"] == "onbeat"
+        assert "kick-locked-sub" in sub_tags(profile)
+
+    def test_sustained_requires_shallow_modulation(self):
+        """'sustained' is reserved for a low end that barely moves: any deeply
+        modulated sub gets a phase-based label instead."""
+        t = _sub_time()
+        cases = {
+            "held": np.sin(2 * np.pi * SUB_NOTE_HZ * t),
+            "ducked": np.sin(2 * np.pi * SUB_NOTE_HZ * t) * (1 - 0.95 * _beat_decay(t, 0.13)),
+            "plucked": np.sin(2 * np.pi * SUB_NOTE_HZ * t) * _beat_decay(t, 0.16),
+        }
+        for name, sub in cases.items():
+            profile = compute_sub_profile(
+                _normalize(_synth_kick(t) + 0.8 * sub + _synth_hats(t)), SUB_SR_TEST, bpm=SUB_BPM
+            )
+            shallow = profile["pump_depth"] < PUMP_DEPTH_MIN
+            assert (profile["sub_character"] == "sustained") == shallow, name
 
     def test_beat_times_survive_tempo_drift(self):
         """Folding on tracked beats beats folding on a fixed grid when tempo drifts."""
