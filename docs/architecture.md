@@ -62,6 +62,16 @@ and `vocal_presence` (harmonic energy in the vocal band). It is not part of the 
 `dsp/worker.py` runs it per track for the DB-persisted `analyze` path (see Data store & export), and
 its columns feed the similarity/clustering vector.
 
+`sub_engine.compute_sub_profile(y, sr, bpm, beat_times)` answers the follow-up question — not *how
+much* low end but *what kind*: sub presence, the sub **fundamental** (`sub_f0_hz`/`sub_note`), a
+**rumble** score, and **sub-pump** depth/phase. It works on the band-limited signal decimated to
+1 kHz, which buys ~1 Hz FFT bins in the bottom octave (the stored spectrogram's 10.8 Hz bins cannot
+resolve a semitone at 41 Hz), and folds the sub envelope over the *tracked beat times* with phase 0
+rolled onto the kick transient — phase is what separates a sidechained sub (bottoms out at the kick)
+from a rumble tail (bottoms out before the next one) from a kick-locked sub (peaks *on* the kick)
+from an offbeat bassline (peaks at the half-beat). Like the stem profile it sits outside the ordered pipeline and is run per track by
+`dsp/worker.py`; it consumes the groove engine's beat grid when available.
+
 `extract_feature_vector(track)` flattens a `Track` into the numeric dict used for similarity matching.
 
 ## Config / preset system (`src/dsp/config.py`)
@@ -119,10 +129,14 @@ them consistent.
   (`spectral_flatness`, `crest_factor`, `onset_strength_mean/std`, `beat_strength`,
   `zero_crossing_rate`, `roughness`) and the model-free stem-proxy columns (`sub_ratio`,
   `bass_ratio`, `kick_rate`, `perc_rate`, `hat_rate`, `vocal_presence` — from `dsp/stem_profile.py`)
-  on the `features` table; `replace_segments` persists
+  and the sub-bass character columns (`sub_presence`, `sub_f0_hz`, `sub_note`,
+  `sub_f0_jitter_cents`, `sub_flatness`, `sub_peak_share`, `sub_peak_crest_db`, `rumble_score`,
+  `pump_depth`, `pump_phase`, `sub_peak_phase`, `sub_gap_ratio`, `sub_character` — from
+  `dsp/sub_engine.py`) on the `features` table; `replace_segments` persists
   phrasing-engine structure segments to the `segments` table (idempotent per `method` —
   re-analysis replaces rather than duplicates). All are merged into the features dict by
-  `dsp/worker.py`'s `_add_tonality`/`_add_swing`/`_add_density`/`_add_stem_profile` (best-effort, called from
+  `dsp/worker.py`'s `_add_tonality`/`_add_swing`/`_add_density`/`_add_stem_profile`/`_add_sub_profile`
+  (best-effort, called from
   `analyze_one_track` — the shared compute-only pipeline both `Orchestrator.analyze_library` and
   `Orchestrator.analyze_single_track` run per file) before `insert_features` during `analyze`, so
   tracks analyzed before a given feature shipped have `NULL`/zero values until re-analyzed.

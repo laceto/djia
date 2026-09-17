@@ -107,8 +107,11 @@ class TrackStore:
                  spectral_flatness, crest_factor, onset_strength_mean,
                  onset_strength_std, beat_strength, zero_crossing_rate, roughness,
                  sub_ratio, bass_ratio, kick_rate, perc_rate, hat_rate, vocal_presence,
+                 sub_presence, sub_f0_hz, sub_note, sub_f0_jitter_cents,
+                 sub_flatness, sub_peak_share, sub_peak_crest_db, rumble_score,
+                 pump_depth, pump_phase, sub_peak_phase, sub_gap_ratio, sub_character,
                  mfcc_vector)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 track_id,
                 features.get('tempo'),
@@ -143,6 +146,19 @@ class TrackStore:
                 features.get('perc_rate'),
                 features.get('hat_rate'),
                 features.get('vocal_presence'),
+                features.get('sub_presence'),
+                features.get('sub_f0_hz'),
+                features.get('sub_note'),
+                features.get('sub_f0_jitter_cents'),
+                features.get('sub_flatness'),
+                features.get('sub_peak_share'),
+                features.get('sub_peak_crest_db'),
+                features.get('rumble_score'),
+                features.get('pump_depth'),
+                features.get('pump_phase'),
+                features.get('sub_peak_phase'),
+                features.get('sub_gap_ratio'),
+                features.get('sub_character'),
                 mfcc_vector,
             ))
 
