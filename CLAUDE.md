@@ -33,6 +33,9 @@ right context. The data contract for everything is the `Track` dataclass in `src
 → READ: `docs/api-reference.md`
 → ALSO READ: `docs/scripts-reference.md` for CLI commands
 
+**PLOTTING / VISUALIZATION** — Diagnostic plots (waveform, beat grid, novelty, chromagram, spectrogram, energy, mood radar, structure bars)
+→ READ: `docs/api-reference.md` (`src/dsp/visualization.py`) + `docs/scripts-reference.md` (`plot` CLI command)
+
 **RUNNING THE PIPELINE** — CLI, orchestrator, ingestion, analyzing a library
 → READ: `docs/scripts-reference.md`
 
@@ -40,7 +43,9 @@ right context. The data contract for everything is the `Track` dataclass in `src
 
 ```
 src/
-  dsp/          core pipeline: extractor + groove/phrasing/mood/curation engines, config.py
+  dsp/          core pipeline: extractor + groove/phrasing/mood/curation engines, config.py;
+                visualization.py — diagnostic plots (waveform, beat grid, novelty, chromagram,
+                spectrogram, energy, mood radar, structure bars), backs the `plot` CLI command
   ai/           stem_separator, classifier, segmentation, processor, transition_mapper,
                 playlist_generator, setlist_generator, track_tuner_* (optional LangGraph agent)
   features/     schema.py — the Track dataclass, THE data contract

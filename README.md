@@ -20,6 +20,8 @@ DJIA analyzes your audio library to extract features, classify mood, detect stru
 - Hierarchical clustering to group similar tracks into crates
 - DJ playlist generation with optimal transitions
 - Element-onset detection (where new sound elements enter) with derived mix points
+- Diagnostic plots (waveform, beat grid, novelty, chromagram, spectrogram, energy, mood radar,
+  structure bars), dual-labeled with beat count + bar number
 - Traktor NML export for direct DJ software integration
 - DJUCED hot-cue export (mix marks straight onto Hercules controller pads)
 - SQLite database for persistent analysis results
@@ -199,6 +201,17 @@ python -m src.cli spectrogram 1
 # Recompute and save the .npy log-magnitude spectrogram for an already-analyzed track (ID 1)
 ```
 
+### 9. Generate Diagnostic Plots
+
+```bash
+python -m src.cli plot 1
+# All 8 plots (waveform, beat grid, novelty, chromagram, spectrogram, energy, mood radar,
+# structure bars) for an already-analyzed track (ID 1), written to results/plots/1/
+
+python -m src.cli plot --track "data/some_track.mp3"
+# Same, for any audio file — no prior analysis or DB entry required
+```
+
 ## CLI Reference
 
 ### Commands
@@ -286,6 +299,21 @@ python -m src.cli spectrogram TRACK_ID [OPTIONS]
   # Example: spectrogram 1
 ```
 
+#### `plot`
+Generate all 8 diagnostic plots (waveform, beat grid, novelty, chromagram, spectrogram, energy,
+mood radar, structure bars) for a track — dual-labeled with beat count + bar number.
+
+```bash
+python -m src.cli plot [TRACK_ID] [OPTIONS]
+  --track PATH          Path to an audio file (bypasses the DB; use instead of TRACK_ID)
+  --db PATH             Database path (default: db/djia.db)
+  --out-dir PATH        Base plots directory (default: results/plots); written under
+                        <out-dir>/<track_id or filename stem>/
+  --show                Also open plot windows instead of only saving them
+  # Example: plot 1                              (looked up via --db)
+  # Example: plot --track data/some_track.mp3     (no DB entry required)
+```
+
 ## Programmatic API
 
 ### Orchestrator: End-to-End Analysis
@@ -366,6 +394,17 @@ print(f"BPM: {features['bpm']}")
 # Get mood
 mood = store.get_track_mood(1)
 print(f"Mood: {mood}")
+```
+
+### Visualization: Diagnostic Plots
+
+```python
+from src.dsp.visualization import generate_all_plots
+
+# Runs the full DSP+AI pipeline and saves all 8 plots under results/plots/<key>/
+paths = generate_all_plots("data/track.wav", key="1")
+print(paths)  # [waveform.png, beat_grid.png, novelty.png, chromagram.png, spectrogram.png,
+              #  energy.png, mood_radar.png, structure_bars.png]
 ```
 
 ## Performance Benchmarks
@@ -552,7 +591,8 @@ djia/
 │   ├── ingestion/             # Phase 1: scanner.py, loader.py
 │   ├── dsp/                   # Phase 2: extractor + groove/phrasing/mood/curation engines, config.py
 │   │   ├── worker.py                # picklable per-track analyze step for ProcessPoolExecutor
-│   │   └── spectrogram.py           # log-magnitude STFT computation + .npy persistence
+│   │   ├── spectrogram.py           # log-magnitude STFT computation + .npy persistence
+│   │   └── visualization.py         # 8 diagnostic plots; backs the `plot` CLI command
 │   ├── ai/
 │   │   ├── classifier.py            # Phase 3: mood classification
 │   │   ├── stem_separator.py        # Phase 3: Demucs stems

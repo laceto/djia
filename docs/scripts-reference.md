@@ -65,6 +65,15 @@ python -m src.cli export-traktor [out.nml] [--traktor-input Collection.nml] [--d
 python -m src.cli spectrogram <track_id> [--db PATH] [--spectrogram-dir data/spectrograms]
 #   e.g. spectrogram 1   → loads the track's audio and saves data/spectrograms/1.npy
 
+# plot (track_id positional, optional) — generate all 8 diagnostic plots for a track
+python -m src.cli plot <track_id> [--db PATH] [--out-dir results/plots] [--show]
+python -m src.cli plot --track "path/to.mp3" [--out-dir results/plots] [--show]
+#   waveform, beat grid, novelty, chromagram, spectrogram, energy, mood radar, structure bars —
+#   all dual-labeled with beat count + bar number. Looks up file_path from --db when track_id
+#   is given, or bypasses the DB entirely with --track. Writes to
+#   <out-dir>/<track_id or filename stem>/ so different tracks don't overwrite each other.
+#   --show also opens plot windows (in addition to saving).
+
 # crosscheck-djuced — compare DJIA's detected keys against the keys DJUCED has stored
 python -m src.cli crosscheck-djuced [--db PATH] [--djuced-input DJUCED.db] [--output report.md]
 #   --djuced-input: path to DJUCED.db (default ~/Documents/DJUCED/DJUCED.db); read-only

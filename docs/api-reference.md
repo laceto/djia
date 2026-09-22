@@ -52,6 +52,15 @@ Public entry points for programmatic use. Import the package from the repo root.
   — module-level (picklable), compute-only per-track pipeline used by `Orchestrator.analyze_library`;
   never touches the DB, never raises (failures surface via the returned dict's `"error"` key). Not
   normally called directly — see `docs/architecture.md` for the parallel-analyze design.
+- **`visualization.generate_all_plots(file_path, out_dir=None, key=None, show=False) -> List[Path]`**
+  — loads the track, runs the full DSP+AI pipeline, and renders all 8 diagnostic plots (waveform,
+  beat grid, novelty, chromagram, spectrogram, energy, mood radar, structure bars) under
+  `out_dir/<key>/` (default `results/plots/<filename stem>/`; pass a DB `track_id` as `key` to
+  namespace like `spectrogram_key`). Backs the `plot` CLI command. The individual `plot_*(y, sr,
+  track, out_dir, show)` functions and `annotate_beat_counts(ax, points, color, draw_vlines, bpm)`
+  (dual beat-count / bar-number top axis) are also importable for custom plotting.
+  `plot_spectrogram` reuses `spectrogram.compute_spectrogram` (log-frequency STFT-to-dB) rather than
+  a separate computation.
 
 ## Database (`src/database/`)
 

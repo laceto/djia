@@ -161,6 +161,24 @@ them consistent.
   `DJUCED.db` (Hercules controllers), matched by fuzzy filename. Dry-run by default,
   auto-backup before the first real write; DJUCED must be closed while writing.
 
+## Visualization (`src/dsp/visualization.py`)
+
+Presentation layer over the same `Track` (+ `classify_mood()`) output everything else consumes — not
+one of the four ordered DSP engines. `generate_all_plots(file_path, out_dir, key, show)` loads the
+track, runs `extractor.extract_track_features` + `ai.classifier.classify_mood`, and renders all 8
+diagnostic plots (waveform, beat grid, novelty curve, chromagram, spectrogram, energy curve, mood
+radar, structure bars) via one `plot_*()` function each; `annotate_beat_counts` adds the dual
+beat-count/bar-number top axis shared by the time-series plots. `plot_spectrogram` reuses
+`spectrogram.compute_spectrogram` (the same STFT-to-dB computation persisted to
+`data/spectrograms/{track_id}.npy` at analyze time) rather than re-implementing it, rendered as a
+log-frequency heatmap via `librosa.display.specshow`. Backs the `plot` CLI command (`src/cli.py`),
+which resolves a DB `track_id` to its `file_path` (or takes `--track PATH` directly) and namespaces
+output under `results/plots/<track_id or filename stem>/` so multiple tracks don't collide.
+
+The standalone root scripts `demo_capabilities.py` and `detect_structure.py` predate this module and
+keep their own inline copies of similar plotting code (see `docs/scripts-reference.md`); new plotting
+needs should use `visualization.py` instead of extending those scripts.
+
 ## Ingestion
 
 `src/ingestion/{scanner,loader}.py` handle file discovery and librosa loading (resampled to
