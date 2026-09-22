@@ -1,0 +1,21 @@
+INFO:src.database.schema:Database initialized at db/djia.db
+INFO:src.orchestrator:Scanning directory: data
+INFO:src.ingestion.scanner:Scan complete: found 693 audio file(s)
+INFO:src.orchestrator:Found 0 audio file(s)
+
+======================================================================
+  DJIA Track Analysis
+======================================================================
+
+Analyzing audio library: data
+
+Analyzing tracks: 0track [00:00, ?track/s]Analyzing tracks: 0track [00:00, ?track/s]
+
+======================================================================
+  Analysis Complete
+======================================================================
+
+Tracks analyzed: 0
+Tracks skipped: 0
+Errors: 0
+Database: db/djia.db

@@ -1,0 +1,261 @@
+INFO:src.database.schema:Database initialized at db/djia.db
+Resuming analysis for 76 remaining track(s), workers=22
+Resuming:   0%|          | 0/76 [00:00<?, ?track/s]INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+ERROR:root:Failed to load data\tracks\01 - Heartthrob - Futures Past (Original Mix).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\01 - Heartthrob - Futures Past (Original Mix).mp3 (Could not load audio file data\tracks\01 - Heartthrob - Futures Past (Original Mix).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:src.orchestrator:\u2713 Analyzed: Troy Pierce - Lost On The Way To DC10 (Berlin Version).mp3
+Resuming:   1%|1         | 1/76 [03:32<4:25:42, 212.57s/track]INFO:src.orchestrator:\u2713 Analyzed: Tractile - To Go To.mp3
+Resuming:   3%|2         | 2/76 [03:42<1:55:24, 93.58s/track] INFO:src.orchestrator:\u2713 Analyzed: Troy Pierce - 25 bitches (Matt John's 25 pitches rmx).mp3
+Resuming:   4%|3         | 3/76 [03:46<1:03:39, 52.32s/track]INFO:src.orchestrator:\u2713 Analyzed: Troy Pierce - Klitkut.mp3
+Resuming:   5%|5         | 4/76 [03:48<39:03, 32.55s/track]  INFO:src.orchestrator:\u2713 Analyzed: Tractile - Unquenchable.mp3
+Resuming:   7%|6         | 5/76 [03:48<24:41, 20.87s/track]INFO:src.orchestrator:\u2713 Analyzed: Traffic Signs - Infiltrate.mp3
+Resuming:   8%|7         | 6/76 [03:49<16:24, 14.06s/track]INFO:src.orchestrator:\u2713 Analyzed: 01 - Citizen Kain - Doppelgaenger.mp3
+Resuming:   9%|9         | 7/76 [03:49<10:56,  9.51s/track]INFO:src.orchestrator:\u2713 Analyzed: Troy Pierce - Golden.mp3
+Resuming:  11%|#         | 8/76 [03:49<07:27,  6.58s/track]INFO:src.orchestrator:\u2713 Analyzed: 01 - ambivalent - nineteen.mp3
+Resuming:  12%|#1        | 9/76 [03:54<06:40,  5.97s/track]INFO:src.orchestrator:\u2713 Analyzed: Troy Pierce - 25 Bitches (Gaiser'S Too Many Bitches Remix).mp3
+Resuming:  13%|#3        | 10/76 [03:59<06:13,  5.66s/track]INFO:src.orchestrator:\u2713 Analyzed: Troy Pierce - Even If It´s Alone Black Acid.mp3
+Resuming:  14%|#4        | 11/76 [03:59<04:17,  3.96s/track]INFO:src.orchestrator:\u2713 Analyzed: Troy Pierce - 25 Bitches (Heartthrob remix).mp3
+Resuming:  16%|#5        | 12/76 [04:00<03:11,  2.99s/track]INFO:src.orchestrator:\u2713 Analyzed: 01 - Heartthrob - Futures Past (Original Mix).mp3
+Resuming:  17%|#7        | 13/76 [04:07<04:34,  4.36s/track]INFO:src.orchestrator:\u2713 Analyzed: Tractile - Stay out.mp3
+Resuming:  18%|#8        | 14/76 [04:09<03:37,  3.51s/track]INFO:src.orchestrator:\u2713 Analyzed: 01 - larsson - need the sun - siberia.mp3
+Resuming:  20%|#9        | 15/76 [04:18<05:11,  5.11s/track]ERROR:root:Failed to load data\tracks\Troy Pierce - The Day After Yesterday - aleszylder.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Troy Pierce - The Day After Yesterday - aleszylder.mp3 (Could not load audio file data\tracks\Troy Pierce - The Day After Yesterday - aleszylder.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - ramon tapia - say what.mp3
+Resuming:  21%|##1       | 16/76 [04:30<07:19,  7.32s/track]INFO:src.orchestrator:\u2713 Analyzed: Tractile - The Eel.mp3
+Resuming:  22%|##2       | 17/76 [04:31<05:12,  5.30s/track]INFO:src.orchestrator:\u2713 Analyzed: Troy Pierce - Oxytocin.mp3
+Resuming:  24%|##3       | 18/76 [04:49<08:59,  9.30s/track]ERROR:root:Failed to load data\tracks\Will Saul And Tam Cooper-Sequential Circus (Konrad Black Remix)-Emf.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Will Saul And Tam Cooper-Sequential Circus (Konrad Black Remix)-Emf.mp3 (Could not load audio file data\tracks\Will Saul And Tam Cooper-Sequential Circus (Konrad Black Remix)-Emf.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed:  Hermanez - Marrakech.mp3
+Resuming:  25%|##5       | 19/76 [05:06<10:55, 11.50s/track]ERROR:root:Failed to load data\tracks\microfunk_aka_2000_and_one_and_dave_ellesmere_-_pecan.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\microfunk_aka_2000_and_one_and_dave_ellesmere_-_pecan.mp3 (Could not load audio file data\tracks\microfunk_aka_2000_and_one_and_dave_ellesmere_-_pecan.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+ERROR:root:Failed to load data\tracks\marek_bois--you_got_good_ash_(gabriel_ananda_remix)-cmc.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\marek_bois--you_got_good_ash_(gabriel_ananda_remix)-cmc.mp3 (Could not load audio file data\tracks\marek_bois--you_got_good_ash_(gabriel_ananda_remix)-cmc.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: -Sw.Sr.--[2006.11]--7 Grindvik - Do Us Apart.mp3
+Resuming:  26%|##6       | 20/76 [05:19<11:04, 11.86s/track]INFO:src.orchestrator:\u2713 Analyzed: 01 - pan - pot - confronted - dh.mp3
+Resuming:  28%|##7       | 21/76 [05:24<09:13, 10.07s/track]ERROR:root:Failed to load data\tracks\niederflur-led.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\niederflur-led.mp3 (Could not load audio file data\tracks\niederflur-led.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - Ricardo Villalobos - Que Belle Epoque 2006.mp3
+Resuming:  29%|##8       | 22/76 [05:55<14:30, 16.13s/track]INFO:src.orchestrator:\u2713 Analyzed: Winx - Don t Laugh.mp3
+Resuming:  30%|###       | 23/76 [05:58<10:45, 12.18s/track]ERROR:root:Failed to load data\tracks\moritz_piske-slipless_in_seattle_(matt_star_remix)-loyalty---.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\moritz_piske-slipless_in_seattle_(matt_star_remix)-loyalty---.mp3 (Could not load audio file data\tracks\moritz_piske-slipless_in_seattle_(matt_star_remix)-loyalty---.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: Troy Pierce - The Day After Yesterday - aleszylder.mp3
+Resuming:  32%|###1      | 24/76 [06:00<08:02,  9.29s/track]ERROR:root:Failed to load data\tracks\nina_soul-ivory_black_(pfirter_remix)-loyalty.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\nina_soul-ivory_black_(pfirter_remix)-loyalty.mp3 (Could not load audio file data\tracks\nina_soul-ivory_black_(pfirter_remix)-loyalty.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: Vanjee, Julian Collazos - Rumba.mp3
+Resuming:  33%|###2      | 25/76 [06:23<11:12, 13.19s/track]INFO:src.orchestrator:\u2713 Analyzed: microfunk_aka_2000_and_one_and_dave_ellesmere_-_pecan.mp3
+Resuming:  34%|###4      | 26/76 [06:35<10:49, 12.99s/track]ERROR:root:Failed to load data\tracks\paco osuna - transheet (original mix).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\paco osuna - transheet (original mix).mp3 (Could not load audio file data\tracks\paco osuna - transheet (original mix).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: marek_bois--you_got_good_ash_(gabriel_ananda_remix)-cmc.mp3
+Resuming:  36%|###5      | 27/76 [06:43<09:26, 11.56s/track]INFO:src.orchestrator:\u2713 Analyzed: Workidz - Work It [Original Mix].mp3
+Resuming:  37%|###6      | 28/76 [07:03<11:05, 13.87s/track]Note: Illegal Audio-MPEG-Header 0x4c595249 at offset 11259808.
+Note: Trying to resync...
+Note: Hit end of (available) data during resync.
+Note: Illegal Audio-MPEG-Header 0x4c595249 at offset 11259808.
+Note: Trying to resync...
+Note: Hit end of (available) data during resync.
+INFO:src.orchestrator:\u2713 Analyzed: Will Saul And Tam Cooper-Sequential Circus (Konrad Black Remix)-Emf.mp3
+Resuming:  38%|###8      | 29/76 [07:07<08:42, 11.11s/track]INFO:src.orchestrator:\u2713 Analyzed: niederflur-led.mp3
+Resuming:  39%|###9      | 30/76 [07:12<07:05,  9.24s/track]INFO:src.orchestrator:\u2713 Analyzed: marco_carola-pallegio.mp3
+Resuming:  41%|####      | 31/76 [07:32<09:18, 12.41s/track]INFO:src.orchestrator:\u2713 Analyzed: nina_soul-ivory_black_(pfirter_remix)-loyalty.mp3
+Resuming:  42%|####2     | 32/76 [07:39<08:00, 10.93s/track]INFO:src.orchestrator:\u2713 Analyzed: Winx - Don't Laugh [Richie Santana Remix].mp3
+Resuming:  43%|####3     | 33/76 [07:52<08:13, 11.47s/track]INFO:src.orchestrator:\u2713 Analyzed: miss_fitz-geschprech_(jeff_samuel_remix)-hqem.mp3
+Resuming:  45%|####4     | 34/76 [07:59<07:07, 10.18s/track]INFO:src.orchestrator:\u2713 Analyzed: marek bois - bed boi pill.mp3
+ERROR:root:Failed to load data\tracks\plan_tec--espias_psiquicios_(jonas_kopp_psiquic_remix)-dh.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\plan_tec--espias_psiquicios_(jonas_kopp_psiquic_remix)-dh.mp3 (Could not load audio file data\tracks\plan_tec--espias_psiquicios_(jonas_kopp_psiquic_remix)-dh.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: Workidz_Washmachine_Original_Mix.mp3
+Resuming:  47%|####7     | 36/76 [08:03<04:14,  6.37s/track]ERROR:root:Failed to load data\tracks\plastikman_-_slow_poke_twilight_zone_mix-gem.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\plastikman_-_slow_poke_twilight_zone_mix-gem.mp3 (Could not load audio file data\tracks\plastikman_-_slow_poke_twilight_zone_mix-gem.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: matt_obrien-serotone.mp3
+Resuming:  49%|####8     | 37/76 [08:18<05:31,  8.49s/track]INFO:src.orchestrator:\u2713 Analyzed: paco osuna - transheet (original mix).mp3
+INFO:src.orchestrator:\u2713 Analyzed: moritz_piske-slipless_in_seattle_(matt_star_remix)-loyalty---.mp3
+Resuming:  51%|#####1    | 39/76 [08:25<03:54,  6.34s/track]INFO:src.orchestrator:\u2713 Analyzed: paco osuna - [2007.02] - crazy.mp3
+Resuming:  53%|#####2    | 40/76 [08:32<03:52,  6.45s/track]INFO:src.orchestrator:\u2713 Analyzed: oblivion--marche_(original_mix).mp3
+Resuming:  54%|#####3    | 41/76 [08:33<03:06,  5.33s/track]INFO:src.orchestrator:\u2713 Analyzed: me - Rej.mp3
+Resuming:  55%|#####5    | 42/76 [08:38<02:53,  5.10s/track]INFO:src.orchestrator:\u2713 Analyzed: par_grindvik-casio-hqem.mp3
+Resuming:  57%|#####6    | 43/76 [08:41<02:31,  4.59s/track]INFO:src.orchestrator:\u2713 Analyzed: par_grindvik_and_linzatti-light_year.mp3
+Resuming:  58%|#####7    | 44/76 [08:44<02:16,  4.27s/track]ERROR:root:Failed to load data\tracks\ryan_crosson-confiteria_del_molino_(original_mix).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\ryan_crosson-confiteria_del_molino_(original_mix).mp3 (Could not load audio file data\tracks\ryan_crosson-confiteria_del_molino_(original_mix).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+ERROR:root:Failed to load data\tracks\samim-heater_claude_vonstroke_remix-hqem.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\samim-heater_claude_vonstroke_remix-hqem.mp3 (Could not load audio file data\tracks\samim-heater_claude_vonstroke_remix-hqem.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: Tyrone - Ounce Of Bounce.mp3
+Resuming:  59%|#####9    | 45/76 [09:08<05:01,  9.72s/track]INFO:src.orchestrator:\u2713 Analyzed: phil_kieran-triple_crown-hqem.mp3
+Resuming:  61%|######    | 46/76 [09:17<04:49,  9.66s/track]INFO:src.orchestrator:\u2713 Analyzed: plan_tec--espias_psiquicios_(jonas_kopp_psiquic_remix)-dh.mp3
+Resuming:  62%|######1   | 47/76 [09:21<03:50,  7.96s/track]ERROR:root:Failed to load data\tracks\slam-were_not_here_(joe_stawarz_remix)-hqem.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\slam-were_not_here_(joe_stawarz_remix)-hqem.mp3 (Could not load audio file data\tracks\slam-were_not_here_(joe_stawarz_remix)-hqem.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+ERROR:root:Failed to load data\tracks\sebo k and metro - saxtrack - dh.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\sebo k and metro - saxtrack - dh.mp3 (Could not load audio file data\tracks\sebo k and metro - saxtrack - dh.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+ERROR:root:Failed to load data\tracks\samklang-ich_zeig_dir_wie_(luca_bacchetti_remix)(0daymusic.org).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\samklang-ich_zeig_dir_wie_(luca_bacchetti_remix)(0daymusic.org).mp3 (Could not load audio file data\tracks\samklang-ich_zeig_dir_wie_(luca_bacchetti_remix)(0daymusic.org).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+ERROR:root:Failed to load data\tracks\techno_vocals_-_dub_mix-dd.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\techno_vocals_-_dub_mix-dd.mp3 (Could not load audio file data\tracks\techno_vocals_-_dub_mix-dd.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+ERROR:root:Failed to load data\tracks\thrill_cosby_-_oogity_boogity-drum.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\thrill_cosby_-_oogity_boogity-drum.mp3 (Could not load audio file data\tracks\thrill_cosby_-_oogity_boogity-drum.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: plastikman_-_slow_poke_twilight_zone_mix-gem.mp3
+Resuming:  63%|######3   | 48/76 [09:53<06:56, 14.88s/track]INFO:src.orchestrator:\u2713 Analyzed: par_grindvik-continue_me.mp3
+Resuming:  64%|######4   | 49/76 [09:57<05:15, 11.70s/track]INFO:src.orchestrator:\u2713 Analyzed: samuel_l._session-the_stick_up_(sls_remix_2).mp3
+Resuming:  66%|######5   | 50/76 [10:16<06:03, 13.99s/track]ERROR:root:Failed to load data\tracks\tom_clark_and_daniel_dreier-the_rising_beat_(for_rise_only)-hqem.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\tom_clark_and_daniel_dreier-the_rising_beat_(for_rise_only)-hqem.mp3 (Could not load audio file data\tracks\tom_clark_and_daniel_dreier-the_rising_beat_(for_rise_only)-hqem.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: slam-were_not_here_(joe_stawarz_remix)-hqem.mp3
+Resuming:  67%|######7   | 51/76 [10:27<05:22, 12.89s/track]INFO:src.orchestrator:\u2713 Analyzed: r u ok - 04 - ambivalent - nuggets.mp3
+Resuming:  68%|######8   | 52/76 [10:27<03:41,  9.24s/track]INFO:src.orchestrator:\u2713 Analyzed: samim-heater_claude_vonstroke_remix-hqem.mp3
+Resuming:  70%|######9   | 53/76 [10:34<03:14,  8.47s/track]INFO:src.orchestrator:\u2713 Analyzed: ryan_crosson-confiteria_del_molino_(original_mix).mp3
+Resuming:  71%|#######1  | 54/76 [10:44<03:14,  8.85s/track]INFO:src.orchestrator:\u2713 Analyzed: pilas-6jun06-hqem.mp3
+Resuming:  72%|#######2  | 55/76 [10:46<02:24,  6.87s/track]ERROR:root:Failed to load data\tracks\tom_clark-fragile_elements_(paul_ritch_remix)-loyalty.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\tom_clark-fragile_elements_(paul_ritch_remix)-loyalty.mp3 (Could not load audio file data\tracks\tom_clark-fragile_elements_(paul_ritch_remix)-loyalty.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: sebo k and metro - saxtrack - dh.mp3
+Resuming:  74%|#######3  | 56/76 [10:56<02:39,  7.96s/track]INFO:src.orchestrator:\u2713 Analyzed: skoozbot - next to monchhichi - 04 - a fistful of duckets.mp3
+Resuming:  75%|#######5  | 57/76 [10:57<01:51,  5.86s/track]INFO:src.orchestrator:\u2713 Analyzed: techno_vocals_-_dub_mix-dd.mp3
+Resuming:  76%|#######6  | 58/76 [11:06<01:58,  6.58s/track]INFO:src.orchestrator:\u2713 Analyzed: samklang-ich_zeig_dir_wie_(luca_bacchetti_remix)(0daymusic.org).mp3
+Resuming:  78%|#######7  | 59/76 [11:15<02:05,  7.41s/track]INFO:src.orchestrator:\u2713 Analyzed: thrill_cosby_-_oogity_boogity-drum.mp3
+Resuming:  79%|#######8  | 60/76 [11:18<01:39,  6.23s/track]ERROR:root:Failed to load data\tracks\troy_pierce-girl_down_by_the_river_original-tsp.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\troy_pierce-girl_down_by_the_river_original-tsp.mp3 (Could not load audio file data\tracks\troy_pierce-girl_down_by_the_river_original-tsp.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: tractile-remix_2_(troy_pierce_mix)-hqem.mp3
+Resuming:  80%|########  | 61/76 [11:41<02:45, 11.06s/track]INFO:src.orchestrator:\u2713 Analyzed: swat_squad_-_escoria_(ryan_crosson_remix)-dd.mp3
+Resuming:  82%|########1 | 62/76 [11:47<02:13,  9.51s/track]INFO:src.orchestrator:\u2713 Analyzed: troy pierce - right on time.mp3
+Resuming:  83%|########2 | 63/76 [11:53<01:50,  8.49s/track]INFO:src.orchestrator:\u2713 Analyzed: swayzak - Smile and Receive (Cassy Beatmix).mp3
+Resuming:  84%|########4 | 64/76 [11:54<01:16,  6.35s/track]INFO:src.orchestrator:\u2713 Analyzed: tom_clark_and_daniel_dreier-the_rising_beat_(for_rise_only)-hqem.mp3
+Resuming:  86%|########5 | 65/76 [11:56<00:54,  4.92s/track]INFO:src.orchestrator:\u2713 Analyzed: tadeo – reflection nebula 056n.mp3
+Resuming:  87%|########6 | 66/76 [12:03<00:57,  5.78s/track]INFO:src.orchestrator:\u2713 Analyzed: troy_pierce-girl_down_by_the_river_original-tsp.mp3
+Resuming:  88%|########8 | 67/76 [12:11<00:57,  6.38s/track]INFO:src.orchestrator:\u2713 Analyzed: rhadoo - 03 slagare.mp3
+Resuming:  89%|########9 | 68/76 [12:12<00:37,  4.63s/track]INFO:src.orchestrator:\u2713 Analyzed: tom_clark-fragile_elements_(paul_ritch_remix)-loyalty.mp3
+Resuming:  91%|######### | 69/76 [12:20<00:40,  5.72s/track]INFO:src.orchestrator:\u2713 Analyzed: troy_pierce-finished.mp3
+Resuming:  92%|#########2| 70/76 [12:24<00:30,  5.06s/track]INFO:src.orchestrator:\u2713 Analyzed: Richie Hawtin - Minus Yellow.mp3
+Resuming:  93%|#########3| 71/76 [12:27<00:22,  4.47s/track]INFO:src.orchestrator:\u2713 Analyzed: ulysse-sometimes-hqem.mp3
+Resuming:  95%|#########4| 72/76 [12:38<00:26,  6.63s/track]INFO:src.orchestrator:\u2713 Analyzed: sun electric - toninas - villalobos rmx.mp3
+Resuming:  96%|#########6| 73/76 [12:45<00:19,  6.60s/track]INFO:src.orchestrator:\u2713 Analyzed: Minilogue - Snake charmer.mp3
+Resuming:  97%|#########7| 74/76 [13:02<00:19,  9.82s/track]INFO:src.orchestrator:\u2713 Analyzed: shackleton - blood on my hands ( ricardo villalobos' apocalypso now remix) - 2007.mp3
+Resuming:  99%|#########8| 75/76 [13:18<00:11, 11.64s/track]INFO:src.orchestrator:\u2713 Analyzed: Ricardo Villalobos - 808 the bassqueen.mp3
+Resuming: 100%|##########| 76/76 [13:19<00:00,  8.49s/track]Resuming: 100%|##########| 76/76 [13:19<00:00, 10.52s/track]
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0150 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0010 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0050 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0050 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0945 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0020 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+Using rule-based classifier (Essentia unavailable)
+Creating low pass filter ...Low pass filter created, time used = 0.0010 seconds
+num_octave =  9
+Creating early downsampling filter ...No early downsampling is required, downsample_factor =  1
+Early downsampling filter created,                         time used = 0.0000 seconds
+
+Done. Analyzed: 76  Errors: 0  Total jobs: 76

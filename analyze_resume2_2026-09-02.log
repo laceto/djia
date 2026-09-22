@@ -1,0 +1,80 @@
+INFO:src.database.schema:Database initialized at db/djia.db
+Resuming analysis for 94 remaining track(s), workers=22
+Resuming:   0%|          | 0/94 [00:00<?, ?track/s][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\layer3.c:INT123_do_layer3():1948] error: dequantization failed!
+Note: Illegal Audio-MPEG-Header 0x6339d146 at offset 193368.
+Note: Trying to resync...
+Note: Skipped 373 bytes in input.
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\layer3.c:INT123_do_layer3():1948] error: dequantization failed!
+Note: Illegal Audio-MPEG-Header 0x6339d146 at offset 193368.
+Note: Trying to resync...
+Note: Skipped 373 bytes in input.
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+ERROR:root:Failed to load data\tracks\Skoozbot-Next To Monchhichi (Adam Beyer Remix)-Hqem.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Skoozbot-Next To Monchhichi (Adam Beyer Remix)-Hqem.mp3 (Could not load audio file data\tracks\Skoozbot-Next To Monchhichi (Adam Beyer Remix)-Hqem.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+ERROR:root:Failed to load data\tracks\Slam ft Dot Allison - Kill the Pain (Marc Houle dub).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Slam ft Dot Allison - Kill the Pain (Marc Houle dub).mp3 (Could not load audio file data\tracks\Slam ft Dot Allison - Kill the Pain (Marc Houle dub).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+ERROR:root:Failed to load data\tracks\Tiga - 3 Weeks (Troy Pierce Move Until You Leave Mix).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Tiga - 3 Weeks (Troy Pierce Move Until You Leave Mix).mp3 (Could not load audio file data\tracks\Tiga - 3 Weeks (Troy Pierce Move Until You Leave Mix).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+ERROR:root:Failed to load data\tracks\Tom Budden - The Tree Dance.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Tom Budden - The Tree Dance.mp3 (Could not load audio file data\tracks\Tom Budden - The Tree Dance.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+ERROR:root:Failed to load data\tracks\Slam - This World (Wighnomy Bros & Robag Wruhme Bukkelflippers).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Slam - This World (Wighnomy Bros & Robag Wruhme Bukkelflippers).mp3 (Could not load audio file data\tracks\Slam - This World (Wighnomy Bros & Robag Wruhme Bukkelflippers).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+ERROR:root:Failed to load data\tracks\Sweet N Candy - Tackywakeup ( Marek Hemmann Remix).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Sweet N Candy - Tackywakeup ( Marek Hemmann Remix).mp3 (Could not load audio file data\tracks\Sweet N Candy - Tackywakeup ( Marek Hemmann Remix).mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:root:Loading checkpoint from C:\Users\l_ace\Desktop\projects\djia\venv\Lib\site-packages\skey\models\skey.pt
+ERROR:root:Failed to load data\tracks\Tobi Neumann, Onur Ozer, Sensitiva - Together.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Tobi Neumann, Onur Ozer, Sensitiva - Together.mp3 (Could not load audio file data\tracks\Tobi Neumann, Onur Ozer, Sensitiva - Together.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: Slam ft Dot Allison - Kill the Pain (Marc Houle dub).mp3
+Resuming:   1%|1         | 1/94 [02:39<4:06:43, 159.18s/track]INFO:src.orchestrator:\u2713 Analyzed: Skoozbot-Next To Monchhichi (Adam Beyer Remix)-Hqem.mp3
+Resuming:   2%|2         | 2/94 [02:40<1:41:42, 66.33s/track] INFO:src.orchestrator:\u2713 Analyzed: Super Flu - Shine.mp3
+Resuming:   3%|3         | 3/94 [02:52<1:02:42, 41.35s/track]INFO:src.orchestrator:\u2713 Analyzed: Tiga - 3 Weeks (Troy Pierce Move Until You Leave Mix).mp3
+Resuming:   4%|4         | 4/94 [03:05<45:23, 30.26s/track]  INFO:src.orchestrator:\u2713 Analyzed: Snax - Honeymooners Over (Konrad Black Remix).mp3
+Resuming:   5%|5         | 5/94 [03:05<28:53, 19.47s/track]INFO:src.orchestrator:\u2713 Analyzed: Slam - This World (Wighnomy Bros & Robag Wruhme Bukkelflippers).mp3
+Resuming:   6%|6         | 6/94 [03:13<22:49, 15.56s/track]INFO:src.orchestrator:\u2713 Analyzed: Slam - Kill The Pain.mp3
+Resuming:   7%|7         | 7/94 [03:17<16:56, 11.68s/track]INFO:src.orchestrator:\u2713 Analyzed: Tobias Freund - Street_Knowledge_Original_Mix.mp3
+Resuming:   9%|8         | 8/94 [03:22<13:39,  9.53s/track]INFO:src.orchestrator:\u2713 Analyzed: The Skull - Sensuella.mp3
+Resuming:  10%|9         | 9/94 [03:24<10:15,  7.24s/track]INFO:src.orchestrator:\u2713 Analyzed: Tadeo - Granada Granada (mix. 3).mp3
+Resuming:  11%|#         | 10/94 [03:26<07:56,  5.67s/track]INFO:src.orchestrator:\u2713 Analyzed: Tom Budden - The Tree Dance.mp3
+Resuming:  12%|#1        | 11/94 [03:29<06:37,  4.79s/track]INFO:src.orchestrator:\u2713 Analyzed: Steve Bug - Loverboy.mp3
+Resuming:  13%|#2        | 12/94 [03:32<05:48,  4.25s/track]INFO:src.orchestrator:\u2713 Analyzed: Sweet N Candy - Tackywakeup ( Marek Hemmann Remix).mp3
+Resuming:  14%|#3        | 13/94 [03:38<06:18,  4.68s/track]INFO:src.orchestrator:\u2713 Analyzed: Shlomi_Aber_-_Diosa.mp3
+Resuming:  15%|#4        | 14/94 [03:39<04:56,  3.70s/track]INFO:src.orchestrator:\u2713 Analyzed: The Skull - All You Booty Shakers.mp3
+Resuming:  16%|#5        | 15/94 [03:39<03:29,  2.65s/track]INFO:src.orchestrator:\u2713 Analyzed: Shinedoe - Phunk.mp3
+Resuming:  17%|#7        | 16/94 [03:56<08:56,  6.87s/track]INFO:src.orchestrator:\u2713 Analyzed: Steve Angello & Sebastian Ingrosso - Click (Original Mix).mp3
+Resuming:  18%|#8        | 17/94 [03:58<06:45,  5.27s/track]INFO:src.orchestrator:\u2713 Analyzed: Simon Baker-The Fly.mp3
+Resuming:  19%|#9        | 18/94 [03:59<05:24,  4.27s/track]INFO:src.orchestrator:\u2713 Analyzed: TELEFON TEL AVIV - The Worst Thing In The World (Gaiser Rmx).mp3
+Resuming:  20%|##        | 19/94 [04:03<04:53,  3.91s/track]INFO:src.orchestrator:\u2713 Analyzed: Sis - Trumpet.mp3
+Resuming:  21%|##1       | 20/94 [04:04<03:58,  3.23s/track]INFO:src.orchestrator:\u2713 Analyzed: Steve Lawler - Kalimba.mp3
+Resuming:  22%|##2       | 21/94 [04:07<03:46,  3.11s/track]ERROR:root:Failed to load data\tracks\Troy Pierce - 25 Bitches (marc houle remix) -.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Troy Pierce - 25 Bitches (marc houle remix) -.mp3 (Could not load audio file data\tracks\Troy Pierce - 25 Bitches (marc houle remix) -.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: Tobi Neumann, Onur Ozer, Sensitiva - Together.mp3
+Resuming:  23%|##3       | 22/94 [04:38<13:37, 11.36s/track]INFO:src.orchestrator:\u2713 Analyzed: Tractile - Dynam.mp3
+Resuming:  24%|##4       | 23/94 [05:21<24:46, 20.94s/track]ERROR:root:Failed to load data\tracks\Troy Pierce - The Day After Yesterday - aleszylder.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Troy Pierce - The Day After Yesterday - aleszylder.mp3 (Could not load audio file data\tracks\Troy Pierce - The Day After Yesterday - aleszylder.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: Tony Rohr & Dave Shokh - Dirka Dirka.mp3
+Resuming:  26%|##5       | 24/94 [05:31<20:47, 17.82s/track]INFO:src.orchestrator:\u2713 Analyzed: Troy Pierce - 25 Bitches (marc houle remix) -.mp3
+Resuming:  27%|##6       | 25/94 [05:51<21:08, 18.39s/track]ERROR:root:Failed to load data\tracks\Will Saul And Tam Cooper-Sequential Circus (Konrad Black Remix)-Emf.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input
+INFO:src.dsp.mood_engine:S-KEY unavailable/failed for data\tracks\Will Saul And Tam Cooper-Sequential Circus (Konrad Black Remix)-Emf.mp3 (Could not load audio file data\tracks\Will Saul And Tam Cooper-Sequential Circus (Konrad Black Remix)-Emf.mp3: Failed to decode audio samples: decode_av_frame, C:\actions-runner\_work\torchcodec\torchcodec\meta-pytorch\torchcodec\src\torchcodec\_core\SingleStreamDecoder.cpp:1541, Could not push packet to decoder: Invalid data found when processing input); using chroma key detection
+INFO:src.orchestrator:\u2713 Analyzed: Tractile - Silent Movie.mp3
+Resuming:  28%|##7       | 26/94 [06:06<19:41, 17.37s/track]INFO:src.orchestrator:\u2713 Analyzed: Tractile_-_Soda_Cola_-_Original_Mix.mp3
+Resuming:  29%|##8       | 27/94 [06:08<14:18, 12.81s/track]

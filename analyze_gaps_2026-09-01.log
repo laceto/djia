@@ -1,0 +1,6 @@
+=== Analyzing: data\tracks\02 - igor krsmanovic - red lighter.mp3 ===
+INFO:src.database.schema:Database initialized at db/djia.db
+Note: Illegal Audio-MPEG-Header 0x00000000 at offset 17544197.
+Note: Trying to resync...
+Note: Skipped 1024 bytes in input.
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\parse.c:wetwork():1389] error: Giving up resync after 1024 bytes - your stream is not nice... (maybe increasing resync limit could help).

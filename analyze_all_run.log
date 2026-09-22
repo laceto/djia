@@ -1,0 +1,1281 @@
+INFO:src.database.schema:Database initialized at data/djia.db
+INFO:src.orchestrator:Scanning directory: data
+INFO:src.ingestion.scanner:Scan complete: found 736 audio file(s)
+INFO:src.orchestrator:Found 736 audio file(s)
+
+======================================================================
+  DJIA Track Analysis
+======================================================================
+
+Analyzing audio library: data
+
+Using rule-based classifier (Essentia unavailable)
+Analyzing tracks:   0%|          | 0/736 [00:00<?, ?track/s]WARNING:src.orchestrator:No BPM for data\ Hermanez - Marrakech.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed:  Hermanez - Marrakech.mp3
+Analyzing tracks:   0%|          | 1/736 [00:46<9:29:42, 46.51s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\$ingoli Electro Minimal - Matt John - Io.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: $ingoli Electro Minimal - Matt John - Io.mp3
+Analyzing tracks:   0%|          | 2/736 [01:21<8:02:48, 39.47s/track]WARNING:src.orchestrator:No BPM for data\- dop - ikarus.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: - dop - ikarus.mp3
+Analyzing tracks:   0%|          | 3/736 [02:04<8:23:56, 41.25s/track]WARNING:src.orchestrator:No BPM for data\-Gel Abril-Very Wrong (Chaim Remix)-Hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: -Gel Abril-Very Wrong (Chaim Remix)-Hqem.mp3
+Analyzing tracks:   1%|          | 4/736 [02:31<7:13:26, 35.53s/track]WARNING:src.orchestrator:No BPM for data\-Sw.Sr.--[2006.11]--7 Grindvik - Do Us Apart.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: -Sw.Sr.--[2006.11]--7 Grindvik - Do Us Apart.mp3
+Analyzing tracks:   1%|          | 5/736 [03:19<8:10:32, 40.26s/track]WARNING:src.orchestrator:No BPM for data\01 - ambivalent - nineteen.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - ambivalent - nineteen.mp3
+Analyzing tracks:   1%|          | 6/736 [03:46<7:14:15, 35.69s/track]WARNING:src.orchestrator:No BPM for data\01 - Andy Lee - Lope.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - Andy Lee - Lope.mp3
+Analyzing tracks:   1%|          | 7/736 [04:43<8:36:43, 42.53s/track]WARNING:src.orchestrator:No BPM for data\01 - Atomium - Joris Vermeiren.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - Atomium - Joris Vermeiren.mp3
+Analyzing tracks:   1%|1         | 8/736 [04:52<6:29:20, 32.09s/track]WARNING:src.orchestrator:No BPM for data\01 - Citizen Kain - Doppelgaenger.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - Citizen Kain - Doppelgaenger.mp3
+Analyzing tracks:   1%|1         | 9/736 [05:19<6:09:13, 30.47s/track]WARNING:src.orchestrator:No BPM for data\01 - Gaiser - Pullpush.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - Gaiser - Pullpush.mp3
+Analyzing tracks:   1%|1         | 10/736 [05:59<6:41:43, 33.20s/track]WARNING:src.orchestrator:No BPM for data\01 - Heartthrob - Futures Past (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - Heartthrob - Futures Past (Original Mix).mp3
+Analyzing tracks:   1%|1         | 11/736 [06:36<6:57:46, 34.57s/track]WARNING:src.orchestrator:No BPM for data\01 - larsson - need the sun - siberia.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - larsson - need the sun - siberia.mp3
+Analyzing tracks:   2%|1         | 12/736 [07:08<6:46:24, 33.68s/track]WARNING:src.orchestrator:No BPM for data\01 - markus fix - research - bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - markus fix - research - bside.mp3
+Analyzing tracks:   2%|1         | 13/736 [07:46<7:00:30, 34.90s/track]WARNING:src.orchestrator:No BPM for data\01 - pan - pot - confronted - dh.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - pan - pot - confronted - dh.mp3
+Analyzing tracks:   2%|1         | 14/736 [08:34<7:49:04, 38.98s/track]WARNING:src.orchestrator:No BPM for data\01 - ramon tapia - say what.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - ramon tapia - say what.mp3
+Analyzing tracks:   2%|2         | 15/736 [09:14<7:51:38, 39.25s/track]WARNING:src.orchestrator:No BPM for data\01 - Ricardo Villalobos - Que Belle Epoque 2006.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01 - Ricardo Villalobos - Que Belle Epoque 2006.mp3
+Analyzing tracks:   2%|2         | 16/736 [10:09<8:48:58, 44.08s/track]WARNING:src.orchestrator:No BPM for data\01-ambivalent_and_jpls-creep (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-ambivalent_and_jpls-creep (0daymusic.org).mp3
+Analyzing tracks:   2%|2         | 17/736 [10:41<8:03:17, 40.33s/track]WARNING:src.orchestrator:No BPM for data\01-click_box-sugar_pain.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-click_box-sugar_pain.mp3
+Analyzing tracks:   2%|2         | 18/736 [11:01<6:51:12, 34.36s/track]WARNING:src.orchestrator:No BPM for data\01-daniel_stefanik--say_it_loud-siberia (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-daniel_stefanik--say_it_loud-siberia (0daymusic.org).mp3
+Analyzing tracks:   3%|2         | 19/736 [11:40<7:05:17, 35.59s/track]WARNING:src.orchestrator:No BPM for data\01-daso-thujon.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-daso-thujon.mp3
+Analyzing tracks:   3%|2         | 20/736 [12:17<7:09:00, 35.95s/track]WARNING:src.orchestrator:No BPM for data\01-delete_aka_sergio_munoz-where_is_my_moustache-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-delete_aka_sergio_munoz-where_is_my_moustache-bside.mp3
+Analyzing tracks:   3%|2         | 21/736 [12:48<6:52:49, 34.64s/track]WARNING:src.orchestrator:No BPM for data\01-heinrichs_and_hirtenfellner-tromp_it_(original_mix)-bside (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-heinrichs_and_hirtenfellner-tromp_it_(original_mix)-bside (0daymusic.org).mp3
+Analyzing tracks:   3%|2         | 22/736 [13:23<6:52:17, 34.65s/track]WARNING:src.orchestrator:No BPM for data\01-kiki-a1_dancing_graffiti.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-kiki-a1_dancing_graffiti.mp3
+Analyzing tracks:   3%|3         | 23/736 [13:54<6:39:03, 33.58s/track]WARNING:src.orchestrator:No BPM for data\01-len_faki-my_black_sheep__radio_slave_remix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-len_faki-my_black_sheep__radio_slave_remix.mp3
+Analyzing tracks:   3%|3         | 24/736 [14:34<7:02:04, 35.57s/track]WARNING:src.orchestrator:No BPM for data\01-luca_bacchetti-afrikaans__original_mix (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-luca_bacchetti-afrikaans__original_mix (0daymusic.org).mp3
+Analyzing tracks:   3%|3         | 25/736 [15:21<7:42:23, 39.02s/track]WARNING:src.orchestrator:No BPM for data\01-m.a.n.d.y._and_booka_shade-o_superman_feat._laurie_anderson__matt_john_remix - 0daymusic.org.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-m.a.n.d.y._and_booka_shade-o_superman_feat._laurie_anderson__matt_john_remix - 0daymusic.org.mp3
+Analyzing tracks:   4%|3         | 26/736 [15:56<7:26:53, 37.77s/track]WARNING:src.orchestrator:No BPM for data\01-Marc Houle-Sands.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-Marc Houle-Sands.mp3
+Analyzing tracks:   4%|3         | 27/736 [16:24<6:51:26, 34.82s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\01-marco_carola--jackpot.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-marco_carola--jackpot.mp3
+Analyzing tracks:   4%|3         | 28/736 [16:59<6:50:01, 34.75s/track]WARNING:src.orchestrator:No BPM for data\01-marco_carola-dancing_days.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-marco_carola-dancing_days.mp3
+Analyzing tracks:   4%|3         | 29/736 [17:29<6:33:38, 33.41s/track]WARNING:src.orchestrator:No BPM for data\01-marek_bois--memento_moments_(delete_aka_sergio_munoz_rmx)-dh (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-marek_bois--memento_moments_(delete_aka_sergio_munoz_rmx)-dh (0daymusic.org).mp3
+Analyzing tracks:   4%|4         | 30/736 [17:59<6:21:30, 32.42s/track]WARNING:src.orchestrator:No BPM for data\01-markantonio_and_joseph_capriati-molotov_(original_mix)-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-markantonio_and_joseph_capriati-molotov_(original_mix)-bside.mp3
+Analyzing tracks:   4%|4         | 31/736 [18:31<6:18:46, 32.24s/track]WARNING:src.orchestrator:No BPM for data\01-matt_star-kuhle_fliege_(hugo_remix)-bside (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-matt_star-kuhle_fliege_(hugo_remix)-bside (0daymusic.org).mp3
+Analyzing tracks:   4%|4         | 32/736 [19:15<6:59:15, 35.73s/track]WARNING:src.orchestrator:No BPM for data\01-nhar_-_dont_forget_to_lick.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-nhar_-_dont_forget_to_lick.mp3
+Analyzing tracks:   4%|4         | 33/736 [19:49<6:54:36, 35.39s/track]WARNING:src.orchestrator:No BPM for data\01-pitto-sexvibe-nvs.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-pitto-sexvibe-nvs.mp3
+Analyzing tracks:   5%|4         | 34/736 [20:40<7:48:14, 40.02s/track]WARNING:src.orchestrator:No BPM for data\01-raudive-turn_it_off-tsp.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-raudive-turn_it_off-tsp.mp3
+Analyzing tracks:   5%|4         | 35/736 [21:06<6:58:29, 35.82s/track]WARNING:src.orchestrator:No BPM for data\01-reboot-ronson_(original_mix) (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-reboot-ronson_(original_mix) (0daymusic.org).mp3
+Analyzing tracks:   5%|4         | 36/736 [21:46<7:12:47, 37.10s/track]WARNING:src.orchestrator:No BPM for data\01-ruede_hagelstein_feat_naneci-semikolon__original_mix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-ruede_hagelstein_feat_naneci-semikolon__original_mix.mp3
+Analyzing tracks:   5%|5         | 37/736 [22:26<7:20:12, 37.79s/track]WARNING:src.orchestrator:No BPM for data\01-sebo_k-diva-(original_mix) (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-sebo_k-diva-(original_mix) (0daymusic.org).mp3
+Analyzing tracks:   5%|5         | 38/736 [23:00<7:06:32, 36.66s/track]WARNING:src.orchestrator:No BPM for data\01-skoozbot-next_to_monchhichi_(original_mix)-hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-skoozbot-next_to_monchhichi_(original_mix)-hqem.mp3
+Analyzing tracks:   5%|5         | 39/736 [23:26<6:30:50, 33.64s/track]WARNING:src.orchestrator:No BPM for data\01-slam-positive_education_(paul_ritch_remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-slam-positive_education_(paul_ritch_remix).mp3
+Analyzing tracks:   5%|5         | 40/736 [24:08<6:57:00, 35.95s/track]WARNING:src.orchestrator:No BPM for data\01-steadycam_-_get_on_up_there-xds.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-steadycam_-_get_on_up_there-xds.mp3
+Analyzing tracks:   6%|5         | 41/736 [24:43<6:53:52, 35.73s/track]WARNING:src.orchestrator:No BPM for data\01-tadeo-fractal-hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-tadeo-fractal-hqem.mp3
+Analyzing tracks:   6%|5         | 42/736 [25:07<6:11:55, 32.15s/track]WARNING:src.orchestrator:No BPM for data\01-Teflon-a1 The Wombat-Hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-Teflon-a1 The Wombat-Hqem.mp3
+Analyzing tracks:   6%|5         | 43/736 [25:36<6:00:41, 31.23s/track]WARNING:src.orchestrator:No BPM for data\01-tiger_stripes-hooked__guy_gerber_remix (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-tiger_stripes-hooked__guy_gerber_remix (0daymusic.org).mp3
+Analyzing tracks:   6%|5         | 44/736 [26:15<6:27:21, 33.59s/track]WARNING:src.orchestrator:No BPM for data\01-uto_karem-alive_(original_mix)-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-uto_karem-alive_(original_mix)-bside.mp3
+Analyzing tracks:   6%|6         | 45/736 [26:40<5:58:14, 31.11s/track]WARNING:src.orchestrator:No BPM for data\01-x-press_2-london_xpress__steve_lawler_remix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01-x-press_2-london_xpress__steve_lawler_remix.mp3
+Analyzing tracks:   6%|6         | 46/736 [27:30<7:04:03, 36.87s/track]WARNING:src.orchestrator:No BPM for data\01. JPLS - Twilight 1.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01. JPLS - Twilight 1.mp3
+Analyzing tracks:   6%|6         | 47/736 [27:54<6:19:07, 33.01s/track]WARNING:src.orchestrator:No BPM for data\01. SIS - Nu Wim De Wa.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01. SIS - Nu Wim De Wa.mp3
+Analyzing tracks:   7%|6         | 48/736 [28:27<6:17:25, 32.92s/track]WARNING:src.orchestrator:No BPM for data\01_-_tadeo_-_4__original_mix_.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01_-_tadeo_-_4__original_mix_.mp3
+Analyzing tracks:   7%|6         | 49/736 [28:54<5:55:17, 31.03s/track]WARNING:src.orchestrator:No BPM for data\01_anthony_collins-bombay_strings_(original_mix)-aub.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01_anthony_collins-bombay_strings_(original_mix)-aub.mp3
+Analyzing tracks:   7%|6         | 50/736 [29:23<5:47:45, 30.42s/track]WARNING:src.orchestrator:No BPM for data\01_heartthrob_-_baby_kate-drum.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01_heartthrob_-_baby_kate-drum.mp3
+Analyzing tracks:   7%|6         | 51/736 [29:48<5:29:21, 28.85s/track]WARNING:src.orchestrator:No BPM for data\01_martinez_-_momomowha.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 01_martinez_-_momomowha.mp3
+Analyzing tracks:   7%|7         | 52/736 [30:39<6:45:15, 35.55s/track]WARNING:src.orchestrator:No BPM for data\02 - christian smith and john selway - swingworld paul ritch remix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02 - christian smith and john selway - swingworld paul ritch remix.mp3
+Analyzing tracks:   7%|7         | 53/736 [31:12<6:37:08, 34.89s/track]WARNING:src.orchestrator:No BPM for data\02 - deltano - materia escura.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02 - deltano - materia escura.mp3
+Analyzing tracks:   7%|7         | 54/736 [31:50<6:44:18, 35.57s/track]INFO:src.database.store:Inserted track 117: 02 - Gel Abril - Your Face Is A Mess (Mark Broom Remix).mp3
+WARNING:src.orchestrator:No BPM for data\02 - Gel Abril - Your Face Is A Mess (Mark Broom Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02 - Gel Abril - Your Face Is A Mess (Mark Broom Remix).mp3
+Analyzing tracks:   7%|7         | 55/736 [32:14<6:07:08, 32.35s/track]Note: Illegal Audio-MPEG-Header 0x00000000 at offset 17532698.
+Note: Trying to resync...
+Note: Skipped 1024 bytes in input.
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\parse.c:wetwork():1389] error: Giving up resync after 1024 bytes - your stream is not nice... (maybe increasing resync limit could help).
+ERROR:src.ingestion.loader:Error loading audio from data\02 - igor krsmanovic - red lighter.mp3: 
+ERROR:src.orchestrator:Failed to load audio: data\02 - igor krsmanovic - red lighter.mp3
+Analyzing tracks:   8%|7         | 56/736 [32:15<4:18:08, 22.78s/track]INFO:src.database.store:Inserted track 118: 02 - Ricardo Villalobos - Tempura.mp3
+WARNING:src.orchestrator:No BPM for data\02 - Ricardo Villalobos - Tempura.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02 - Ricardo Villalobos - Tempura.mp3
+Analyzing tracks:   8%|7         | 57/736 [33:02<5:40:42, 30.11s/track]INFO:src.database.store:Inserted track 119: 02 - Sweet Chat Rion (Dimbiman Rmx) - Ark.mp3
+WARNING:src.orchestrator:No BPM for data\02 - Sweet Chat Rion (Dimbiman Rmx) - Ark.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02 - Sweet Chat Rion (Dimbiman Rmx) - Ark.mp3
+Analyzing tracks:   8%|7         | 58/736 [33:14<4:38:58, 24.69s/track]WARNING:src.orchestrator:No BPM for data\02 - tg aka tim green - mr dry dachshund bottomless remix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02 - tg aka tim green - mr dry dachshund bottomless remix.mp3
+Analyzing tracks:   8%|8         | 59/736 [33:46<5:02:16, 26.79s/track]INFO:src.database.store:Inserted track 120: 02-afternoon_coffee_boys-dark_blend__camea_remix--tsp.mp3
+WARNING:src.orchestrator:No BPM for data\02-afternoon_coffee_boys-dark_blend__camea_remix--tsp.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-afternoon_coffee_boys-dark_blend__camea_remix--tsp.mp3
+Analyzing tracks:   8%|8         | 60/736 [34:08<4:46:54, 25.47s/track]INFO:src.database.store:Inserted track 121: 02-argy-1985_(sydenham_and_rune_remix)-hqem.mp3
+WARNING:src.orchestrator:No BPM for data\02-argy-1985_(sydenham_and_rune_remix)-hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-argy-1985_(sydenham_and_rune_remix)-hqem.mp3
+Analyzing tracks:   8%|8         | 61/736 [34:43<5:18:18, 28.29s/track]INFO:src.database.store:Inserted track 122: 02-bryan_zentz-shadowtalk (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\02-bryan_zentz-shadowtalk (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-bryan_zentz-shadowtalk (0daymusic.org).mp3
+Analyzing tracks:   8%|8         | 62/736 [35:17<5:35:00, 29.82s/track]INFO:src.database.store:Inserted track 123: 02-christian_smith_and_john_selway-swingworld__paul_ritch_remix (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\02-christian_smith_and_john_selway-swingworld__paul_ritch_remix (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-christian_smith_and_john_selway-swingworld__paul_ritch_remix (0daymusic.org).mp3
+Analyzing tracks:   9%|8         | 63/736 [35:53<5:56:10, 31.75s/track]INFO:src.database.store:Inserted track 124: 02-click_box-bass_tilt.mp3
+WARNING:src.orchestrator:No BPM for data\02-click_box-bass_tilt.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-click_box-bass_tilt.mp3
+Analyzing tracks:   9%|8         | 64/736 [36:23<5:50:50, 31.32s/track]INFO:src.database.store:Inserted track 125: 02-junior_boys-no_kinda_man_(jona_remix)-scratch.mp3
+WARNING:src.orchestrator:No BPM for data\02-junior_boys-no_kinda_man_(jona_remix)-scratch.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-junior_boys-no_kinda_man_(jona_remix)-scratch.mp3
+Analyzing tracks:   9%|8         | 65/736 [37:06<6:29:21, 34.82s/track]INFO:src.database.store:Inserted track 126: 02-luca_bacchetti-el_matador__dub_mix (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\02-luca_bacchetti-el_matador__dub_mix (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-luca_bacchetti-el_matador__dub_mix (0daymusic.org).mp3
+Analyzing tracks:   9%|8         | 66/736 [37:37<6:16:56, 33.76s/track]INFO:src.database.store:Inserted track 127: 02-marc_houle-selection_(original_mix)-bside.mp3
+WARNING:src.orchestrator:No BPM for data\02-marc_houle-selection_(original_mix)-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-marc_houle-selection_(original_mix)-bside.mp3
+Analyzing tracks:   9%|9         | 67/736 [38:01<5:41:46, 30.65s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 128: 02-marco_carola--swingback.mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\02-marco_carola--swingback.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-marco_carola--swingback.mp3
+Analyzing tracks:   9%|9         | 68/736 [38:32<5:42:08, 30.73s/track]INFO:src.database.store:Inserted track 129: 02-marco_carola-apnea.mp3
+WARNING:src.orchestrator:No BPM for data\02-marco_carola-apnea.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-marco_carola-apnea.mp3
+Analyzing tracks:   9%|9         | 69/736 [39:10<6:06:03, 32.93s/track]INFO:src.database.store:Inserted track 130: 02-mark_brown-new_heights_(christian_smith_and_john_selway_remix)-scratch (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\02-mark_brown-new_heights_(christian_smith_and_john_selway_remix)-scratch (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-mark_brown-new_heights_(christian_smith_and_john_selway_remix)-scratch (0daymusic.org).mp3
+Analyzing tracks:  10%|9         | 70/736 [39:46<6:15:15, 33.81s/track]INFO:src.database.store:Inserted track 131: 02-michele_tabucchi_davide_squillace--one_lobster_please_(mathias_kadens_gambass_remix)-dh (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\02-michele_tabucchi_davide_squillace--one_lobster_please_(mathias_kadens_gambass_remix)-dh (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-michele_tabucchi_davide_squillace--one_lobster_please_(mathias_kadens_gambass_remix)-dh (0daymusic.org).mp3
+Analyzing tracks:  10%|9         | 71/736 [40:17<6:07:39, 33.17s/track]INFO:src.database.store:Inserted track 132: 02-mikael_stavostrand-moment_and_movement (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\02-mikael_stavostrand-moment_and_movement (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-mikael_stavostrand-moment_and_movement (0daymusic.org).mp3
+Analyzing tracks:  10%|9         | 72/736 [40:46<5:52:18, 31.83s/track]INFO:src.database.store:Inserted track 133: 02-mike_shannon-dr._x_(x_flex_mix).mp3
+WARNING:src.orchestrator:No BPM for data\02-mike_shannon-dr._x_(x_flex_mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-mike_shannon-dr._x_(x_flex_mix).mp3
+Analyzing tracks:  10%|9         | 73/736 [41:13<5:35:12, 30.34s/track]INFO:src.database.store:Inserted track 134: 02-paco_osuna-influence_(original_mix)-bside.mp3
+WARNING:src.orchestrator:No BPM for data\02-paco_osuna-influence_(original_mix)-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-paco_osuna-influence_(original_mix)-bside.mp3
+Analyzing tracks:  10%|#         | 74/736 [41:44<5:38:45, 30.70s/track]INFO:src.database.store:Inserted track 135: 02-par_grindvik-nand-grind-hqem.mp3
+WARNING:src.orchestrator:No BPM for data\02-par_grindvik-nand-grind-hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-par_grindvik-nand-grind-hqem.mp3
+Analyzing tracks:  10%|#         | 75/736 [42:17<5:43:15, 31.16s/track]INFO:src.database.store:Inserted track 136: 02-paul_ritch-souba-hqem.mp3
+WARNING:src.orchestrator:No BPM for data\02-paul_ritch-souba-hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-paul_ritch-souba-hqem.mp3
+Analyzing tracks:  10%|#         | 76/736 [42:46<5:36:53, 30.63s/track]INFO:src.database.store:Inserted track 137: 02-plastikman-panikattack_second_attack_remix-loyalty.mp3
+WARNING:src.orchestrator:No BPM for data\02-plastikman-panikattack_second_attack_remix-loyalty.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-plastikman-panikattack_second_attack_remix-loyalty.mp3
+Analyzing tracks:  10%|#         | 77/736 [43:23<5:56:40, 32.47s/track]INFO:src.database.store:Inserted track 138: 02-rino_cerrone_and_joseph_capriati-spider_pork-PARELA.mp3
+WARNING:src.orchestrator:No BPM for data\02-rino_cerrone_and_joseph_capriati-spider_pork-PARELA.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-rino_cerrone_and_joseph_capriati-spider_pork-PARELA.mp3
+Analyzing tracks:  11%|#         | 78/736 [43:59<6:09:37, 33.70s/track]INFO:src.database.store:Inserted track 139: 02-sascha_ciccopiedi-the_drive.mp3
+WARNING:src.orchestrator:No BPM for data\02-sascha_ciccopiedi-the_drive.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-sascha_ciccopiedi-the_drive.mp3
+Analyzing tracks:  11%|#         | 79/736 [44:32<6:05:30, 33.38s/track]INFO:src.database.store:Inserted track 140: 02-senor_coconut_and_his_orchestra-behind_the_mask__ricardo_villalobos_remix-ute.mp3
+WARNING:src.orchestrator:No BPM for data\02-senor_coconut_and_his_orchestra-behind_the_mask__ricardo_villalobos_remix-ute.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-senor_coconut_and_his_orchestra-behind_the_mask__ricardo_villalobos_remix-ute.mp3
+Analyzing tracks:  11%|#         | 80/736 [45:41<8:00:47, 43.98s/track]INFO:src.database.store:Inserted track 141: 02-slajh_aka_steve_lawler_and_jimmy_hill-white_pockets__original_mix.mp3
+WARNING:src.orchestrator:No BPM for data\02-slajh_aka_steve_lawler_and_jimmy_hill-white_pockets__original_mix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-slajh_aka_steve_lawler_and_jimmy_hill-white_pockets__original_mix.mp3
+Analyzing tracks:  11%|#1        | 81/736 [46:16<7:31:35, 41.37s/track]INFO:src.database.store:Inserted track 142: 02-spencer_parker_and_diesel_pres_co.lab-zanzibar__nick_curly_mix (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\02-spencer_parker_and_diesel_pres_co.lab-zanzibar__nick_curly_mix (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-spencer_parker_and_diesel_pres_co.lab-zanzibar__nick_curly_mix (0daymusic.org).mp3
+Analyzing tracks:  11%|#1        | 82/736 [46:46<6:53:14, 37.91s/track]INFO:src.database.store:Inserted track 143: 02-tg-cave_the_speakers_(konrad_black_remix)-hqem.mp3
+WARNING:src.orchestrator:No BPM for data\02-tg-cave_the_speakers_(konrad_black_remix)-hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-tg-cave_the_speakers_(konrad_black_remix)-hqem.mp3
+Analyzing tracks:  11%|#1        | 83/736 [47:20<6:41:41, 36.91s/track]INFO:src.database.store:Inserted track 144: 02-tolga_fidan-for_our_fathers_(original_mix)-bside.mp3
+WARNING:src.orchestrator:No BPM for data\02-tolga_fidan-for_our_fathers_(original_mix)-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-tolga_fidan-for_our_fathers_(original_mix)-bside.mp3
+Analyzing tracks:  11%|#1        | 84/736 [47:56<6:36:33, 36.49s/track]INFO:src.database.store:Inserted track 145: 02-uto_karem-elevate_v2_(original_mix) (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\02-uto_karem-elevate_v2_(original_mix) (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02-uto_karem-elevate_v2_(original_mix) (0daymusic.org).mp3
+Analyzing tracks:  12%|#1        | 85/736 [48:21<6:00:24, 33.22s/track]INFO:src.database.store:Inserted track 146: 02. JPLS - Twilight 3.mp3
+WARNING:src.orchestrator:No BPM for data\02. JPLS - Twilight 3.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02. JPLS - Twilight 3.mp3
+Analyzing tracks:  12%|#1        | 86/736 [48:48<5:37:01, 31.11s/track]INFO:src.database.store:Inserted track 147: 02. Par Grindvik - World of Mine.mp3
+WARNING:src.orchestrator:No BPM for data\02. Par Grindvik - World of Mine.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02. Par Grindvik - World of Mine.mp3
+Analyzing tracks:  12%|#1        | 87/736 [49:22<5:47:48, 32.15s/track]INFO:src.database.store:Inserted track 148: 02_christian_smith_and_john_selway_-_coming_storm.mp3
+WARNING:src.orchestrator:No BPM for data\02_christian_smith_and_john_selway_-_coming_storm.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02_christian_smith_and_john_selway_-_coming_storm.mp3
+Analyzing tracks:  12%|#1        | 88/736 [49:50<5:33:18, 30.86s/track]INFO:src.database.store:Inserted track 149: 02_raudive-pylon_(original_mix)-aub.mp3
+WARNING:src.orchestrator:No BPM for data\02_raudive-pylon_(original_mix)-aub.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 02_raudive-pylon_(original_mix)-aub.mp3
+Analyzing tracks:  12%|#2        | 89/736 [50:18<5:22:35, 29.92s/track]INFO:src.database.store:Inserted track 150: 03 - All there is - Melchior Productions.mp3
+WARNING:src.orchestrator:No BPM for data\03 - All there is - Melchior Productions.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03 - All there is - Melchior Productions.mp3
+Analyzing tracks:  12%|#2        | 90/736 [50:26<4:12:30, 23.45s/track]INFO:src.database.store:Inserted track 151: 03 - Ricardo Villalobos - Suesse Cheques.mp3
+WARNING:src.orchestrator:No BPM for data\03 - Ricardo Villalobos - Suesse Cheques.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03 - Ricardo Villalobos - Suesse Cheques.mp3
+Analyzing tracks:  12%|#2        | 91/736 [50:57<4:37:20, 25.80s/track]INFO:src.database.store:Inserted track 152: 03 Booka Shade - Sweet Lies [Matthias Tanzmann Remix].mp3
+WARNING:src.orchestrator:No BPM for data\03 Booka Shade - Sweet Lies [Matthias Tanzmann Remix].mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03 Booka Shade - Sweet Lies [Matthias Tanzmann Remix].mp3
+Analyzing tracks:  12%|#2        | 92/736 [51:29<4:56:26, 27.62s/track]INFO:src.database.store:Inserted track 153: 03-d_ramirez_feat_tc-with_me_or_against_me__tocadisco__s_carnaval_in_rio_mix-tt.mp3
+WARNING:src.orchestrator:No BPM for data\03-d_ramirez_feat_tc-with_me_or_against_me__tocadisco__s_carnaval_in_rio_mix-tt.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-d_ramirez_feat_tc-with_me_or_against_me__tocadisco__s_carnaval_in_rio_mix-tt.mp3
+Analyzing tracks:  13%|#2        | 93/736 [51:55<4:51:13, 27.18s/track]INFO:src.database.store:Inserted track 154: 03-deadbeat_-_mecca_drum_jack.mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\layer3.c:INT123_do_layer3():1908] error: dequantization failed!
+Note: Illegal Audio-MPEG-Header 0x2c706b2c at offset 15531278.
+Note: Trying to resync...
+Note: Skipped 1024 bytes in input.
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\parse.c:wetwork():1389] error: Giving up resync after 1024 bytes - your stream is not nice... (maybe increasing resync limit could help).
+ERROR:src.ingestion.loader:Error loading audio from data\03-deadbeat_-_mecca_drum_jack.mp3: 
+ERROR:src.orchestrator:Failed to load audio: data\03-deadbeat_-_mecca_drum_jack.mp3
+Analyzing tracks:  13%|#2        | 94/736 [51:56<3:24:58, 19.16s/track]INFO:src.database.store:Inserted track 155: 03-delete-sharlz_bronce_(original_mix)-bside.mp3
+WARNING:src.orchestrator:No BPM for data\03-delete-sharlz_bronce_(original_mix)-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-delete-sharlz_bronce_(original_mix)-bside.mp3
+Analyzing tracks:  13%|#2        | 95/736 [52:24<3:53:49, 21.89s/track]INFO:src.database.store:Inserted track 156: 03-ilario_alicante-near_africa_(markus_fix_and_robert_dietz_remix) (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\03-ilario_alicante-near_africa_(markus_fix_and_robert_dietz_remix) (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-ilario_alicante-near_africa_(markus_fix_and_robert_dietz_remix) (0daymusic.org).mp3
+Analyzing tracks:  13%|#3        | 96/736 [53:05<4:55:25, 27.70s/track]INFO:src.database.store:Inserted track 157: 03-Jon Seber-Speechless Monkeys (Delete Remix)-Hqem.mp3
+WARNING:src.orchestrator:No BPM for data\03-Jon Seber-Speechless Monkeys (Delete Remix)-Hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-Jon Seber-Speechless Monkeys (Delete Remix)-Hqem.mp3
+Analyzing tracks:  13%|#3        | 97/736 [53:33<4:55:30, 27.75s/track]INFO:src.database.store:Inserted track 158: 03-luca_bacchetti-caribbean__original_mix (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\03-luca_bacchetti-caribbean__original_mix (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-luca_bacchetti-caribbean__original_mix (0daymusic.org).mp3
+Analyzing tracks:  13%|#3        | 98/736 [54:06<5:09:26, 29.10s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 159: 03-marco_carola--lost_connection_(digital_release).mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\03-marco_carola--lost_connection_(digital_release).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-marco_carola--lost_connection_(digital_release).mp3
+Analyzing tracks:  13%|#3        | 99/736 [54:36<5:13:47, 29.56s/track]INFO:src.database.store:Inserted track 160: 03-mathias_kaden-saloee-nvs.mp3
+WARNING:src.orchestrator:No BPM for data\03-mathias_kaden-saloee-nvs.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-mathias_kaden-saloee-nvs.mp3
+Analyzing tracks:  14%|#3        | 100/736 [55:04<5:09:05, 29.16s/track]INFO:src.database.store:Inserted track 161: 03-miss_fitz-menternal_(villalobos_in_the_pipe_mix)-hqem.mp3
+WARNING:src.orchestrator:No BPM for data\03-miss_fitz-menternal_(villalobos_in_the_pipe_mix)-hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-miss_fitz-menternal_(villalobos_in_the_pipe_mix)-hqem.mp3
+Analyzing tracks:  14%|#3        | 101/736 [56:05<6:48:22, 38.59s/track]INFO:src.database.store:Inserted track 162: 03-perc_-_ice_cream_for_kenton_(lee_pennington_remix).mp3
+WARNING:src.orchestrator:No BPM for data\03-perc_-_ice_cream_for_kenton_(lee_pennington_remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-perc_-_ice_cream_for_kenton_(lee_pennington_remix).mp3
+Analyzing tracks:  14%|#3        | 102/736 [56:42<6:43:00, 38.14s/track]INFO:src.database.store:Inserted track 163: 03-tiefschwarz_-_ghostrack_(radio_slave_remix)-hqem.mp3
+WARNING:src.orchestrator:No BPM for data\03-tiefschwarz_-_ghostrack_(radio_slave_remix)-hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-tiefschwarz_-_ghostrack_(radio_slave_remix)-hqem.mp3
+Analyzing tracks:  14%|#3        | 103/736 [57:29<7:10:26, 40.80s/track]INFO:src.database.store:Inserted track 164: 03-tigerskin--take_the_e-train-siberia (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\03-tigerskin--take_the_e-train-siberia (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-tigerskin--take_the_e-train-siberia (0daymusic.org).mp3
+Analyzing tracks:  14%|#4        | 104/736 [58:10<7:09:55, 40.82s/track]INFO:src.database.store:Inserted track 165: 03-uto_karem-homebase_(original_mix) (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\03-uto_karem-homebase_(original_mix) (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03-uto_karem-homebase_(original_mix) (0daymusic.org).mp3
+Analyzing tracks:  14%|#4        | 105/736 [58:36<6:21:23, 36.27s/track]INFO:src.database.store:Inserted track 166: 03. JPLS -Twilight 8.mp3
+WARNING:src.orchestrator:No BPM for data\03. JPLS -Twilight 8.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03. JPLS -Twilight 8.mp3
+Analyzing tracks:  14%|#4        | 106/736 [58:59<5:41:32, 32.53s/track]INFO:src.database.store:Inserted track 167: 03_magda_-_staring_contest-drum.mp3
+WARNING:src.orchestrator:No BPM for data\03_magda_-_staring_contest-drum.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 03_magda_-_staring_contest-drum.mp3
+Analyzing tracks:  15%|#4        | 107/736 [59:23<5:13:46, 29.93s/track]INFO:src.database.store:Inserted track 168: 04 - Le Crapin - Cabanne.mp3
+WARNING:src.orchestrator:No BPM for data\04 - Le Crapin - Cabanne.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04 - Le Crapin - Cabanne.mp3
+Analyzing tracks:  15%|#4        | 108/736 [59:34<4:11:35, 24.04s/track]WARNING:src.orchestrator:No BPM for data\04 - rainer weichhold - yeah - epicfail.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04 - rainer weichhold - yeah - epicfail.mp3
+Analyzing tracks:  15%|#4        | 109/736 [59:59<4:16:49, 24.58s/track]INFO:src.database.store:Inserted track 169: 04 - Ricardo Villalobos - I Try To Love (Can I Live).mp3
+WARNING:src.orchestrator:No BPM for data\04 - Ricardo Villalobos - I Try To Love (Can I Live).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04 - Ricardo Villalobos - I Try To Love (Can I Live).mp3
+Analyzing tracks:  15%|#4        | 110/736 [1:00:40<5:05:54, 29.32s/track]INFO:src.database.store:Inserted track 170: 04 - Ricardo Villalobos - Unflug.mp3
+WARNING:src.orchestrator:No BPM for data\04 - Ricardo Villalobos - Unflug.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04 - Ricardo Villalobos - Unflug.mp3
+Analyzing tracks:  15%|#5        | 111/736 [1:01:09<5:06:19, 29.41s/track]WARNING:src.orchestrator:No BPM for data\04 Andomat 3000 Brique Mihai Popoviciu Remix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04 Andomat 3000 Brique Mihai Popoviciu Remix.mp3
+Analyzing tracks:  15%|#5        | 112/736 [1:01:40<5:08:41, 29.68s/track]INFO:src.database.store:Inserted track 171: 04 Gaiser - Wet Contents.mp3
+WARNING:src.orchestrator:No BPM for data\04 Gaiser - Wet Contents.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04 Gaiser - Wet Contents.mp3
+Analyzing tracks:  15%|#5        | 113/736 [1:02:13<5:19:35, 30.78s/track]INFO:src.database.store:Inserted track 172: 04-mike_shannon-the_love_fry_(raw_mix)-bside.mp3
+WARNING:src.orchestrator:No BPM for data\04-mike_shannon-the_love_fry_(raw_mix)-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04-mike_shannon-the_love_fry_(raw_mix)-bside.mp3
+Analyzing tracks:  15%|#5        | 114/736 [1:03:03<6:18:37, 36.52s/track]INFO:src.database.store:Inserted track 173: 04-paco_osuna-alarm_(original_mix)-bside.mp3
+WARNING:src.orchestrator:No BPM for data\04-paco_osuna-alarm_(original_mix)-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04-paco_osuna-alarm_(original_mix)-bside.mp3
+Analyzing tracks:  16%|#5        | 115/736 [1:03:31<5:51:13, 33.94s/track]INFO:src.database.store:Inserted track 174: 04. JPLS - Green 01 (Skoozpots Twilite remix).mp3
+WARNING:src.orchestrator:No BPM for data\04. JPLS - Green 01 (Skoozpots Twilite remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04. JPLS - Green 01 (Skoozpots Twilite remix).mp3
+Analyzing tracks:  16%|#5        | 116/736 [1:03:54<5:17:05, 30.69s/track]INFO:src.database.store:Inserted track 175: 04[1] James Venturi ~ People (Microdinamic Rmx).mp3
+WARNING:src.orchestrator:No BPM for data\04[1] James Venturi ~ People (Microdinamic Rmx).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04[1] James Venturi ~ People (Microdinamic Rmx).mp3
+Analyzing tracks:  16%|#5        | 117/736 [1:04:24<5:13:23, 30.38s/track]INFO:src.database.store:Inserted track 176: 04_konrad_black_-_ginkgankgonk-drum.mp3
+WARNING:src.orchestrator:No BPM for data\04_konrad_black_-_ginkgankgonk-drum.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 04_konrad_black_-_ginkgankgonk-drum.mp3
+Analyzing tracks:  16%|#6        | 118/736 [1:04:41<4:34:11, 26.62s/track]INFO:src.database.store:Inserted track 177: 05 - Marc Houle - East to west.mp3
+WARNING:src.orchestrator:No BPM for data\05 - Marc Houle - East to west.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 05 - Marc Houle - East to west.mp3
+Analyzing tracks:  16%|#6        | 119/736 [1:04:57<3:59:14, 23.27s/track]INFO:src.database.store:Inserted track 178: 05 - Ricardo Villalobos - Lazer@Present.mp3
+WARNING:src.orchestrator:No BPM for data\05 - Ricardo Villalobos - Lazer@Present.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 05 - Ricardo Villalobos - Lazer@Present.mp3
+Analyzing tracks:  16%|#6        | 120/736 [1:05:26<4:17:08, 25.05s/track]INFO:src.database.store:Inserted track 179: 05 - V - Dimbiman.mp3
+WARNING:src.orchestrator:No BPM for data\05 - V - Dimbiman.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 05 - V - Dimbiman.mp3
+Analyzing tracks:  16%|#6        | 121/736 [1:05:36<3:28:40, 20.36s/track]INFO:src.database.store:Inserted track 180: 05-paco_osuna-breath_(original_mix_digital_exclusive)-bside.mp3
+WARNING:src.orchestrator:No BPM for data\05-paco_osuna-breath_(original_mix_digital_exclusive)-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 05-paco_osuna-breath_(original_mix_digital_exclusive)-bside.mp3
+Analyzing tracks:  17%|#6        | 122/736 [1:06:04<3:53:08, 22.78s/track]INFO:src.database.store:Inserted track 181: 05. JPLS - Twilite 6.1.mp3
+WARNING:src.orchestrator:No BPM for data\05. JPLS - Twilite 6.1.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 05. JPLS - Twilite 6.1.mp3
+Analyzing tracks:  17%|#6        | 123/736 [1:06:25<3:46:33, 22.17s/track]INFO:src.database.store:Inserted track 182: 05_troy_pierce_-_grvl-drum.mp3
+WARNING:src.orchestrator:No BPM for data\05_troy_pierce_-_grvl-drum.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 05_troy_pierce_-_grvl-drum.mp3
+Analyzing tracks:  17%|#6        | 124/736 [1:06:48<3:50:18, 22.58s/track]INFO:src.database.store:Inserted track 183: 06 - Charlie's on the Dancefloor feat Mu - John Shananigans.mp3
+WARNING:src.orchestrator:No BPM for data\06 - Charlie's on the Dancefloor feat Mu - John Shananigans.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 06 - Charlie's on the Dancefloor feat Mu - John Shananigans.mp3
+Analyzing tracks:  17%|#6        | 125/736 [1:06:59<3:12:27, 18.90s/track]INFO:src.database.store:Inserted track 184: 06-heartthrob-interference.mp3
+WARNING:src.orchestrator:No BPM for data\06-heartthrob-interference.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 06-heartthrob-interference.mp3
+Analyzing tracks:  17%|#7        | 126/736 [1:07:26<3:36:42, 21.32s/track]INFO:src.database.store:Inserted track 185: 06-oblivion-the_rain_and_the_train.mp3
+WARNING:src.orchestrator:No BPM for data\06-oblivion-the_rain_and_the_train.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 06-oblivion-the_rain_and_the_train.mp3
+Analyzing tracks:  17%|#7        | 127/736 [1:07:49<3:42:30, 21.92s/track]INFO:src.database.store:Inserted track 186: 06-paco_osuna-amore_(original_mix_digital_exclusive)-bside.mp3
+WARNING:src.orchestrator:No BPM for data\06-paco_osuna-amore_(original_mix_digital_exclusive)-bside.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 06-paco_osuna-amore_(original_mix_digital_exclusive)-bside.mp3
+Analyzing tracks:  17%|#7        | 128/736 [1:08:12<3:45:53, 22.29s/track]INFO:src.database.store:Inserted track 187: 06. JPLS - Twilite 4.mp3
+WARNING:src.orchestrator:No BPM for data\06. JPLS - Twilite 4.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 06. JPLS - Twilite 4.mp3
+Analyzing tracks:  18%|#7        | 129/736 [1:08:33<3:41:01, 21.85s/track]INFO:src.database.store:Inserted track 188: 07 - I Speak For Some of That - Jabberjaw.mp3
+WARNING:src.orchestrator:No BPM for data\07 - I Speak For Some of That - Jabberjaw.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 07 - I Speak For Some of That - Jabberjaw.mp3
+Analyzing tracks:  18%|#7        | 130/736 [1:08:45<3:11:25, 18.95s/track]INFO:src.database.store:Inserted track 189: 07-depeche_mode-the_sinner_in_me_(ricardo_villalobos_conclave_remix)_-_.mp3
+WARNING:src.orchestrator:No BPM for data\07-depeche_mode-the_sinner_in_me_(ricardo_villalobos_conclave_remix)_-_.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 07-depeche_mode-the_sinner_in_me_(ricardo_villalobos_conclave_remix)_-_.mp3
+Analyzing tracks:  18%|#7        | 131/736 [1:09:37<4:49:31, 28.71s/track]INFO:src.database.store:Inserted track 190: 07-heartthrob-slow_dance.mp3
+WARNING:src.orchestrator:No BPM for data\07-heartthrob-slow_dance.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 07-heartthrob-slow_dance.mp3
+Analyzing tracks:  18%|#7        | 132/736 [1:10:00<4:32:22, 27.06s/track]INFO:src.database.store:Inserted track 191: 07. Gaiser - Comma, Fade.mp3
+WARNING:src.orchestrator:No BPM for data\07. Gaiser - Comma, Fade.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 07. Gaiser - Comma, Fade.mp3
+Analyzing tracks:  18%|#8        | 133/736 [1:10:29<4:37:35, 27.62s/track]INFO:src.database.store:Inserted track 192: 07. JPLS - Twilite 1 (Skoozbot remix).mp3
+WARNING:src.orchestrator:No BPM for data\07. JPLS - Twilite 1 (Skoozbot remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 07. JPLS - Twilite 1 (Skoozbot remix).mp3
+Analyzing tracks:  18%|#8        | 134/736 [1:10:50<4:18:26, 25.76s/track]INFO:src.database.store:Inserted track 193: 08 - Contact Claro Intelecto.mp3
+WARNING:src.orchestrator:No BPM for data\08 - Contact Claro Intelecto.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 08 - Contact Claro Intelecto.mp3
+Analyzing tracks:  18%|#8        | 135/736 [1:11:01<3:34:54, 21.45s/track]INFO:src.database.store:Inserted track 194: 08 - Ricardo Villalobos - Bounus Track - Senor Coconut - Electrolatino (R.Villalobos Lecktro Carino Mix).mp3
+WARNING:src.orchestrator:No BPM for data\08 - Ricardo Villalobos - Bounus Track - Senor Coconut - Electrolatino (R.Villalobos Lecktro Carino Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 08 - Ricardo Villalobos - Bounus Track - Senor Coconut - Electrolatino (R.Villalobos Lecktro Carino Mix).mp3
+Analyzing tracks:  18%|#8        | 136/736 [1:12:05<5:40:37, 34.06s/track]INFO:src.database.store:Inserted track 195: 08 - Ricardo Villalobos - Dexter.mp3
+WARNING:src.orchestrator:No BPM for data\08 - Ricardo Villalobos - Dexter.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 08 - Ricardo Villalobos - Dexter.mp3
+Analyzing tracks:  19%|#8        | 137/736 [1:12:41<5:45:20, 34.59s/track]INFO:src.database.store:Inserted track 196: 08-gaiser-leave_it_(original_mix).mp3
+WARNING:src.orchestrator:No BPM for data\08-gaiser-leave_it_(original_mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 08-gaiser-leave_it_(original_mix).mp3
+Analyzing tracks:  19%|#8        | 138/736 [1:13:05<5:13:26, 31.45s/track]INFO:src.database.store:Inserted track 197: 08-tolga_fidan-us_and_them.mp3
+WARNING:src.orchestrator:No BPM for data\08-tolga_fidan-us_and_them.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 08-tolga_fidan-us_and_them.mp3
+Analyzing tracks:  19%|#8        | 139/736 [1:13:30<4:54:23, 29.59s/track]INFO:src.database.store:Inserted track 198: 08. JPLS - Twilite 7.mp3
+WARNING:src.orchestrator:No BPM for data\08. JPLS - Twilite 7.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 08. JPLS - Twilite 7.mp3
+Analyzing tracks:  19%|#9        | 140/736 [1:13:51<4:28:24, 27.02s/track]INFO:src.database.store:Inserted track 199: 09 - Typerope - Mathew Jonson.mp3
+WARNING:src.orchestrator:No BPM for data\09 - Typerope - Mathew Jonson.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 09 - Typerope - Mathew Jonson.mp3
+Analyzing tracks:  19%|#9        | 141/736 [1:14:06<3:51:35, 23.35s/track]INFO:src.database.store:Inserted track 200: 09. JPLS - Twilite 6.2.mp3
+WARNING:src.orchestrator:No BPM for data\09. JPLS - Twilite 6.2.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 09. JPLS - Twilite 6.2.mp3
+Analyzing tracks:  19%|#9        | 142/736 [1:14:27<3:44:21, 22.66s/track]INFO:src.database.store:Inserted track 201: 09. Paco Osuna - Cretine.mp3
+WARNING:src.orchestrator:No BPM for data\09. Paco Osuna - Cretine.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 09. Paco Osuna - Cretine.mp3
+Analyzing tracks:  19%|#9        | 143/736 [1:14:45<3:29:24, 21.19s/track]INFO:src.database.store:Inserted track 202: 09_tractile_-_unquenchable-drum.mp3
+WARNING:src.orchestrator:No BPM for data\09_tractile_-_unquenchable-drum.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 09_tractile_-_unquenchable-drum.mp3
+Analyzing tracks:  20%|#9        | 144/736 [1:15:08<3:33:59, 21.69s/track]INFO:src.database.store:Inserted track 203: 10 - Lost Summer - Baeks.mp3
+WARNING:src.orchestrator:No BPM for data\10 - Lost Summer - Baeks.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 10 - Lost Summer - Baeks.mp3
+Analyzing tracks:  20%|#9        | 145/736 [1:15:21<3:07:42, 19.06s/track]INFO:src.database.store:Inserted track 204: 10. JPLS - Twilite 9.mp3
+WARNING:src.orchestrator:No BPM for data\10. JPLS - Twilite 9.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 10. JPLS - Twilite 9.mp3
+Analyzing tracks:  20%|#9        | 146/736 [1:15:42<3:15:23, 19.87s/track]INFO:src.database.store:Inserted track 205: 11 - Manos Libre - 11 Brother's Vibe.mp3
+WARNING:src.orchestrator:No BPM for data\11 - Manos Libre - 11 Brother's Vibe.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 11 - Manos Libre - 11 Brother's Vibe.mp3
+Analyzing tracks:  20%|#9        | 147/736 [1:15:52<2:44:21, 16.74s/track]INFO:src.database.store:Inserted track 206: 11_jpls_-_twilite_7-drum.mp3
+WARNING:src.orchestrator:No BPM for data\11_jpls_-_twilite_7-drum.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 11_jpls_-_twilite_7-drum.mp3
+Analyzing tracks:  20%|##        | 148/736 [1:16:13<2:56:25, 18.00s/track]INFO:src.database.store:Inserted track 207: 12 - Elevation II - 12 Vainqueur.mp3
+WARNING:src.orchestrator:No BPM for data\12 - Elevation II - 12 Vainqueur.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 12 - Elevation II - 12 Vainqueur.mp3
+Analyzing tracks:  20%|##        | 149/736 [1:16:36<3:11:55, 19.62s/track]INFO:src.database.store:Inserted track 208: 12_loco_dice_-_orchidee-drum.mp3
+WARNING:src.orchestrator:No BPM for data\12_loco_dice_-_orchidee-drum.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 12_loco_dice_-_orchidee-drum.mp3
+Analyzing tracks:  20%|##        | 150/736 [1:17:16<4:09:53, 25.59s/track]INFO:src.database.store:Inserted track 209: 13 - All God's Children (Maurice Fulton Rmx) - Walter Jones.mp3
+WARNING:src.orchestrator:No BPM for data\13 - All God's Children (Maurice Fulton Rmx) - Walter Jones.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 13 - All God's Children (Maurice Fulton Rmx) - Walter Jones.mp3
+Analyzing tracks:  21%|##        | 151/736 [1:17:30<3:36:10, 22.17s/track]INFO:src.database.store:Inserted track 210: 14 - That Track By Kat - Kat Williams.mp3
+WARNING:src.orchestrator:No BPM for data\14 - That Track By Kat - Kat Williams.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 14 - That Track By Kat - Kat Williams.mp3
+Analyzing tracks:  21%|##        | 152/736 [1:17:49<3:26:42, 21.24s/track]INFO:src.database.store:Inserted track 211: 14-antonio_pocai-14-12_(original_mix).mp3
+WARNING:src.orchestrator:No BPM for data\14-antonio_pocai-14-12_(original_mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 14-antonio_pocai-14-12_(original_mix).mp3
+Analyzing tracks:  21%|##        | 153/736 [1:18:14<3:36:48, 22.31s/track]INFO:src.database.store:Inserted track 212: 14-richie_hawtin_-_tonarzt-ms.mp3
+WARNING:src.orchestrator:No BPM for data\14-richie_hawtin_-_tonarzt-ms.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 14-richie_hawtin_-_tonarzt-ms.mp3
+Analyzing tracks:  21%|##        | 154/736 [1:18:33<3:28:34, 21.50s/track]INFO:src.database.store:Inserted track 213: 15 - Squirrel Bait - Daniel Bell.mp3
+WARNING:src.orchestrator:No BPM for data\15 - Squirrel Bait - Daniel Bell.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 15 - Squirrel Bait - Daniel Bell.mp3
+Analyzing tracks:  21%|##1       | 155/736 [1:18:49<3:12:45, 19.91s/track]INFO:src.database.store:Inserted track 214: 16 - You Wouldn't - False.mp3
+WARNING:src.orchestrator:No BPM for data\16 - You Wouldn't - False.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 16 - You Wouldn't - False.mp3
+Analyzing tracks:  21%|##1       | 156/736 [1:18:55<2:32:05, 15.73s/track]INFO:src.database.store:Inserted track 215: 17 - Dexter - Ricardo Villalobos.mp3
+WARNING:src.orchestrator:No BPM for data\17 - Dexter - Ricardo Villalobos.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 17 - Dexter - Ricardo Villalobos.mp3
+Analyzing tracks:  21%|##1       | 157/736 [1:19:21<2:59:42, 18.62s/track]INFO:src.database.store:Inserted track 216: 18 - Stiff Neck - Errorsmith.mp3
+WARNING:src.orchestrator:No BPM for data\18 - Stiff Neck - Errorsmith.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 18 - Stiff Neck - Errorsmith.mp3
+Analyzing tracks:  21%|##1       | 158/736 [1:19:31<2:35:21, 16.13s/track]INFO:src.database.store:Inserted track 217: 19 - Mr. Chancleta - Luciano.mp3
+WARNING:src.orchestrator:No BPM for data\19 - Mr. Chancleta - Luciano.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 19 - Mr. Chancleta - Luciano.mp3
+Analyzing tracks:  22%|##1       | 159/736 [1:19:44<2:26:58, 15.28s/track]INFO:src.database.store:Inserted track 218: 20 - Mini-Klik (Random Factor Rmx) - Koro Osanago.mp3
+WARNING:src.orchestrator:No BPM for data\20 - Mini-Klik (Random Factor Rmx) - Koro Osanago.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 20 - Mini-Klik (Random Factor Rmx) - Koro Osanago.mp3
+Analyzing tracks:  22%|##1       | 160/736 [1:20:02<2:32:47, 15.92s/track]INFO:src.database.store:Inserted track 219: 2000 And One - Funk That.mp3
+WARNING:src.orchestrator:No BPM for data\2000 And One - Funk That.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 2000 And One - Funk That.mp3
+Analyzing tracks:  22%|##1       | 161/736 [1:20:32<3:12:42, 20.11s/track]INFO:src.database.store:Inserted track 220: 2000 and One - Spanish Fly (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\2000 and One - Spanish Fly (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 2000 and One - Spanish Fly (Original Mix).mp3
+Analyzing tracks:  22%|##2       | 162/736 [1:21:00<3:36:08, 22.59s/track]WARNING:src.orchestrator:No BPM for data\2000 And One - Spanish Fly.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 2000 And One - Spanish Fly.mp3
+Analyzing tracks:  22%|##2       | 163/736 [1:21:29<3:54:18, 24.53s/track]WARNING:src.orchestrator:No BPM for data\2000 And One - Tropical Melons.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 2000 And One - Tropical Melons.mp3
+Analyzing tracks:  22%|##2       | 164/736 [1:21:59<4:09:53, 26.21s/track]INFO:src.database.store:Inserted track 221: 2000_and_one-pak_pak - pure037_.mp3
+Note: Illegal Audio-MPEG-Header 0x329324b0 at offset 14055402.
+Note: Trying to resync...
+Note: Skipped 1006 bytes in input.
+Note: Illegal Audio-MPEG-Header 0x329324b0 at offset 14055402.
+Note: Trying to resync...
+Note: Skipped 1006 bytes in input.
+WARNING:src.orchestrator:No BPM for data\2000_and_one-pak_pak - pure037_.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 2000_and_one-pak_pak - pure037_.mp3
+Analyzing tracks:  22%|##2       | 165/736 [1:22:22<3:58:05, 25.02s/track]INFO:src.database.store:Inserted track 222: 2000_and_one_-_get_down.mp3
+WARNING:src.orchestrator:No BPM for data\2000_and_one_-_get_down.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 2000_and_one_-_get_down.mp3
+Analyzing tracks:  23%|##2       | 166/736 [1:22:50<4:07:32, 26.06s/track]INFO:src.database.store:Inserted track 223: 2008 - Techno - Minilogue - Jamaica (Dubfire Remix).mp3
+WARNING:src.orchestrator:No BPM for data\2008 - Techno - Minilogue - Jamaica (Dubfire Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 2008 - Techno - Minilogue - Jamaica (Dubfire Remix).mp3
+Analyzing tracks:  23%|##2       | 167/736 [8:59:08<1301:04:32, 8231.76s/track]INFO:src.database.store:Inserted track 224: 20090211 - Marco Carola - Plaster (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\20090211 - Marco Carola - Plaster (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 20090211 - Marco Carola - Plaster (Original Mix).mp3
+Analyzing tracks:  23%|##2       | 168/736 [8:59:40<910:38:46, 5771.70s/track] INFO:src.database.store:Inserted track 225: 21 - Law of Grace - Soul Capsule.mp3
+WARNING:src.orchestrator:No BPM for data\21 - Law of Grace - Soul Capsule.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 21 - Law of Grace - Soul Capsule.mp3
+Analyzing tracks:  23%|##2       | 169/736 [9:00:03<637:23:47, 4046.96s/track]INFO:src.database.store:Inserted track 226: 22 - Evolution - Joris Vermeiren.mp3
+WARNING:src.orchestrator:No BPM for data\22 - Evolution - Joris Vermeiren.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 22 - Evolution - Joris Vermeiren.mp3
+Analyzing tracks:  23%|##3       | 170/736 [9:00:19<446:08:52, 2837.69s/track]INFO:src.database.store:Inserted track 227: 4. Drummolator.mp3
+WARNING:src.orchestrator:No BPM for data\4. Drummolator.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 4. Drummolator.mp3
+Analyzing tracks:  23%|##3       | 171/736 [9:01:14<314:22:27, 2003.09s/track]INFO:src.database.store:Inserted track 228: 4.R U OK - 01 - Ambivalent - R U OK.mp3
+WARNING:src.orchestrator:No BPM for data\4.R U OK - 01 - Ambivalent - R U OK.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: 4.R U OK - 01 - Ambivalent - R U OK.mp3
+Analyzing tracks:  23%|##3       | 172/736 [9:01:38<220:47:32, 1409.31s/track]INFO:src.database.store:Inserted track 229: [6] Maxime Dangles - My head (Original).mp3
+WARNING:src.orchestrator:No BPM for data\[6] Maxime Dangles - My head (Original).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: [6] Maxime Dangles - My head (Original).mp3
+Analyzing tracks:  24%|##3       | 173/736 [9:02:07<155:37:18, 995.10s/track] INFO:src.database.store:Inserted track 230: [jett 08 2007] - skoozbot - next to monchhichi (paco osuna remix).mp3
+WARNING:src.orchestrator:No BPM for data\[jett 08 2007] - skoozbot - next to monchhichi (paco osuna remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: [jett 08 2007] - skoozbot - next to monchhichi (paco osuna remix).mp3
+Analyzing tracks:  24%|##3       | 174/736 [9:02:33<109:58:44, 704.49s/track]INFO:src.database.store:Inserted track 231: [jett 12 2006] - dani koenig - hard south americans (locodice mix).mp3
+WARNING:src.orchestrator:No BPM for data\[jett 12 2006] - dani koenig - hard south americans (locodice mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: [jett 12 2006] - dani koenig - hard south americans (locodice mix).mp3
+Analyzing tracks:  24%|##3       | 175/736 [9:03:05<78:21:03, 502.79s/track] INFO:src.database.store:Inserted track 232: a1 misc [sender 057] tanz_der_polymere hemmann and kaden remix.mp3
+WARNING:src.orchestrator:No BPM for data\a1 misc [sender 057] tanz_der_polymere hemmann and kaden remix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: a1 misc [sender 057] tanz_der_polymere hemmann and kaden remix.mp3
+Analyzing tracks:  24%|##3       | 176/736 [9:03:30<55:55:20, 359.50s/track]INFO:src.database.store:Inserted track 233: a1-microdinamic_-_debbie_does_dallas-nbd.mp3
+WARNING:src.orchestrator:No BPM for data\a1-microdinamic_-_debbie_does_dallas-nbd.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: a1-microdinamic_-_debbie_does_dallas-nbd.mp3
+Analyzing tracks:  24%|##4       | 177/736 [9:03:56<40:16:17, 259.35s/track]INFO:src.database.store:Inserted track 234: a1-par_grindvik-continue_in_my_words.mp3
+WARNING:src.orchestrator:No BPM for data\a1-par_grindvik-continue_in_my_words.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: a1-par_grindvik-continue_in_my_words.mp3
+Analyzing tracks:  24%|##4       | 178/736 [9:04:20<29:14:40, 188.67s/track]INFO:src.database.store:Inserted track 235: a2-ambivalent_-_r_u_ok_(a_cappella)-tr.mp3
+WARNING:src.orchestrator:No BPM for data\a2-ambivalent_-_r_u_ok_(a_cappella)-tr.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: a2-ambivalent_-_r_u_ok_(a_cappella)-tr.mp3
+Analyzing tracks:  24%|##4       | 179/736 [9:04:33<21:01:18, 135.87s/track]INFO:src.database.store:Inserted track 236: a2-markus_fix-release_yourself.mp3
+WARNING:src.orchestrator:No BPM for data\a2-markus_fix-release_yourself.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: a2-markus_fix-release_yourself.mp3
+Analyzing tracks:  24%|##4       | 180/736 [9:04:59<15:54:13, 102.97s/track]INFO:src.database.store:Inserted track 237: a3 parris mitchell - follow me ghetto (acid) (feat dj funk).mp3
+WARNING:src.orchestrator:No BPM for data\a3 parris mitchell - follow me ghetto (acid) (feat dj funk).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: a3 parris mitchell - follow me ghetto (acid) (feat dj funk).mp3
+Analyzing tracks:  25%|##4       | 181/736 [9:05:16<11:53:51, 77.17s/track] INFO:src.database.store:Inserted track 238: Adam bayer & mathew jhonson - Marionette (Adam Beyer Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Adam bayer & mathew jhonson - Marionette (Adam Beyer Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Adam bayer & mathew jhonson - Marionette (Adam Beyer Remix).mp3
+Analyzing tracks:  25%|##4       | 182/736 [9:05:52<9:58:44, 64.85s/track] Warning: Xing stream size off by more than 1%, fuzzy seeking may be even more fuzzy than by design!
+INFO:src.database.store:Inserted track 239: Adam Beyer - A Walking Contradiction A1 Part 1 [Plus8087].mp3
+Warning: Xing stream size off by more than 1%, fuzzy seeking may be even more fuzzy than by design!
+Warning: Xing stream size off by more than 1%, fuzzy seeking may be even more fuzzy than by design!
+WARNING:src.orchestrator:No BPM for data\Adam Beyer - A Walking Contradiction A1 Part 1 [Plus8087].mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Adam Beyer - A Walking Contradiction A1 Part 1 [Plus8087].mp3
+Analyzing tracks:  25%|##4       | 183/736 [9:06:16<8:05:33, 52.68s/track]INFO:src.database.store:Inserted track 240: Adam Beyer - A Walking Contradiction b1 Part 2.mp3
+WARNING:src.orchestrator:No BPM for data\Adam Beyer - A Walking Contradiction b1 Part 2.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Adam Beyer - A Walking Contradiction b1 Part 2.mp3
+Analyzing tracks:  25%|##5       | 184/736 [9:06:42<6:50:15, 44.59s/track]INFO:src.database.store:Inserted track 241: Adam Beyer and Jesper Dahlback - As if Dubs.mp3
+WARNING:src.orchestrator:No BPM for data\Adam Beyer and Jesper Dahlback - As if Dubs.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Adam Beyer and Jesper Dahlback - As if Dubs.mp3
+Analyzing tracks:  25%|##5       | 185/736 [9:07:07<5:57:19, 38.91s/track]INFO:src.database.store:Inserted track 242: adam_beyer-china_girl.mp3
+WARNING:src.orchestrator:No BPM for data\adam_beyer-china_girl.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: adam_beyer-china_girl.mp3
+Analyzing tracks:  25%|##5       | 186/736 [9:07:41<5:41:17, 37.23s/track]INFO:src.database.store:Inserted track 243: adultnapper-juror no 9 (gaisers found guilty remix)-(Electric.Tk).mp3
+WARNING:src.orchestrator:No BPM for data\adultnapper-juror no 9 (gaisers found guilty remix)-(Electric.Tk).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: adultnapper-juror no 9 (gaisers found guilty remix)-(Electric.Tk).mp3
+Analyzing tracks:  25%|##5       | 187/736 [9:08:04<5:02:57, 33.11s/track]WARNING:src.orchestrator:No BPM for data\Afternoon Coffee Boys - Dark Blend.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Afternoon Coffee Boys - Dark Blend.mp3
+Analyzing tracks:  26%|##5       | 188/736 [9:08:24<4:24:31, 28.96s/track]INFO:src.database.store:Inserted track 244: Agaric - Come Below (Mikael Stavostrand 2nd Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Agaric - Come Below (Mikael Stavostrand 2nd Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Agaric - Come Below (Mikael Stavostrand 2nd Mix).mp3
+Analyzing tracks:  26%|##5       | 189/736 [9:08:54<4:27:26, 29.34s/track]INFO:src.database.store:Inserted track 245: Agaric - Goose Step.mp3
+WARNING:src.orchestrator:No BPM for data\Agaric - Goose Step.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Agaric - Goose Step.mp3
+Analyzing tracks:  26%|##5       | 190/736 [9:09:16<4:07:28, 27.20s/track]INFO:src.database.store:Inserted track 246: agnes-personal_dub_(roy_horten_mix)-loyalty.mp3
+Note: Illegal Audio-MPEG-Header 0x4c595249 at offset 18646120.
+Note: Trying to resync...
+Note: Hit end of (available) data during resync.
+Note: Illegal Audio-MPEG-Header 0x4c595249 at offset 18646120.
+Note: Trying to resync...
+Note: Hit end of (available) data during resync.
+WARNING:src.orchestrator:No BPM for data\agnes-personal_dub_(roy_horten_mix)-loyalty.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: agnes-personal_dub_(roy_horten_mix)-loyalty.mp3
+Analyzing tracks:  26%|##5       | 191/736 [9:09:46<4:14:34, 28.03s/track]INFO:src.database.store:Inserted track 247: Akiko Kiyama - Nicked Al Final Del Tune (Marc Ashken Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Akiko Kiyama - Nicked Al Final Del Tune (Marc Ashken Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Akiko Kiyama - Nicked Al Final Del Tune (Marc Ashken Remix).mp3
+Analyzing tracks:  26%|##6       | 192/736 [9:10:11<4:04:40, 26.99s/track]INFO:src.database.store:Inserted track 248: Alex Flatner feat. Lopazz - Perfect Circles (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Alex Flatner feat. Lopazz - Perfect Circles (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alex Flatner feat. Lopazz - Perfect Circles (Original Mix).mp3
+Analyzing tracks:  26%|##6       | 193/736 [9:10:36<4:00:34, 26.58s/track]WARNING:src.orchestrator:No BPM for data\Alex Guerrero - Caminando.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alex Guerrero - Caminando.mp3
+Analyzing tracks:  26%|##6       | 194/736 [9:11:00<3:51:56, 25.68s/track]INFO:src.database.store:Inserted track 249: Alex Kenji - A lot of.mp3
+WARNING:src.orchestrator:No BPM for data\Alex Kenji - A lot of.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alex Kenji - A lot of.mp3
+Analyzing tracks:  26%|##6       | 195/736 [9:11:23<3:44:24, 24.89s/track]INFO:src.database.store:Inserted track 250: Alex Picone - Floppy.mp3
+WARNING:src.orchestrator:No BPM for data\Alex Picone - Floppy.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alex Picone - Floppy.mp3
+Analyzing tracks:  27%|##6       | 196/736 [9:11:49<3:46:26, 25.16s/track]INFO:src.database.store:Inserted track 251: Alex under - aditah la granjerita.mp3
+WARNING:src.orchestrator:No BPM for data\Alex under - aditah la granjerita.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alex under - aditah la granjerita.mp3
+Analyzing tracks:  27%|##6       | 197/736 [9:12:14<3:47:09, 25.29s/track]INFO:src.database.store:Inserted track 252: Alex Under - Anthemo.mp3
+WARNING:src.orchestrator:No BPM for data\Alex Under - Anthemo.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alex Under - Anthemo.mp3
+Analyzing tracks:  27%|##6       | 198/736 [9:12:40<3:49:25, 25.59s/track]INFO:src.database.store:Inserted track 253: Alex Under - El Diluvio Azul - minimal.mp3
+WARNING:src.orchestrator:No BPM for data\Alex Under - El Diluvio Azul - minimal.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alex Under - El Diluvio Azul - minimal.mp3
+Analyzing tracks:  27%|##7       | 199/736 [9:13:04<3:43:49, 25.01s/track]WARNING:src.orchestrator:No BPM for data\Alex Under - El Diluvio Azul.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alex Under - El Diluvio Azul.mp3
+Analyzing tracks:  27%|##7       | 200/736 [9:13:28<3:41:17, 24.77s/track]INFO:src.database.store:Inserted track 254: Alex Under - Fortuito.mp3
+WARNING:src.orchestrator:No BPM for data\Alex Under - Fortuito.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alex Under - Fortuito.mp3
+Analyzing tracks:  27%|##7       | 201/736 [9:13:59<3:56:09, 26.48s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 255: Alexi Delano - Xpansul - Intelligence Reframed Ep - 01 - Echolocation.mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\Alexi Delano - Xpansul - Intelligence Reframed Ep - 01 - Echolocation.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alexi Delano - Xpansul - Intelligence Reframed Ep - 01 - Echolocation.mp3
+Analyzing tracks:  27%|##7       | 202/736 [9:14:20<3:40:54, 24.82s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 256: Alexi Delano - Xpansul - Intelligence Reframed Ep - 02 - Cosmic Antipathy.mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\Alexi Delano - Xpansul - Intelligence Reframed Ep - 02 - Cosmic Antipathy.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alexi Delano - Xpansul - Intelligence Reframed Ep - 02 - Cosmic Antipathy.mp3
+Analyzing tracks:  28%|##7       | 203/736 [9:14:40<3:29:43, 23.61s/track]INFO:src.database.store:Inserted track 257: Alexi Delano - Xpansul - Intelligence Reframed Ep - 03 - Vegetotherapy.mp3
+WARNING:src.orchestrator:No BPM for data\Alexi Delano - Xpansul - Intelligence Reframed Ep - 03 - Vegetotherapy.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alexi Delano - Xpansul - Intelligence Reframed Ep - 03 - Vegetotherapy.mp3
+Analyzing tracks:  28%|##7       | 204/736 [9:15:03<3:26:47, 23.32s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 258: Alexi Delano - Xpansul - Intelligence Reframed Ep - 04 - Meta-Intellectual.mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\Alexi Delano - Xpansul - Intelligence Reframed Ep - 04 - Meta-Intellectual.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alexi Delano - Xpansul - Intelligence Reframed Ep - 04 - Meta-Intellectual.mp3
+Analyzing tracks:  28%|##7       | 205/736 [9:15:27<3:26:29, 23.33s/track]INFO:src.database.store:Inserted track 259: alexi delano _-_ would you.mp3
+WARNING:src.orchestrator:No BPM for data\alexi delano _-_ would you.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: alexi delano _-_ would you.mp3
+Analyzing tracks:  28%|##7       | 206/736 [9:15:53<3:34:55, 24.33s/track]INFO:src.database.store:Inserted track 260: alexi_delano_and_xpansul_-_antioxidation.mp3
+WARNING:src.orchestrator:No BPM for data\alexi_delano_and_xpansul_-_antioxidation.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: alexi_delano_and_xpansul_-_antioxidation.mp3
+Analyzing tracks:  28%|##8       | 207/736 [9:16:21<3:44:06, 25.42s/track]INFO:src.database.store:Inserted track 261: Alfa Romero - Might Coupe (Electric.Tk).mp3
+WARNING:src.orchestrator:No BPM for data\Alfa Romero - Might Coupe (Electric.Tk).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Alfa Romero - Might Coupe (Electric.Tk).mp3
+Analyzing tracks:  28%|##8       | 208/736 [9:16:49<3:49:54, 26.13s/track]INFO:src.database.store:Inserted track 262: Ambivalent - Boite Diabolique (Heartthrob Remiix).mp3
+WARNING:src.orchestrator:No BPM for data\Ambivalent - Boite Diabolique (Heartthrob Remiix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ambivalent - Boite Diabolique (Heartthrob Remiix).mp3
+Analyzing tracks:  28%|##8       | 209/736 [9:17:10<3:37:29, 24.76s/track]INFO:src.database.store:Inserted track 263: Ambivalent - Indecision.mp3
+WARNING:src.orchestrator:No BPM for data\Ambivalent - Indecision.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ambivalent - Indecision.mp3
+Analyzing tracks:  29%|##8       | 210/736 [9:17:36<3:39:59, 25.09s/track]INFO:src.database.store:Inserted track 264: Ambivalent - Lowlights (Expansion Contraction Ep).mp3
+WARNING:src.orchestrator:No BPM for data\Ambivalent - Lowlights (Expansion Contraction Ep).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ambivalent - Lowlights (Expansion Contraction Ep).mp3
+Analyzing tracks:  29%|##8       | 211/736 [9:18:01<3:38:35, 24.98s/track]INFO:src.database.store:Inserted track 265: Ambivalent - Palindrome (Camea remix).mp3
+WARNING:src.orchestrator:No BPM for data\Ambivalent - Palindrome (Camea remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ambivalent - Palindrome (Camea remix).mp3
+Analyzing tracks:  29%|##8       | 212/736 [9:18:23<3:29:58, 24.04s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 266: Ambivalent - R U OK (Marco Carola 2 Beats remix).mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\Ambivalent - R U OK (Marco Carola 2 Beats remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ambivalent - R U OK (Marco Carola 2 Beats remix).mp3
+Analyzing tracks:  29%|##8       | 213/736 [9:18:56<3:52:09, 26.63s/track]INFO:src.database.store:Inserted track 267: AMBIVALENT - R U Ok (Marco Carola 4 Beats remix).mp3
+WARNING:src.orchestrator:No BPM for data\AMBIVALENT - R U Ok (Marco Carola 4 Beats remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: AMBIVALENT - R U Ok (Marco Carola 4 Beats remix).mp3
+Analyzing tracks:  29%|##9       | 214/736 [9:19:27<4:03:57, 28.04s/track]INFO:src.database.store:Inserted track 268: Ame - Rej (Original Mix) beatport.mp3
+WARNING:src.orchestrator:No BPM for data\Ame - Rej (Original Mix) beatport.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ame - Rej (Original Mix) beatport.mp3
+Analyzing tracks:  29%|##9       | 215/736 [9:20:06<4:33:23, 31.48s/track]INFO:src.database.store:Inserted track 269: Andomat 3000 - Vertical Smile (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Andomat 3000 - Vertical Smile (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Andomat 3000 - Vertical Smile (Original Mix).mp3
+Analyzing tracks:  29%|##9       | 216/736 [9:20:37<4:30:33, 31.22s/track]INFO:src.database.store:Inserted track 270: andomat 3000 and jan-entracte music.mp3
+WARNING:src.orchestrator:No BPM for data\andomat 3000 and jan-entracte music.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: andomat 3000 and jan-entracte music.mp3
+Analyzing tracks:  29%|##9       | 217/736 [9:21:01<4:10:24, 28.95s/track]INFO:src.database.store:Inserted track 271: Andre Kraml - Safari (James Holden Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Andre Kraml - Safari (James Holden Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Andre Kraml - Safari (James Holden Remix).mp3
+Analyzing tracks:  30%|##9       | 218/736 [9:21:36<4:27:11, 30.95s/track]INFO:src.database.store:Inserted track 272: Anja Schneider & Sebo K - Rancho Relaxo (Jennifer Cardini & Shonky Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Anja Schneider & Sebo K - Rancho Relaxo (Jennifer Cardini & Shonky Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Anja Schneider & Sebo K - Rancho Relaxo (Jennifer Cardini & Shonky Remix).mp3
+Analyzing tracks:  30%|##9       | 219/736 [9:22:11<4:36:44, 32.12s/track]INFO:src.database.store:Inserted track 273: anja schneider & sebo k - rancho relaxo (original mix).mp3
+WARNING:src.orchestrator:No BPM for data\anja schneider & sebo k - rancho relaxo (original mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: anja schneider & sebo k - rancho relaxo (original mix).mp3
+Analyzing tracks:  30%|##9       | 220/736 [9:22:46<4:42:09, 32.81s/track]INFO:src.database.store:Inserted track 274: Anja Schneider - Mole.mp3
+WARNING:src.orchestrator:No BPM for data\Anja Schneider - Mole.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Anja Schneider - Mole.mp3
+Analyzing tracks:  30%|###       | 221/736 [9:23:18<4:41:39, 32.81s/track]INFO:src.database.store:Inserted track 275: Anja schneider and sebo k - side leaps (magda_remix).mp3
+WARNING:src.orchestrator:No BPM for data\Anja schneider and sebo k - side leaps (magda_remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Anja schneider and sebo k - side leaps (magda_remix).mp3
+Analyzing tracks:  30%|###       | 222/736 [9:23:46<4:27:53, 31.27s/track]INFO:src.database.store:Inserted track 276: Argy - Love Dose (B2 Luciano RMX).mp3
+WARNING:src.orchestrator:No BPM for data\Argy - Love Dose (B2 Luciano RMX).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Argy - Love Dose (B2 Luciano RMX).mp3
+Analyzing tracks:  30%|###       | 223/736 [9:24:20<4:35:14, 32.19s/track]WARNING:src.orchestrator:No BPM for data\Argy - Love Dose.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Argy - Love Dose.mp3
+Analyzing tracks:  30%|###       | 224/736 [9:24:54<4:38:16, 32.61s/track]INFO:src.database.store:Inserted track 277: Argy - The Storm.mp3
+WARNING:src.orchestrator:No BPM for data\Argy - The Storm.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Argy - The Storm.mp3
+Analyzing tracks:  31%|###       | 225/736 [9:25:24<4:32:12, 31.96s/track]INFO:src.database.store:Inserted track 278: Armand Van Helden - This Aint Hollywood (Radio Slave Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Armand Van Helden - This Aint Hollywood (Radio Slave Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Armand Van Helden - This Aint Hollywood (Radio Slave Remix).mp3
+Analyzing tracks:  31%|###       | 226/736 [9:26:05<4:52:28, 34.41s/track]INFO:src.database.store:Inserted track 279: Arnaud Le Texier - Wild Quiche (Shinedoe Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Arnaud Le Texier - Wild Quiche (Shinedoe Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Arnaud Le Texier - Wild Quiche (Shinedoe Remix).mp3
+Analyzing tracks:  31%|###       | 227/736 [9:26:37<4:46:54, 33.82s/track]INFO:src.database.store:Inserted track 280: Audio Werner - trust.mp3
+WARNING:src.orchestrator:No BPM for data\Audio Werner - trust.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Audio Werner - trust.mp3
+Analyzing tracks:  31%|###       | 228/736 [9:27:31<5:36:20, 39.73s/track]INFO:src.database.store:Inserted track 281: Audio Werner-Zwrtshak Drive-Mim.mp3
+WARNING:src.orchestrator:No BPM for data\Audio Werner-Zwrtshak Drive-Mim.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Audio Werner-Zwrtshak Drive-Mim.mp3
+Analyzing tracks:  31%|###1      | 229/736 [9:28:27<6:19:03, 44.86s/track]INFO:src.database.store:Inserted track 282: audio_werner-onandon.mp3
+WARNING:src.orchestrator:No BPM for data\audio_werner-onandon.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: audio_werner-onandon.mp3
+Analyzing tracks:  31%|###1      | 230/736 [9:29:31<7:05:15, 50.43s/track]INFO:src.database.store:Inserted track 283: Audion - Billy Says Go.mp3
+WARNING:src.orchestrator:No BPM for data\Audion - Billy Says Go.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Audion - Billy Says Go.mp3
+Analyzing tracks:  31%|###1      | 231/736 [9:30:02<6:16:54, 44.78s/track]INFO:src.database.store:Inserted track 284: Audion - Mouth To Mouth.mp3
+WARNING:src.orchestrator:No BPM for data\Audion - Mouth To Mouth.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Audion - Mouth To Mouth.mp3
+Analyzing tracks:  32%|###1      | 232/736 [9:30:57<6:41:01, 47.74s/track]WARNING:src.orchestrator:No BPM for data\B1 - Gabriel Ananda - Doppelwhipper - Cmc.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: B1 - Gabriel Ananda - Doppelwhipper - Cmc.mp3
+Analyzing tracks:  32%|###1      | 233/736 [9:31:48<6:49:04, 48.80s/track]INFO:src.database.store:Inserted track 285: b1-catz_n_dogz-omanko_(italoboyz_remix).mp3
+WARNING:src.orchestrator:No BPM for data\b1-catz_n_dogz-omanko_(italoboyz_remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: b1-catz_n_dogz-omanko_(italoboyz_remix).mp3
+Analyzing tracks:  32%|###1      | 234/736 [9:32:29<6:28:12, 46.40s/track]INFO:src.database.store:Inserted track 286: b1-dettmann_and_klock--scenario-cmc.mp3
+WARNING:src.orchestrator:No BPM for data\b1-dettmann_and_klock--scenario-cmc.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: b1-dettmann_and_klock--scenario-cmc.mp3
+Analyzing tracks:  32%|###1      | 235/736 [9:33:00<5:49:50, 41.90s/track]INFO:src.database.store:Inserted track 287: b1-par_grindvik-continue_me.mp3
+WARNING:src.orchestrator:No BPM for data\b1-par_grindvik-continue_me.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: b1-par_grindvik-continue_me.mp3
+Analyzing tracks:  32%|###2      | 236/736 [9:33:35<5:30:58, 39.72s/track]INFO:src.database.store:Inserted track 288: b1-the_vegetable_orchestra_-_ricardo_villalobos_(atavismus_mix)-tr.mp3
+WARNING:src.orchestrator:No BPM for data\b1-the_vegetable_orchestra_-_ricardo_villalobos_(atavismus_mix)-tr.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: b1-the_vegetable_orchestra_-_ricardo_villalobos_(atavismus_mix)-tr.mp3
+Analyzing tracks:  32%|###2      | 237/736 [9:34:41<6:34:34, 47.44s/track]INFO:src.database.store:Inserted track 289: Baffa - Sospecha sospechosa (Ilario Alicante remix).mp3
+WARNING:src.orchestrator:No BPM for data\Baffa - Sospecha sospechosa (Ilario Alicante remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Baffa - Sospecha sospechosa (Ilario Alicante remix).mp3
+Analyzing tracks:  32%|###2      | 238/736 [9:35:11<5:50:29, 42.23s/track]INFO:src.database.store:Inserted track 290: Barem - Censored Elephant.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Censored Elephant.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Censored Elephant.mp3
+Analyzing tracks:  32%|###2      | 239/736 [9:35:29<4:50:36, 35.08s/track]INFO:src.database.store:Inserted track 291: Barem - Cilindro Fusiphorm Rmx.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Cilindro Fusiphorm Rmx.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Cilindro Fusiphorm Rmx.mp3
+Analyzing tracks:  33%|###2      | 240/736 [9:36:01<4:42:04, 34.12s/track]INFO:src.database.store:Inserted track 292: Barem - Ears.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Ears.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Ears.mp3
+Analyzing tracks:  33%|###2      | 241/736 [9:36:26<4:20:03, 31.52s/track]INFO:src.database.store:Inserted track 293: Barem - Goofy's Nightmare.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Goofy's Nightmare.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Goofy's Nightmare.mp3
+Analyzing tracks:  33%|###2      | 242/736 [9:36:52<4:03:42, 29.60s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 294: Barem - Kolimar - 02 - Kolimar.mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\Barem - Kolimar - 02 - Kolimar.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Kolimar - 02 - Kolimar.mp3
+Analyzing tracks:  33%|###3      | 243/736 [9:37:22<4:04:56, 29.81s/track]INFO:src.database.store:Inserted track 295: barem - link.mp3
+WARNING:src.orchestrator:No BPM for data\barem - link.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: barem - link.mp3
+Analyzing tracks:  33%|###3      | 244/736 [9:37:43<3:42:50, 27.18s/track]INFO:src.database.store:Inserted track 296: Barem - Looks.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Looks.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Looks.mp3
+Analyzing tracks:  33%|###3      | 245/736 [9:38:08<3:36:40, 26.48s/track]INFO:src.database.store:Inserted track 297: Barem - Never Better Than Late - 02 - Then They-.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Never Better Than Late - 02 - Then They-.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Never Better Than Late - 02 - Then They-.mp3
+Analyzing tracks:  33%|###3      | 246/736 [9:38:31<3:29:31, 25.66s/track]INFO:src.database.store:Inserted track 298: Barem - Never Better Than Late - 03 - Ponymal Morning.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Never Better Than Late - 03 - Ponymal Morning.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Never Better Than Late - 03 - Ponymal Morning.mp3
+Analyzing tracks:  34%|###3      | 247/736 [9:39:01<3:38:31, 26.81s/track]INFO:src.database.store:Inserted track 299: Barem - Never Better Than Late - 04 - So Serial.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Never Better Than Late - 04 - So Serial.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Never Better Than Late - 04 - So Serial.mp3
+Analyzing tracks:  34%|###3      | 248/736 [9:39:27<3:37:24, 26.73s/track]INFO:src.database.store:Inserted track 300: Barem - Opal.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Opal.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Opal.mp3
+Analyzing tracks:  34%|###3      | 249/736 [9:39:52<3:31:01, 26.00s/track]INFO:src.database.store:Inserted track 301: Barem - Suki (Seph mix).mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Suki (Seph mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Suki (Seph mix).mp3
+Analyzing tracks:  34%|###3      | 250/736 [9:40:22<3:42:04, 27.42s/track]INFO:src.database.store:Inserted track 302: Barem - Suki.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Suki.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Suki.mp3
+Analyzing tracks:  34%|###4      | 251/736 [9:40:48<3:36:56, 26.84s/track]INFO:src.database.store:Inserted track 303: Barem - Word Soup.mp3
+WARNING:src.orchestrator:No BPM for data\Barem - Word Soup.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Barem - Word Soup.mp3
+Analyzing tracks:  34%|###4      | 252/736 [9:41:13<3:31:44, 26.25s/track]INFO:src.database.store:Inserted track 304: barem-ideas_(heartthrob_remix)-mbf.mp3
+WARNING:src.orchestrator:No BPM for data\barem-ideas_(heartthrob_remix)-mbf.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: barem-ideas_(heartthrob_remix)-mbf.mp3
+Analyzing tracks:  34%|###4      | 253/736 [9:41:36<3:23:08, 25.23s/track]INFO:src.database.store:Inserted track 305: barem-nylon_pheek_rmx.mp3
+WARNING:src.orchestrator:No BPM for data\barem-nylon_pheek_rmx.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: barem-nylon_pheek_rmx.mp3
+Analyzing tracks:  35%|###4      | 254/736 [9:42:01<3:23:16, 25.30s/track]INFO:src.database.store:Inserted track 306: Beanfield - Tides (Carl Craig Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Beanfield - Tides (Carl Craig Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Beanfield - Tides (Carl Craig Remix).mp3
+Analyzing tracks:  35%|###4      | 255/736 [9:42:38<3:50:19, 28.73s/track]INFO:src.database.store:Inserted track 307: Beck - Cell Phone's Dead (Ricardo Villalobos 'Entlebuch' Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Beck - Cell Phone's Dead (Ricardo Villalobos 'Entlebuch' Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Beck - Cell Phone's Dead (Ricardo Villalobos 'Entlebuch' Remix).mp3
+Analyzing tracks:  35%|###4      | 256/736 [9:43:33<4:52:42, 36.59s/track]INFO:src.database.store:Inserted track 308: Benjamin Fehr - Truth & Consequences (Ricardo Villalobos Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Benjamin Fehr - Truth & Consequences (Ricardo Villalobos Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Benjamin Fehr - Truth & Consequences (Ricardo Villalobos Remix).mp3
+Analyzing tracks:  35%|###4      | 257/736 [9:44:20<5:16:27, 39.64s/track]WARNING:src.orchestrator:No BPM for data\Berg Nixon - Box Escape.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Berg Nixon - Box Escape.mp3
+Analyzing tracks:  35%|###5      | 258/736 [9:44:40<4:30:44, 33.98s/track]INFO:src.database.store:Inserted track 309: berg nixon - the depths.mp3
+WARNING:src.orchestrator:No BPM for data\berg nixon - the depths.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: berg nixon - the depths.mp3
+Analyzing tracks:  35%|###5      | 259/736 [9:45:03<4:02:00, 30.44s/track]INFO:src.database.store:Inserted track 310: Berg nixon - victoria station.mp3
+WARNING:src.orchestrator:No BPM for data\Berg nixon - victoria station.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Berg nixon - victoria station.mp3
+Analyzing tracks:  35%|###5      | 260/736 [9:45:25<3:42:49, 28.09s/track]INFO:src.database.store:Inserted track 311: berg nixon box escape.mp3
+WARNING:src.orchestrator:No BPM for data\berg nixon box escape.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: berg nixon box escape.mp3
+Analyzing tracks:  35%|###5      | 261/736 [9:45:46<3:25:15, 25.93s/track]INFO:src.database.store:Inserted track 312: berg_nixon_-_abstraction-emp.mp3
+WARNING:src.orchestrator:No BPM for data\berg_nixon_-_abstraction-emp.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: berg_nixon_-_abstraction-emp.mp3
+Analyzing tracks:  36%|###5      | 262/736 [9:46:09<3:18:53, 25.18s/track]INFO:src.database.store:Inserted track 313: Billy Dalessandro Vs John Gaiser - Come With Me.mp3
+WARNING:src.orchestrator:No BPM for data\Billy Dalessandro Vs John Gaiser - Come With Me.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Billy Dalessandro Vs John Gaiser - Come With Me.mp3
+Analyzing tracks:  36%|###5      | 263/736 [9:46:31<3:10:46, 24.20s/track]INFO:src.database.store:Inserted track 314: Blackstrobe - I'm A Man (Audion's Donation remix).mp3
+WARNING:src.orchestrator:No BPM for data\Blackstrobe - I'm A Man (Audion's Donation remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Blackstrobe - I'm A Man (Audion's Donation remix).mp3
+Analyzing tracks:  36%|###5      | 264/736 [9:47:16<3:57:43, 30.22s/track]INFO:src.database.store:Inserted track 315: Breathe_Here_Original_Mix.mp3
+WARNING:src.orchestrator:No BPM for data\Breathe_Here_Original_Mix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Breathe_Here_Original_Mix.mp3
+Analyzing tracks:  36%|###6      | 265/736 [9:47:40<3:42:38, 28.36s/track]INFO:src.database.store:Inserted track 316: Bukaddor & Fishbeck - Campus.mp3
+WARNING:src.orchestrator:No BPM for data\Bukaddor & Fishbeck - Campus.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Bukaddor & Fishbeck - Campus.mp3
+Analyzing tracks:  36%|###6      | 266/736 [9:48:11<3:49:31, 29.30s/track]INFO:src.database.store:Inserted track 317: bukaddor_and_fishbeck-polterabend-mpx.mp3
+Note: Illegal Audio-MPEG-Header 0x4c595249 at offset 19714089.
+Note: Trying to resync...
+Note: Hit end of (available) data during resync.
+Note: Illegal Audio-MPEG-Header 0x4c595249 at offset 19714089.
+Note: Trying to resync...
+Note: Hit end of (available) data during resync.
+WARNING:src.orchestrator:No BPM for data\bukaddor_and_fishbeck-polterabend-mpx.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: bukaddor_and_fishbeck-polterabend-mpx.mp3
+Analyzing tracks:  36%|###6      | 267/736 [9:48:41<3:51:15, 29.59s/track]INFO:src.database.store:Inserted track 318: Butch - On The Line (Oxia Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Butch - On The Line (Oxia Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Butch - On The Line (Oxia Remix).mp3
+Analyzing tracks:  36%|###6      | 268/736 [9:49:06<3:38:33, 28.02s/track]INFO:src.database.store:Inserted track 319: c1-loco_dice-pimp_jackson_is_talkin_now_(luci_gets_loco_remix_by_luciano) (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\c1-loco_dice-pimp_jackson_is_talkin_now_(luci_gets_loco_remix_by_luciano) (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: c1-loco_dice-pimp_jackson_is_talkin_now_(luci_gets_loco_remix_by_luciano) (0daymusic.org).mp3
+Analyzing tracks:  37%|###6      | 269/736 [9:49:44<4:02:15, 31.13s/track]INFO:src.database.store:Inserted track 320: Carl Craig presents Paperclip People - Throw (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Carl Craig presents Paperclip People - Throw (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Carl Craig presents Paperclip People - Throw (Original Mix).mp3
+Analyzing tracks:  37%|###6      | 270/736 [9:50:38<4:55:48, 38.09s/track]INFO:src.database.store:Inserted track 321: chaton--catch_the_beat_original_mix-rampljus.mp3
+WARNING:src.orchestrator:No BPM for data\chaton--catch_the_beat_original_mix-rampljus.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: chaton--catch_the_beat_original_mix-rampljus.mp3
+Analyzing tracks:  37%|###6      | 271/736 [9:51:12<4:45:41, 36.86s/track]INFO:src.database.store:Inserted track 322: chistian_smith_and_john_selway-total_departure_(nihad_tule_remix)-scratch.mp3
+WARNING:src.orchestrator:No BPM for data\chistian_smith_and_john_selway-total_departure_(nihad_tule_remix)-scratch.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: chistian_smith_and_john_selway-total_departure_(nihad_tule_remix)-scratch.mp3
+Analyzing tracks:  37%|###6      | 272/736 [9:51:46<4:36:20, 35.73s/track]INFO:src.database.store:Inserted track 323: chloe remix- love_love_love_yeah.mp3
+WARNING:src.orchestrator:No BPM for data\chloe remix- love_love_love_yeah.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: chloe remix- love_love_love_yeah.mp3
+Analyzing tracks:  37%|###7      | 273/736 [9:52:18<4:28:21, 34.78s/track]INFO:src.database.store:Inserted track 324: Chris Liebing_Bangbop_Original_Mix.mp3
+WARNING:src.orchestrator:No BPM for data\Chris Liebing_Bangbop_Original_Mix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Chris Liebing_Bangbop_Original_Mix.mp3
+Analyzing tracks:  37%|###7      | 274/736 [9:52:52<4:24:42, 34.38s/track]INFO:src.database.store:Inserted track 325: chris_carrier-sure_shot-snd.mp3
+WARNING:src.orchestrator:No BPM for data\chris_carrier-sure_shot-snd.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: chris_carrier-sure_shot-snd.mp3
+Analyzing tracks:  37%|###7      | 275/736 [9:53:10<3:47:30, 29.61s/track]INFO:src.database.store:Inserted track 326: Christian Smith & John Selway - Transit Time (Dubfire Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Christian Smith & John Selway - Transit Time (Dubfire Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Christian Smith & John Selway - Transit Time (Dubfire Remix).mp3
+Analyzing tracks:  38%|###7      | 276/736 [9:53:56<4:24:09, 34.46s/track]WARNING:src.orchestrator:No BPM for data\Christian Smith, Reset Robot - Elixir.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Christian Smith, Reset Robot - Elixir.mp3
+Analyzing tracks:  38%|###7      | 277/736 [9:54:21<4:01:28, 31.57s/track]INFO:src.database.store:Inserted track 327: Claude VonStroke & Christian Martin - Groundhog Day.mp3
+WARNING:src.orchestrator:No BPM for data\Claude VonStroke & Christian Martin - Groundhog Day.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Claude VonStroke & Christian Martin - Groundhog Day.mp3
+Analyzing tracks:  38%|###7      | 278/736 [9:54:39<3:29:52, 27.50s/track]INFO:src.database.store:Inserted track 328: Claude Vonstroke - Deep Throat - Deep Throat (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Claude Vonstroke - Deep Throat - Deep Throat (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Claude Vonstroke - Deep Throat - Deep Throat (Original Mix).mp3
+Analyzing tracks:  38%|###7      | 279/736 [9:55:05<3:26:50, 27.16s/track]WARNING:src.orchestrator:No BPM for data\Claude VonStroke - Who s Afraid of Detroit.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Claude VonStroke - Who s Afraid of Detroit.mp3
+Analyzing tracks:  38%|###8      | 280/736 [9:55:27<3:15:25, 25.71s/track]INFO:src.database.store:Inserted track 329: Claude Vonstroke - Who's Afraid of Detroit - electro.mp3
+WARNING:src.orchestrator:No BPM for data\Claude Vonstroke - Who's Afraid of Detroit - electro.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Claude Vonstroke - Who's Afraid of Detroit - electro.mp3
+Analyzing tracks:  38%|###8      | 281/736 [9:55:49<3:05:09, 24.42s/track]INFO:src.database.store:Inserted track 330: claude_vonstroke_-_the_whistler_(jesse_rose_remix).mp3
+WARNING:src.orchestrator:No BPM for data\claude_vonstroke_-_the_whistler_(jesse_rose_remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: claude_vonstroke_-_the_whistler_(jesse_rose_remix).mp3
+Analyzing tracks:  38%|###8      | 282/736 [9:56:11<3:00:30, 23.85s/track]INFO:src.database.store:Inserted track 331: clever008--03--JPLS--Z-Program---Mark-Henning_Rework.mp3
+WARNING:src.orchestrator:No BPM for data\clever008--03--JPLS--Z-Program---Mark-Henning_Rework.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: clever008--03--JPLS--Z-Program---Mark-Henning_Rework.mp3
+Analyzing tracks:  38%|###8      | 283/736 [9:56:34<2:57:45, 23.54s/track]INFO:src.database.store:Inserted track 332: Click Box - Sugar Pain.mp3
+WARNING:src.orchestrator:No BPM for data\Click Box - Sugar Pain.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Click Box - Sugar Pain.mp3
+Analyzing tracks:  39%|###8      | 284/736 [9:56:50<2:39:06, 21.12s/track]WARNING:src.orchestrator:No BPM for data\Colder - Wrong Baby.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Colder - Wrong Baby.mp3
+Analyzing tracks:  39%|###8      | 285/736 [9:57:14<2:45:03, 21.96s/track]INFO:src.database.store:Inserted track 333: D'julz - Just So U Know (2000 and One Remix).mp3
+WARNING:src.orchestrator:No BPM for data\D'julz - Just So U Know (2000 and One Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: D'julz - Just So U Know (2000 and One Remix).mp3
+Analyzing tracks:  39%|###8      | 286/736 [9:57:39<2:52:59, 23.06s/track]INFO:src.database.store:Inserted track 334: Damian Schwartz - Las Abuelas (Barem Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Damian Schwartz - Las Abuelas (Barem Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Damian Schwartz - Las Abuelas (Barem Remix).mp3
+Analyzing tracks:  39%|###8      | 287/736 [9:58:04<2:55:39, 23.47s/track]INFO:src.database.store:Inserted track 335: Dan curtin - echozeichen (someone else)-bf.mp3
+WARNING:src.orchestrator:No BPM for data\Dan curtin - echozeichen (someone else)-bf.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Dan curtin - echozeichen (someone else)-bf.mp3
+Analyzing tracks:  39%|###9      | 288/736 [9:58:27<2:55:49, 23.55s/track]INFO:src.database.store:Inserted track 336: Daniel Steinberg - Pay For Me (Someone Else Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Daniel Steinberg - Pay For Me (Someone Else Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Daniel Steinberg - Pay For Me (Someone Else Remix).mp3
+Analyzing tracks:  39%|###9      | 289/736 [9:58:49<2:50:40, 22.91s/track]INFO:src.database.store:Inserted track 337: Danilo Vigorito - Blacktwo.mp3
+WARNING:src.orchestrator:No BPM for data\Danilo Vigorito - Blacktwo.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Danilo Vigorito - Blacktwo.mp3
+Analyzing tracks:  39%|###9      | 290/736 [9:59:18<3:05:09, 24.91s/track]INFO:src.database.store:Inserted track 338: Danilo Vigorito-Lust-Hqem.mp3
+WARNING:src.orchestrator:No BPM for data\Danilo Vigorito-Lust-Hqem.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Danilo Vigorito-Lust-Hqem.mp3
+Analyzing tracks:  40%|###9      | 291/736 [9:59:48<3:16:17, 26.47s/track]INFO:src.database.store:Inserted track 339: Dario Zenker - Felder.mp3
+WARNING:src.orchestrator:No BPM for data\Dario Zenker - Felder.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Dario Zenker - Felder.mp3
+Analyzing tracks:  40%|###9      | 292/736 [10:00:15<3:16:11, 26.51s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 340: Dario Zenker - Moh Reloaded (Tractile Remix #2).mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\Dario Zenker - Moh Reloaded (Tractile Remix #2).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Dario Zenker - Moh Reloaded (Tractile Remix #2).mp3
+Analyzing tracks:  40%|###9      | 293/736 [10:00:38<3:08:30, 25.53s/track]INFO:src.database.store:Inserted track 341: Dario Zenker - Newbe (Heartthrob's Are U Gay Mix) - minimal.mp3
+WARNING:src.orchestrator:No BPM for data\Dario Zenker - Newbe (Heartthrob's Are U Gay Mix) - minimal.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Dario Zenker - Newbe (Heartthrob's Are U Gay Mix) - minimal.mp3
+Analyzing tracks:  40%|###9      | 294/736 [10:01:04<3:07:53, 25.51s/track]INFO:src.database.store:Inserted track 342: Dario Zenker - Sam und Er.mp3
+WARNING:src.orchestrator:No BPM for data\Dario Zenker - Sam und Er.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Dario Zenker - Sam und Er.mp3
+Analyzing tracks:  40%|####      | 295/736 [10:01:39<3:29:29, 28.50s/track]INFO:src.database.store:Inserted track 343: Davide Squillace - Miss giggler - (darko esser rmx).mp3
+WARNING:src.orchestrator:No BPM for data\Davide Squillace - Miss giggler - (darko esser rmx).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Davide Squillace - Miss giggler - (darko esser rmx).mp3
+Analyzing tracks:  40%|####      | 296/736 [10:02:05<3:23:13, 27.71s/track]INFO:src.database.store:Inserted track 344: Decimal_Attakkit_Original Mix.mp3
+WARNING:src.orchestrator:No BPM for data\Decimal_Attakkit_Original Mix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Decimal_Attakkit_Original Mix.mp3
+Analyzing tracks:  40%|####      | 297/736 [10:02:27<3:10:26, 26.03s/track]INFO:src.database.store:Inserted track 345: Delete & Baffa - At You.mp3
+WARNING:src.orchestrator:No BPM for data\Delete & Baffa - At You.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Delete & Baffa - At You.mp3
+Analyzing tracks:  40%|####      | 298/736 [10:02:56<3:15:46, 26.82s/track]INFO:src.database.store:Inserted track 346: Delete - Flight Schedule (Gregor Tresher Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Delete - Flight Schedule (Gregor Tresher Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Delete - Flight Schedule (Gregor Tresher Remix).mp3
+Analyzing tracks:  41%|####      | 299/736 [10:03:25<3:21:19, 27.64s/track]INFO:src.database.store:Inserted track 347: Delete - Let George Do It.mp3
+WARNING:src.orchestrator:No BPM for data\Delete - Let George Do It.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Delete - Let George Do It.mp3
+Analyzing tracks:  41%|####      | 300/736 [10:03:54<3:22:26, 27.86s/track]INFO:src.database.store:Inserted track 348: delete aka sergio munoz - where are my sunglasses.mp3
+WARNING:src.orchestrator:No BPM for data\delete aka sergio munoz - where are my sunglasses.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: delete aka sergio munoz - where are my sunglasses.mp3
+Analyzing tracks:  41%|####      | 301/736 [10:04:23<3:24:02, 28.14s/track]INFO:src.database.store:Inserted track 349: delete_-_dewdropper.mp3
+WARNING:src.orchestrator:No BPM for data\delete_-_dewdropper.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: delete_-_dewdropper.mp3
+Analyzing tracks:  41%|####1     | 302/736 [10:04:45<3:10:30, 26.34s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 350: Depeche Mode - Sinner In Me (Ricardo Villalobos Remix).mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - Sinner In Me (Ricardo Villalobos Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - Sinner In Me (Ricardo Villalobos Remix).mp3
+Analyzing tracks:  41%|####1     | 303/736 [10:05:20<3:28:28, 28.89s/track]INFO:src.database.store:Inserted track 351: Depeche Mode - The Best Of Depeche Mode Volume 1 - 01. Personal Jesus.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 01. Personal Jesus.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 01. Personal Jesus.mp3
+Analyzing tracks:  41%|####1     | 304/736 [10:05:33<2:55:35, 24.39s/track]INFO:src.database.store:Inserted track 352: Depeche Mode - The Best Of Depeche Mode Volume 1 - 02. Just Can't Get Enough.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 02. Just Can't Get Enough.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 02. Just Can't Get Enough.mp3
+Analyzing tracks:  41%|####1     | 305/736 [10:05:47<2:31:20, 21.07s/track]INFO:src.database.store:Inserted track 353: Depeche Mode - The Best Of Depeche Mode Volume 1 - 03. Everything Counts.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 03. Everything Counts.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 03. Everything Counts.mp3
+Analyzing tracks:  42%|####1     | 306/736 [10:06:01<2:16:06, 18.99s/track]INFO:src.database.store:Inserted track 354: Depeche Mode - The Best Of Depeche Mode Volume 1 - 04. Enjoy The Silence.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 04. Enjoy The Silence.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 04. Enjoy The Silence.mp3
+Analyzing tracks:  42%|####1     | 307/736 [10:06:16<2:07:02, 17.77s/track]INFO:src.database.store:Inserted track 355: Depeche Mode - The Best Of Depeche Mode Volume 1 - 05. Shake The Disease.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 05. Shake The Disease.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 05. Shake The Disease.mp3
+Analyzing tracks:  42%|####1     | 308/736 [10:06:33<2:05:22, 17.58s/track]INFO:src.database.store:Inserted track 356: Depeche Mode - The Best Of Depeche Mode Volume 1 - 06. See You.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 06. See You.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 06. See You.mp3
+Analyzing tracks:  42%|####1     | 309/736 [10:06:47<1:57:07, 16.46s/track]INFO:src.database.store:Inserted track 357: Depeche Mode - The Best Of Depeche Mode Volume 1 - 07. It's No Good.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 07. It's No Good.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 07. It's No Good.mp3
+Analyzing tracks:  42%|####2     | 310/736 [10:07:09<2:09:12, 18.20s/track]INFO:src.database.store:Inserted track 358: Depeche Mode - The Best Of Depeche Mode Volume 1 - 08. Strangelove.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 08. Strangelove.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 08. Strangelove.mp3
+Analyzing tracks:  42%|####2     | 311/736 [10:07:22<1:58:25, 16.72s/track]INFO:src.database.store:Inserted track 359: Depeche Mode - The Best Of Depeche Mode Volume 1 - 09. Suffer Well.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 09. Suffer Well.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 09. Suffer Well.mp3
+Analyzing tracks:  42%|####2     | 312/736 [10:07:36<1:51:32, 15.78s/track]INFO:src.database.store:Inserted track 360: Depeche Mode - The Best Of Depeche Mode Volume 1 - 10. Dream On.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 10. Dream On.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 10. Dream On.mp3
+Analyzing tracks:  43%|####2     | 313/736 [10:07:49<1:45:18, 14.94s/track]INFO:src.database.store:Inserted track 361: Depeche Mode - The Best Of Depeche Mode Volume 1 - 11. People Are People.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 11. People Are People.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 11. People Are People.mp3
+Analyzing tracks:  43%|####2     | 314/736 [10:08:02<1:41:27, 14.42s/track]INFO:src.database.store:Inserted track 362: Depeche Mode - The Best Of Depeche Mode Volume 1 - 12. Martyr.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 12. Martyr.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 12. Martyr.mp3
+Analyzing tracks:  43%|####2     | 315/736 [10:08:14<1:36:43, 13.78s/track]INFO:src.database.store:Inserted track 363: Depeche Mode - The Best Of Depeche Mode Volume 1 - 13. Walking In My Shoes.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 13. Walking In My Shoes.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 13. Walking In My Shoes.mp3
+Analyzing tracks:  43%|####2     | 316/736 [10:08:32<1:45:04, 15.01s/track]INFO:src.database.store:Inserted track 364: Depeche Mode - The Best Of Depeche Mode Volume 1 - 14. I Feel You.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 14. I Feel You.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 14. I Feel You.mp3
+Analyzing tracks:  43%|####3     | 317/736 [10:08:49<1:49:13, 15.64s/track]INFO:src.database.store:Inserted track 365: Depeche Mode - The Best Of Depeche Mode Volume 1 - 15. Precious.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 15. Precious.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 15. Precious.mp3
+Analyzing tracks:  43%|####3     | 318/736 [10:09:04<1:46:42, 15.32s/track]INFO:src.database.store:Inserted track 366: Depeche Mode - The Best Of Depeche Mode Volume 1 - 16. Master and Servant.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 16. Master and Servant.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 16. Master and Servant.mp3
+Analyzing tracks:  43%|####3     | 319/736 [10:09:17<1:42:24, 14.74s/track]INFO:src.database.store:Inserted track 367: Depeche Mode - The Best Of Depeche Mode Volume 1 - 17. New Life.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 17. New Life.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 17. New Life.mp3
+Analyzing tracks:  43%|####3     | 320/736 [10:09:30<1:38:54, 14.27s/track]INFO:src.database.store:Inserted track 368: Depeche Mode - The Best Of Depeche Mode Volume 1 - 18. Never Let Me Down Again.mp3
+WARNING:src.orchestrator:No BPM for data\Depeche Mode - The Best Of Depeche Mode Volume 1 - 18. Never Let Me Down Again.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Depeche Mode - The Best Of Depeche Mode Volume 1 - 18. Never Let Me Down Again.mp3
+Analyzing tracks:  44%|####3     | 321/736 [10:09:46<1:40:31, 14.53s/track]INFO:src.database.store:Inserted track 369: dettmann_and_klock--dawning_(revisited)-cmc.mp3
+WARNING:src.orchestrator:No BPM for data\dettmann_and_klock--dawning_(revisited)-cmc.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: dettmann_and_klock--dawning_(revisited)-cmc.mp3
+Analyzing tracks:  44%|####3     | 322/736 [10:10:19<2:19:07, 20.16s/track]WARNING:src.orchestrator:No BPM for data\DJ Rolando - Knights of the Jaguar.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: DJ Rolando - Knights of the Jaguar.mp3
+Analyzing tracks:  44%|####3     | 323/736 [10:10:43<2:26:58, 21.35s/track]WARNING:src.orchestrator:No BPM for data\Dompe - Retroflex.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Dompe - Retroflex.mp3
+Analyzing tracks:  44%|####4     | 324/736 [10:11:02<2:21:22, 20.59s/track]INFO:src.database.store:Inserted track 370: donato_dozzy-destination_eskimo_part_1-bex.mp3
+WARNING:src.orchestrator:No BPM for data\donato_dozzy-destination_eskimo_part_1-bex.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: donato_dozzy-destination_eskimo_part_1-bex.mp3
+Analyzing tracks:  44%|####4     | 325/736 [10:11:30<2:35:46, 22.74s/track]INFO:src.database.store:Inserted track 371: Donnacha Costello-Ok Thats Great Start Over-Tsp.mp3
+WARNING:src.orchestrator:No BPM for data\Donnacha Costello-Ok Thats Great Start Over-Tsp.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Donnacha Costello-Ok Thats Great Start Over-Tsp.mp3
+Analyzing tracks:  44%|####4     | 326/736 [10:11:56<2:42:54, 23.84s/track]INFO:src.database.store:Inserted track 372: Dubfire - Emissions.mp3
+WARNING:src.orchestrator:No BPM for data\Dubfire - Emissions.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Dubfire - Emissions.mp3
+Analyzing tracks:  44%|####4     | 327/736 [10:12:25<2:53:16, 25.42s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 373: Dubfire - Ribcage (Original Mix).mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\Dubfire - Ribcage (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Dubfire - Ribcage (Original Mix).mp3
+Analyzing tracks:  45%|####4     | 328/736 [10:13:12<3:36:04, 31.78s/track]INFO:src.database.store:Inserted track 374: Dustin Zahn - Analog God (Drumcell & Audio Injection).mp3
+WARNING:src.orchestrator:No BPM for data\Dustin Zahn - Analog God (Drumcell & Audio Injection).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Dustin Zahn - Analog God (Drumcell & Audio Injection).mp3
+Analyzing tracks:  45%|####4     | 329/736 [10:13:36<3:21:07, 29.65s/track]WARNING:src.orchestrator:No BPM for data\Eddie Amador - House Music.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Eddie Amador - House Music.mp3
+Analyzing tracks:  45%|####4     | 330/736 [10:14:06<3:21:04, 29.72s/track]INFO:src.database.store:Inserted track 375: Electro Minimal - Sleeparchive - Acd - Voice.mp3
+WARNING:src.orchestrator:No BPM for data\Electro Minimal - Sleeparchive - Acd - Voice.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Electro Minimal - Sleeparchive - Acd - Voice.mp3
+Analyzing tracks:  45%|####4     | 331/736 [10:14:41<3:30:55, 31.25s/track]INFO:src.database.store:Inserted track 376: Elektrochemie - Mucky Star.mp3
+WARNING:src.orchestrator:No BPM for data\Elektrochemie - Mucky Star.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Elektrochemie - Mucky Star.mp3
+Analyzing tracks:  45%|####5     | 332/736 [10:15:14<3:34:12, 31.81s/track]INFO:src.database.store:Inserted track 377: Ellen Allien & Apparat-Turbo_Dreams_Marc_Houle_Jackit_Mix.mp3
+WARNING:src.orchestrator:No BPM for data\Ellen Allien & Apparat-Turbo_Dreams_Marc_Houle_Jackit_Mix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ellen Allien & Apparat-Turbo_Dreams_Marc_Houle_Jackit_Mix.mp3
+Analyzing tracks:  45%|####5     | 333/736 [10:15:32<3:06:20, 27.74s/track]INFO:src.database.store:Inserted track 378: Ellen Allien - Your body is my body (Troy Pierce sharing is caring mix).mp3
+WARNING:src.orchestrator:No BPM for data\Ellen Allien - Your body is my body (Troy Pierce sharing is caring mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ellen Allien - Your body is my body (Troy Pierce sharing is caring mix).mp3
+Analyzing tracks:  45%|####5     | 334/736 [10:15:53<2:51:55, 25.66s/track]WARNING:src.ingestion.loader:Metadata extraction not supported for .wav
+INFO:src.database.store:Inserted track 379: Enfants by Ricardo Villalobos feat. Christian Vander.wav
+WARNING:src.orchestrator:No BPM for data\Enfants by Ricardo Villalobos feat. Christian Vander.wav; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Enfants by Ricardo Villalobos feat. Christian Vander.wav
+Analyzing tracks:  46%|####5     | 335/736 [10:16:13<2:39:35, 23.88s/track]INFO:src.database.store:Inserted track 380: Fabrizio Maurizi - Cabron! (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Fabrizio Maurizi - Cabron! (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fabrizio Maurizi - Cabron! (Original Mix).mp3
+Analyzing tracks:  46%|####5     | 336/736 [10:16:38<2:42:09, 24.32s/track]INFO:src.database.store:Inserted track 381: Fabrizio Maurizi - My Imaginary Friend (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Fabrizio Maurizi - My Imaginary Friend (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fabrizio Maurizi - My Imaginary Friend (Original Mix).mp3
+Analyzing tracks:  46%|####5     | 337/736 [10:17:07<2:50:30, 25.64s/track]INFO:src.database.store:Inserted track 382: Fabrizio Maurizi - No Fear (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Fabrizio Maurizi - No Fear (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fabrizio Maurizi - No Fear (Original Mix).mp3
+Analyzing tracks:  46%|####5     | 338/736 [10:17:36<2:55:58, 26.53s/track]INFO:src.database.store:Inserted track 383: Fabrizio Maurizi - OK- Switch On - 03 - Before The Wind.mp3
+WARNING:src.orchestrator:No BPM for data\Fabrizio Maurizi - OK- Switch On - 03 - Before The Wind.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fabrizio Maurizi - OK- Switch On - 03 - Before The Wind.mp3
+Analyzing tracks:  46%|####6     | 339/736 [10:18:03<2:56:46, 26.72s/track]INFO:src.database.store:Inserted track 384: Fabrizio Maurizi aka Roger - Mundaka.mp3
+WARNING:src.orchestrator:No BPM for data\Fabrizio Maurizi aka Roger - Mundaka.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fabrizio Maurizi aka Roger - Mundaka.mp3
+Analyzing tracks:  46%|####6     | 340/736 [10:18:26<2:48:45, 25.57s/track]INFO:src.database.store:Inserted track 385: False - Bathe-Bf.mp3
+WARNING:src.orchestrator:No BPM for data\False - Bathe-Bf.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: False - Bathe-Bf.mp3
+Analyzing tracks:  46%|####6     | 341/736 [10:18:52<2:50:29, 25.90s/track]INFO:src.database.store:Inserted track 386: False - Face The Rain - minimal.mp3
+WARNING:src.orchestrator:No BPM for data\False - Face The Rain - minimal.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: False - Face The Rain - minimal.mp3
+Analyzing tracks:  46%|####6     | 342/736 [10:19:27<3:07:52, 28.61s/track]INFO:src.database.store:Inserted track 387: False aka Matthew Dear - Fed On Youth.mp3
+WARNING:src.orchestrator:No BPM for data\False aka Matthew Dear - Fed On Youth.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: False aka Matthew Dear - Fed On Youth.mp3
+Analyzing tracks:  47%|####6     | 343/736 [10:20:03<3:22:04, 30.85s/track]INFO:src.database.store:Inserted track 388: Fatboy Slim - Praise You.mp3
+WARNING:src.orchestrator:No BPM for data\Fatboy Slim - Praise You.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fatboy Slim - Praise You.mp3
+Analyzing tracks:  47%|####6     | 344/736 [10:20:24<3:01:16, 27.75s/track]INFO:src.database.store:Inserted track 389: Fatboy Slim - Right Here, Right Now.mp3
+WARNING:src.orchestrator:No BPM for data\Fatboy Slim - Right Here, Right Now.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fatboy Slim - Right Here, Right Now.mp3
+Analyzing tracks:  47%|####6     | 345/736 [10:20:48<2:53:33, 26.63s/track]INFO:src.database.store:Inserted track 390: Fatboy_Slim_-_The_Rockafeller_Skank.mp3
+WARNING:src.orchestrator:No BPM for data\Fatboy_Slim_-_The_Rockafeller_Skank.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fatboy_Slim_-_The_Rockafeller_Skank.mp3
+Analyzing tracks:  47%|####7     | 346/736 [10:21:03<2:29:31, 23.01s/track]WARNING:src.orchestrator:No BPM for data\Federico Grazzini - Tokyo.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Federico Grazzini - Tokyo.mp3
+Analyzing tracks:  47%|####7     | 347/736 [10:21:31<2:40:22, 24.74s/track]INFO:src.database.store:Inserted track 391: Federico Locchi & Frankie Watch - Contrabanda.mp3
+WARNING:src.orchestrator:No BPM for data\Federico Locchi & Frankie Watch - Contrabanda.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Federico Locchi & Frankie Watch - Contrabanda.mp3
+Analyzing tracks:  47%|####7     | 348/736 [10:21:57<2:41:33, 24.98s/track]INFO:src.database.store:Inserted track 392: Feldah & Koba - Is Klar (Pan-Pot Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Feldah & Koba - Is Klar (Pan-Pot Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Feldah & Koba - Is Klar (Pan-Pot Remix).mp3
+Analyzing tracks:  47%|####7     | 349/736 [10:22:29<2:54:10, 27.01s/track]INFO:src.database.store:Inserted track 393: Florian Meindl - While You Sleep.mp3
+WARNING:src.orchestrator:No BPM for data\Florian Meindl - While You Sleep.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Florian Meindl - While You Sleep.mp3
+Analyzing tracks:  48%|####7     | 350/736 [10:22:58<2:58:50, 27.80s/track]INFO:src.database.store:Inserted track 394: Fraktion - This Never Works.mp3
+WARNING:src.orchestrator:No BPM for data\Fraktion - This Never Works.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fraktion - This Never Works.mp3
+Analyzing tracks:  48%|####7     | 351/736 [10:23:23<2:53:00, 26.96s/track]INFO:src.database.store:Inserted track 395: Fraktion aka Jon Gaiser - Acidrop.mp3
+WARNING:src.orchestrator:No BPM for data\Fraktion aka Jon Gaiser - Acidrop.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fraktion aka Jon Gaiser - Acidrop.mp3
+Analyzing tracks:  48%|####7     | 352/736 [10:23:48<2:47:36, 26.19s/track][C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+INFO:src.database.store:Inserted track 396: fraktion_aka_jon_gaiser-bukl-bf.mp3
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\id3.c:process_comment():587] error: No comment text / valid description?
+WARNING:src.orchestrator:No BPM for data\fraktion_aka_jon_gaiser-bukl-bf.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: fraktion_aka_jon_gaiser-bukl-bf.mp3
+Analyzing tracks:  48%|####7     | 353/736 [10:24:09<2:38:31, 24.83s/track]INFO:src.database.store:Inserted track 397: friendly_people-cap_n_cant_get_right_1_(original_mix)-loyalty.mp3
+WARNING:src.orchestrator:No BPM for data\friendly_people-cap_n_cant_get_right_1_(original_mix)-loyalty.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: friendly_people-cap_n_cant_get_right_1_(original_mix)-loyalty.mp3
+Analyzing tracks:  48%|####8     | 354/736 [10:24:36<2:42:20, 25.50s/track]INFO:src.database.store:Inserted track 398: From Karaoke to Stardom - Big Bad Swoosh.mp3
+WARNING:src.orchestrator:No BPM for data\From Karaoke to Stardom - Big Bad Swoosh.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: From Karaoke to Stardom - Big Bad Swoosh.mp3
+Analyzing tracks:  48%|####8     | 355/736 [10:24:59<2:36:01, 24.57s/track]INFO:src.database.store:Inserted track 399: Funkagenda - What the fuck (Original Club Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Funkagenda - What the fuck (Original Club Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Funkagenda - What the fuck (Original Club Mix).mp3
+Analyzing tracks:  48%|####8     | 356/736 [10:25:23<2:35:37, 24.57s/track]INFO:src.database.store:Inserted track 400: Fusiphorm - Green chocolate (Koljah Rmx).mp3
+WARNING:src.orchestrator:No BPM for data\Fusiphorm - Green chocolate (Koljah Rmx).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fusiphorm - Green chocolate (Koljah Rmx).mp3
+Analyzing tracks:  49%|####8     | 357/736 [10:26:01<2:59:38, 28.44s/track]INFO:src.database.store:Inserted track 401: Fusiphorm - I Am You (Someone Else Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Fusiphorm - I Am You (Someone Else Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Fusiphorm - I Am You (Someone Else Remix).mp3
+Analyzing tracks:  49%|####8     | 358/736 [10:26:20<2:42:39, 25.82s/track]INFO:src.database.store:Inserted track 402: Gabriel Ananda--Doppelwhipper-Cmc.mp3
+WARNING:src.orchestrator:No BPM for data\Gabriel Ananda--Doppelwhipper-Cmc.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gabriel Ananda--Doppelwhipper-Cmc.mp3
+Analyzing tracks:  49%|####8     | 359/736 [10:26:58<3:04:41, 29.39s/track]INFO:src.database.store:Inserted track 403: Gabriel Ananda--Miracel Whop-Cmc.mp3
+WARNING:src.orchestrator:No BPM for data\Gabriel Ananda--Miracel Whop-Cmc.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gabriel Ananda--Miracel Whop-Cmc.mp3
+Analyzing tracks:  49%|####8     | 360/736 [10:27:29<3:07:26, 29.91s/track]INFO:src.database.store:Inserted track 404: Gaiser - chlorine.mp3
+WARNING:src.orchestrator:No BPM for data\Gaiser - chlorine.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gaiser - chlorine.mp3
+Analyzing tracks:  49%|####9     | 361/736 [10:27:54<2:56:42, 28.27s/track]INFO:src.database.store:Inserted track 405: Gaiser - Ciliate With.mp3
+WARNING:src.orchestrator:No BPM for data\Gaiser - Ciliate With.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gaiser - Ciliate With.mp3
+Analyzing tracks:  49%|####9     | 362/736 [10:28:18<2:49:33, 27.20s/track]INFO:src.database.store:Inserted track 406: gaiser - eye_Contact_Original_Mix.mp3
+WARNING:src.orchestrator:No BPM for data\gaiser - eye_Contact_Original_Mix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: gaiser - eye_Contact_Original_Mix.mp3
+Analyzing tracks:  49%|####9     | 363/736 [10:28:54<3:03:53, 29.58s/track]INFO:src.database.store:Inserted track 407: Gaiser - Ground.mp3
+WARNING:src.orchestrator:No BPM for data\Gaiser - Ground.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gaiser - Ground.mp3
+Analyzing tracks:  49%|####9     | 364/736 [10:29:14<2:46:59, 26.93s/track]INFO:src.database.store:Inserted track 408: Gaiser - Mute.mp3
+WARNING:src.orchestrator:No BPM for data\Gaiser - Mute.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gaiser - Mute.mp3
+Analyzing tracks:  50%|####9     | 365/736 [10:29:39<2:43:10, 26.39s/track]INFO:src.database.store:Inserted track 409: Gaiser - Neural Block.mp3
+WARNING:src.orchestrator:No BPM for data\Gaiser - Neural Block.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gaiser - Neural Block.mp3
+Analyzing tracks:  50%|####9     | 366/736 [10:30:04<2:38:27, 25.69s/track]INFO:src.database.store:Inserted track 410: gaiser - Out_of_Sort_Original_Mix.mp3
+WARNING:src.orchestrator:No BPM for data\gaiser - Out_of_Sort_Original_Mix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: gaiser - Out_of_Sort_Original_Mix.mp3
+Analyzing tracks:  50%|####9     | 367/736 [10:30:27<2:33:55, 25.03s/track]INFO:src.database.store:Inserted track 411: Gaiser - Scatter.mp3
+WARNING:src.orchestrator:No BPM for data\Gaiser - Scatter.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gaiser - Scatter.mp3
+Analyzing tracks:  50%|#####     | 368/736 [10:30:50<2:30:03, 24.47s/track]INFO:src.database.store:Inserted track 412: Gaiser - Withdrawal.mp3
+WARNING:src.orchestrator:No BPM for data\Gaiser - Withdrawal.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gaiser - Withdrawal.mp3
+Analyzing tracks:  50%|#####     | 369/736 [10:31:14<2:28:12, 24.23s/track]INFO:src.database.store:Inserted track 413: Gaiser Sightblotch_Original_Mix.mp3
+WARNING:src.orchestrator:No BPM for data\Gaiser Sightblotch_Original_Mix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gaiser Sightblotch_Original_Mix.mp3
+Analyzing tracks:  50%|#####     | 370/736 [10:31:37<2:24:56, 23.76s/track]INFO:src.database.store:Inserted track 414: gaiser--offprint-dh.mp3
+WARNING:src.orchestrator:No BPM for data\gaiser--offprint-dh.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: gaiser--offprint-dh.mp3
+Analyzing tracks:  50%|#####     | 371/736 [10:32:01<2:25:38, 23.94s/track]INFO:src.database.store:Inserted track 415: gaiser-descending_order_(original_mix) (0daymusic.org).mp3
+WARNING:src.orchestrator:No BPM for data\gaiser-descending_order_(original_mix) (0daymusic.org).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: gaiser-descending_order_(original_mix) (0daymusic.org).mp3
+Analyzing tracks:  51%|#####     | 372/736 [10:32:42<2:56:47, 29.14s/track]INFO:src.database.store:Inserted track 416: Gary Beck - Consumed (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Gary Beck - Consumed (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gary Beck - Consumed (Original Mix).mp3
+Analyzing tracks:  51%|#####     | 373/736 [10:33:17<3:06:24, 30.81s/track]INFO:src.database.store:Inserted track 417: gel abril - 200 grams.mp3
+WARNING:src.orchestrator:No BPM for data\gel abril - 200 grams.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: gel abril - 200 grams.mp3
+Analyzing tracks:  51%|#####     | 374/736 [10:33:56<3:21:27, 33.39s/track]INFO:src.database.store:Inserted track 418: Gel Abril - The Underground Bullshit.mp3
+WARNING:src.orchestrator:No BPM for data\Gel Abril - The Underground Bullshit.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gel Abril - The Underground Bullshit.mp3
+Analyzing tracks:  51%|#####     | 375/736 [10:34:39<3:37:12, 36.10s/track]INFO:src.database.store:Inserted track 419: Grindvik - Monuments.mp3
+WARNING:src.orchestrator:No BPM for data\Grindvik - Monuments.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Grindvik - Monuments.mp3
+Analyzing tracks:  51%|#####1    | 376/736 [10:35:10<3:27:54, 34.65s/track]INFO:src.database.store:Inserted track 420: gui boratto - gate 7.mp3
+WARNING:src.orchestrator:No BPM for data\gui boratto - gate 7.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: gui boratto - gate 7.mp3
+Analyzing tracks:  51%|#####1    | 377/736 [10:35:40<3:19:18, 33.31s/track]INFO:src.database.store:Inserted track 421: Guido Schneider & Galluzzi - Albertino.mp3
+WARNING:src.orchestrator:No BPM for data\Guido Schneider & Galluzzi - Albertino.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Guido Schneider & Galluzzi - Albertino.mp3
+Analyzing tracks:  51%|#####1    | 378/736 [10:36:16<3:22:25, 33.93s/track]INFO:src.database.store:Inserted track 422: Guido Schneider - poker flat 47 - B1 - Moved (Refreshed).mp3
+WARNING:src.orchestrator:No BPM for data\Guido Schneider - poker flat 47 - B1 - Moved (Refreshed).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Guido Schneider - poker flat 47 - B1 - Moved (Refreshed).mp3
+Analyzing tracks:  51%|#####1    | 379/736 [10:36:50<3:22:18, 34.00s/track]WARNING:src.orchestrator:No BPM for data\Guido Schneider - Re - Moved.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Guido Schneider - Re - Moved.mp3
+Analyzing tracks:  52%|#####1    | 380/736 [10:37:25<3:23:10, 34.24s/track]INFO:src.database.store:Inserted track 423: Guido schneider - Re-moved.mp3
+WARNING:src.orchestrator:No BPM for data\Guido schneider - Re-moved.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Guido schneider - Re-moved.mp3
+Analyzing tracks:  52%|#####1    | 381/736 [10:37:58<3:21:40, 34.09s/track]INFO:src.database.store:Inserted track 424: Guido Schneider - Super Sander [PFRLP17].mp3
+WARNING:src.orchestrator:No BPM for data\Guido Schneider - Super Sander [PFRLP17].mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Guido Schneider - Super Sander [PFRLP17].mp3
+Analyzing tracks:  52%|#####1    | 382/736 [10:38:39<3:32:51, 36.08s/track]WARNING:src.orchestrator:No BPM for data\Guido Schneider, Andre Galluzzi - Albertino.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Guido Schneider, Andre Galluzzi - Albertino.mp3
+Analyzing tracks:  52%|#####2    | 383/736 [10:39:16<3:33:41, 36.32s/track]INFO:src.database.store:Inserted track 425: Guido Schneider_Animism_ (Cocoon).mp3
+WARNING:src.orchestrator:No BPM for data\Guido Schneider_Animism_ (Cocoon).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Guido Schneider_Animism_ (Cocoon).mp3
+Analyzing tracks:  52%|#####2    | 384/736 [10:39:47<3:23:51, 34.75s/track]INFO:src.database.store:Inserted track 426: guido_schneider-halo.mp3
+WARNING:src.orchestrator:No BPM for data\guido_schneider-halo.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: guido_schneider-halo.mp3
+Analyzing tracks:  52%|#####2    | 385/736 [10:40:31<3:39:54, 37.59s/track]INFO:src.database.store:Inserted track 427: Gummihz - Aakny.mp3
+WARNING:src.orchestrator:No BPM for data\Gummihz - Aakny.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Gummihz - Aakny.mp3
+Analyzing tracks:  52%|#####2    | 386/736 [10:41:02<3:27:59, 35.66s/track]INFO:src.database.store:Inserted track 428: Guy Gerber & Shlomi Aber - Sea of Sand (original mix).mp3
+WARNING:src.orchestrator:No BPM for data\Guy Gerber & Shlomi Aber - Sea of Sand (original mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Guy Gerber & Shlomi Aber - Sea of Sand (original mix).mp3
+Analyzing tracks:  53%|#####2    | 387/736 [10:41:34<3:19:54, 34.37s/track]INFO:src.database.store:Inserted track 429: HARDFLOOR - Into the Nature (Plastikman Mix).mp3
+WARNING:src.orchestrator:No BPM for data\HARDFLOOR - Into the Nature (Plastikman Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: HARDFLOOR - Into the Nature (Plastikman Mix).mp3
+Analyzing tracks:  53%|#####2    | 388/736 [10:42:29<3:56:30, 40.78s/track]INFO:src.database.store:Inserted track 430: Hay Consuelo (Samin Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Hay Consuelo (Samin Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Hay Consuelo (Samin Remix).mp3
+Analyzing tracks:  53%|#####2    | 389/736 [10:43:01<3:39:54, 38.02s/track]INFO:src.database.store:Inserted track 431: heartthrob & gaiser - [2007.01] - nasty girl.mp3
+WARNING:src.orchestrator:No BPM for data\heartthrob & gaiser - [2007.01] - nasty girl.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: heartthrob & gaiser - [2007.01] - nasty girl.mp3
+Analyzing tracks:  53%|#####2    | 390/736 [10:43:39<3:39:13, 38.02s/track]INFO:src.database.store:Inserted track 432: Heartthrob - Baby Kate (Adam Beyer and Jesper Dahlback remix).mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob - Baby Kate (Adam Beyer and Jesper Dahlback remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob - Baby Kate (Adam Beyer and Jesper Dahlback remix).mp3
+Analyzing tracks:  53%|#####3    | 391/736 [10:44:11<3:27:42, 36.12s/track]INFO:src.database.store:Inserted track 433: Heartthrob - Baby Kate (Konrad Black Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob - Baby Kate (Konrad Black Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob - Baby Kate (Konrad Black Remix).mp3
+Analyzing tracks:  53%|#####3    | 392/736 [10:44:44<3:22:47, 35.37s/track]INFO:src.database.store:Inserted track 434: Heartthrob - Baby Kate (Plastikman Remix).mp3
+Note: Illegal Audio-MPEG-Header 0x00000000 at offset 13008978.
+Note: Trying to resync...
+Note: Skipped 1024 bytes in input.
+[C:\vcpkg\buildtrees\mpg123\src\-66150af195.clean\src\libmpg123\parse.c:wetwork():1389] error: Giving up resync after 1024 bytes - your stream is not nice... (maybe increasing resync limit could help).
+ERROR:src.ingestion.loader:Error loading audio from data\Heartthrob - Baby Kate (Plastikman Remix).mp3: 
+ERROR:src.orchestrator:Failed to load audio: data\Heartthrob - Baby Kate (Plastikman Remix).mp3
+Analyzing tracks:  53%|#####3    | 393/736 [10:44:45<2:22:19, 24.90s/track]INFO:src.database.store:Inserted track 435: Heartthrob - Baby Kate (Sascha Funke Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob - Baby Kate (Sascha Funke Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob - Baby Kate (Sascha Funke Remix).mp3
+Analyzing tracks:  54%|#####3    | 394/736 [10:45:21<2:40:53, 28.23s/track]INFO:src.database.store:Inserted track 436: Heartthrob - Baby Kate Magda S Where S My Baby Daddy Remix.mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob - Baby Kate Magda S Where S My Baby Daddy Remix.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob - Baby Kate Magda S Where S My Baby Daddy Remix.mp3
+Analyzing tracks:  54%|#####3    | 395/736 [10:45:55<2:50:01, 29.92s/track]INFO:src.database.store:Inserted track 437: Heartthrob - Formation Face.mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob - Formation Face.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob - Formation Face.mp3
+Analyzing tracks:  54%|#####3    | 396/736 [10:46:20<2:41:27, 28.49s/track]INFO:src.database.store:Inserted track 438: Heartthrob - golum.mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob - golum.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob - golum.mp3
+Analyzing tracks:  54%|#####3    | 397/736 [10:46:55<2:52:15, 30.49s/track]INFO:src.database.store:Inserted track 439: Heartthrob - Hot Sugar Candy Apple Taffy (Minus).Mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob - Hot Sugar Candy Apple Taffy (Minus).Mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob - Hot Sugar Candy Apple Taffy (Minus).Mp3
+Analyzing tracks:  54%|#####4    | 398/736 [10:47:36<3:10:12, 33.76s/track]INFO:src.database.store:Inserted track 440: Heartthrob - Out Of Here.mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob - Out Of Here.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob - Out Of Here.mp3
+Analyzing tracks:  54%|#####4    | 399/736 [10:48:04<2:58:55, 31.86s/track]INFO:src.database.store:Inserted track 441: Heartthrob - Roundabout.mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob - Roundabout.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob - Roundabout.mp3
+Analyzing tracks:  54%|#####4    | 400/736 [10:48:38<3:02:40, 32.62s/track]INFO:src.database.store:Inserted track 442: Heartthrob - Signs (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob - Signs (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob - Signs (Original Mix).mp3
+Analyzing tracks:  54%|#####4    | 401/736 [10:49:20<3:17:34, 35.39s/track]INFO:src.database.store:Inserted track 443: heartthrob - thrill.mp3
+WARNING:src.orchestrator:No BPM for data\heartthrob - thrill.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: heartthrob - thrill.mp3
+Analyzing tracks:  55%|#####4    | 402/736 [10:49:50<3:08:12, 33.81s/track]INFO:src.database.store:Inserted track 444: Heartthrob-Baby Kate.mp3
+WARNING:src.orchestrator:No BPM for data\Heartthrob-Baby Kate.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heartthrob-Baby Kate.mp3
+Analyzing tracks:  55%|#####4    | 403/736 [10:50:23<3:06:12, 33.55s/track]INFO:src.database.store:Inserted track 445: heartthrob_vs_troy_pierce-horse_nation_amended-omg.mp3
+WARNING:src.orchestrator:No BPM for data\heartthrob_vs_troy_pierce-horse_nation_amended-omg.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: heartthrob_vs_troy_pierce-horse_nation_amended-omg.mp3
+Analyzing tracks:  55%|#####4    | 404/736 [10:50:56<3:04:28, 33.34s/track]INFO:src.database.store:Inserted track 446: Heinrichs & Hirtenfellner - Chiller.mp3
+WARNING:src.orchestrator:No BPM for data\Heinrichs & Hirtenfellner - Chiller.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Heinrichs & Hirtenfellner - Chiller.mp3
+Analyzing tracks:  55%|#####5    | 405/736 [10:51:39<3:20:37, 36.37s/track]WARNING:src.orchestrator:No BPM for data\Hermanez, massimo girardi - 22.22.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Hermanez, massimo girardi - 22.22.mp3
+Analyzing tracks:  55%|#####5    | 406/736 [10:52:26<3:37:39, 39.57s/track]INFO:src.database.store:Inserted track 447: Hobo - Failsafe.mp3
+WARNING:src.orchestrator:No BPM for data\Hobo - Failsafe.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Hobo - Failsafe.mp3
+Analyzing tracks:  55%|#####5    | 407/736 [10:53:01<3:29:05, 38.13s/track]INFO:src.database.store:Inserted track 448: Ilario Alicante & Delete - 02 Catalanas Roll.mp3
+WARNING:src.orchestrator:No BPM for data\Ilario Alicante & Delete - 02 Catalanas Roll.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ilario Alicante & Delete - 02 Catalanas Roll.mp3
+Analyzing tracks:  55%|#####5    | 408/736 [10:53:40<3:30:03, 38.43s/track]INFO:src.database.store:Inserted track 449: Ilario Alicante - I Like To Serve.mp3
+WARNING:src.orchestrator:No BPM for data\Ilario Alicante - I Like To Serve.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ilario Alicante - I Like To Serve.mp3
+Analyzing tracks:  56%|#####5    | 409/736 [10:54:17<3:26:08, 37.82s/track]WARNING:src.orchestrator:No BPM for data\Ilario Alicante - Vacaciones En Chile.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ilario Alicante - Vacaciones En Chile.mp3
+Analyzing tracks:  56%|#####5    | 410/736 [10:55:09<3:48:57, 42.14s/track]INFO:src.database.store:Inserted track 450: Ilario_Alicante _Living _near_Africa.mp3
+WARNING:src.orchestrator:No BPM for data\Ilario_Alicante _Living _near_Africa.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ilario_Alicante _Living _near_Africa.mp3
+Analyzing tracks:  56%|#####5    | 411/736 [10:55:45<3:37:53, 40.23s/track]INFO:src.database.store:Inserted track 451: Ilario_Alicante_&_Delete_-_01_Going_Straight_To_Caracas.mp3
+WARNING:src.orchestrator:No BPM for data\Ilario_Alicante_&_Delete_-_01_Going_Straight_To_Caracas.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Ilario_Alicante_&_Delete_-_01_Going_Straight_To_Caracas.mp3
+Analyzing tracks:  56%|#####5    | 412/736 [11:13:36<31:26:49, 349.41s/track]INFO:src.database.store:Inserted track 452: Imek - Delirante No Hay Camino (Tadeo Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Imek - Delirante No Hay Camino (Tadeo Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Imek - Delirante No Hay Camino (Tadeo Remix).mp3
+Analyzing tracks:  56%|#####6    | 413/736 [11:14:05<22:44:10, 253.41s/track]INFO:src.database.store:Inserted track 453: innersphere_aka_shinedoe-phunk_(ricardo_villalobos_remix).mp3
+WARNING:src.orchestrator:No BPM for data\innersphere_aka_shinedoe-phunk_(ricardo_villalobos_remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: innersphere_aka_shinedoe-phunk_(ricardo_villalobos_remix).mp3
+Analyzing tracks:  56%|#####6    | 414/736 [11:14:51<17:06:42, 191.31s/track]INFO:src.database.store:Inserted track 454: Isolée - I Owe You (Villalobos Remix).mp3
+WARNING:src.orchestrator:No BPM for data\Isolée - I Owe You (Villalobos Remix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Isolée - I Owe You (Villalobos Remix).mp3
+Analyzing tracks:  56%|#####6    | 415/736 [11:16:10<14:02:30, 157.48s/track]INFO:src.database.store:Inserted track 455: Italoboyz - Viktor Casanova (original mix).mp3
+WARNING:src.orchestrator:No BPM for data\Italoboyz - Viktor Casanova (original mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Italoboyz - Viktor Casanova (original mix).mp3
+Analyzing tracks:  57%|#####6    | 416/736 [11:16:49<10:51:08, 122.09s/track]INFO:src.database.store:Inserted track 456: Italoboyz - Zinga.mp3
+WARNING:src.orchestrator:No BPM for data\Italoboyz - Zinga.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Italoboyz - Zinga.mp3
+Analyzing tracks:  57%|#####6    | 417/736 [11:17:30<8:38:54, 97.60s/track]  INFO:src.database.store:Inserted track 457: ITO & STAR - Sudoko Kid.mp3
+WARNING:src.orchestrator:No BPM for data\ITO & STAR - Sudoko Kid.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: ITO & STAR - Sudoko Kid.mp3
+Analyzing tracks:  57%|#####6    | 418/736 [11:18:17<7:17:04, 82.47s/track]INFO:src.database.store:Inserted track 458: james_venturi_and_janus_orghe-stalattite_stalagmite_(original_mix)-italive.mp3
+WARNING:src.orchestrator:No BPM for data\james_venturi_and_janus_orghe-stalattite_stalagmite_(original_mix)-italive.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: james_venturi_and_janus_orghe-stalattite_stalagmite_(original_mix)-italive.mp3
+Analyzing tracks:  57%|#####6    | 419/736 [11:18:55<6:05:44, 69.22s/track]INFO:src.database.store:Inserted track 459: Jamie Jones & Simon Baker - Kaskazi (Original Mix).mp3
+WARNING:src.orchestrator:No BPM for data\Jamie Jones & Simon Baker - Kaskazi (Original Mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Jamie Jones & Simon Baker - Kaskazi (Original Mix).mp3
+Analyzing tracks:  57%|#####7    | 420/736 [11:19:41<5:26:39, 62.02s/track]INFO:src.database.store:Inserted track 460: Jeff Samuel - Lost.mp3
+WARNING:src.orchestrator:No BPM for data\Jeff Samuel - Lost.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Jeff Samuel - Lost.mp3
+Analyzing tracks:  57%|#####7    | 421/736 [11:20:06<4:27:31, 50.96s/track]INFO:src.database.store:Inserted track 461: Jens Bond - Consequence (Skoozbot mix).mp3
+WARNING:src.orchestrator:No BPM for data\Jens Bond - Consequence (Skoozbot mix).mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Jens Bond - Consequence (Skoozbot mix).mp3
+Analyzing tracks:  57%|#####7    | 422/736 [11:20:34<3:50:46, 44.10s/track]INFO:src.database.store:Inserted track 462: jochen_trappe--organic-mbs.mp3
+WARNING:src.orchestrator:No BPM for data\jochen_trappe--organic-mbs.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: jochen_trappe--organic-mbs.mp3
+Analyzing tracks:  57%|#####7    | 423/736 [11:33:52<23:29:52, 270.26s/track]WARNING:src.orchestrator:No BPM for data\Joey Beltram - Slice 2010.mp3; skipping segment detection
+INFO:src.orchestrator:\u2713 Analyzed: Joey Beltram - Slice 2010.mp3
+Analyzing tracks:  58%|#####7    | 424/736 [11:34:23<17:12:37, 198.58s/track]INFO:src.database.store:Inserted track 463: john gaiser - egress.mp3
