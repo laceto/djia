@@ -17,6 +17,7 @@ from typing import Any, Dict, List
 from ..ai.classifier import MoodClassifier
 from ..audio_analysis import analyze_track as analyze_audio
 from ..ingestion.loader import AudioLoader
+from .bassline_engine import compute_bassline_profile
 from .config import DSPConfig, get_config
 from .curation_engine import compute_crest_factor, compute_spectral_flatness
 from .groove_engine import analyze_groove
@@ -150,6 +151,18 @@ def _add_sub_profile(features: Dict[str, Any], y, sr, file_path, beat_times=None
         logger.warning(f"Failed to compute sub profile for {file_path}: {e}")
 
 
+def _add_bassline_profile(features: Dict[str, Any], y, sr, file_path, beat_times=None) -> None:
+    """Score the six bassline archetypes (rolling, deep-sub, offbeat, acid, staccato,
+    drone); merge into features (best-effort). Runs after `_add_sub_profile` because it
+    reads that profile's `sub_character` / `sub_peak_share` to refine two of the scores."""
+    try:
+        features.update(compute_bassline_profile(
+            y, sr, bpm=features.get('bpm'), beat_times=beat_times, sub_profile=features,
+        ))
+    except Exception as e:
+        logger.warning(f"Failed to compute bassline profile for {file_path}: {e}")
+
+
 def _compute_segments(y, sr, bpm, file_path, segment_config: DSPConfig, bars_per_phrase: int):
     """Detect structure segments — spectral + phrase-locked grid (best-effort).
 
@@ -260,10 +273,9 @@ def analyze_one_track(
         groove = _add_swing(features, y, sr, file_path)
         _add_density(features, y, sr, file_path)
         _add_stem_profile(features, y, sr, file_path)
-        _add_sub_profile(
-            features, y, sr, file_path,
-            beat_times=groove.beat_times if groove is not None else None,
-        )
+        beat_times = groove.beat_times if groove is not None else None
+        _add_sub_profile(features, y, sr, file_path, beat_times=beat_times)
+        _add_bassline_profile(features, y, sr, file_path, beat_times=beat_times)
 
         segment_config = get_config(segment_preset)
 

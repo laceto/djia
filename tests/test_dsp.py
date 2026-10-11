@@ -45,6 +45,11 @@ from src.dsp.sub_engine import (
     RUMBLE_MIN,
     SUB_PROFILE_KEYS,
 )
+from src.dsp.bassline_engine import (
+    BASSLINE_KEYS,
+    bassline_tags,
+    compute_bassline_profile,
+)
 from src.dsp.worker import analyze_one_track
 from src.dsp.spectrogram import (
     compute_spectrogram,
@@ -1009,6 +1014,100 @@ class TestSubEngine:
         with_beats = compute_sub_profile(mix, SUB_SR_TEST, bpm=SUB_BPM, beat_times=beat_times)
         with_grid = compute_sub_profile(mix, SUB_SR_TEST, bpm=SUB_BPM)
         assert with_beats["pump_depth"] > with_grid["pump_depth"]
+
+
+# ---------------------------------------------------------------------------
+# Bassline-type scores. Synthetic extremes only: the assertions are relative
+# ("more offbeat than a roll"), not absolute, because the anchors are heuristic.
+# ---------------------------------------------------------------------------
+
+BASS_NOTE_HZ = 80.0
+
+
+def _bass_notes(t, phases, length, tau=None, freq=BASS_NOTE_HZ):
+    """Bass notes starting at the given beat phases, `length` beats long (optional decay)."""
+    out = np.zeros(t.size)
+    for p in phases:
+        pos = (t % SUB_BEAT) - p * SUB_BEAT
+        gate = (pos >= 0) & (pos < length * SUB_BEAT)
+        env = np.exp(-pos / tau) if tau else np.ones_like(pos)
+        env = env * np.minimum(1.0, np.maximum(pos, 0) / 0.003)  # 3 ms ramp: no clicks
+        out += np.where(gate, env, 0.0) * np.sin(2 * np.pi * freq * t)
+    return out
+
+
+def _bassline_profile(bass, t=None, **kw):
+    t = _sub_time() if t is None else t
+    mix = _normalize(_synth_kick(t) + 0.6 * bass + _synth_hats(t))
+    beat_times = np.arange(0.0, t[-1], SUB_BEAT)
+    return compute_bassline_profile(mix, SUB_SR_TEST, bpm=SUB_BPM, beat_times=beat_times, **kw)
+
+
+class TestBasslineEngine:
+    """Five multi-label bassline archetypes, scored 0-1 from the mix."""
+
+    def test_all_keys_present_and_in_range(self):
+        t = _sub_time()
+        profile = _bassline_profile(_bass_notes(t, [0.5], 0.25), t)
+        assert set(profile) == set(BASSLINE_KEYS)
+        for key, value in profile.items():
+            assert value is None or 0.0 <= value <= 1.0, key
+
+    def test_silent_and_empty_input_return_all_none(self):
+        assert all(v is None for v in compute_bassline_profile(np.zeros(SUB_SR_TEST * 2), SUB_SR_TEST).values())
+        assert all(v is None for v in compute_bassline_profile(np.array([]), SUB_SR_TEST).values())
+        assert all(v is None for v in compute_bassline_profile(None, SUB_SR_TEST).values())
+
+    def test_offbeat_note_scores_offbeat_not_rolling(self):
+        t = _sub_time()
+        offbeat = _bassline_profile(_bass_notes(t, [0.5], 0.25), t)
+        roll = _bassline_profile(_bass_notes(t, [0.25, 0.5, 0.75], 0.22), t)
+        assert offbeat["bassline_offbeat"] > 0.5
+        assert offbeat["bassline_offbeat"] > roll["bassline_offbeat"]
+        assert offbeat["bassline_rolling"] < roll["bassline_rolling"]
+
+    def test_sixteenth_notes_score_rolling(self):
+        t = _sub_time()
+        roll = _bassline_profile(_bass_notes(t, [0.25, 0.5, 0.75], 0.22), t)
+        offbeat = _bassline_profile(_bass_notes(t, [0.5], 0.25), t)
+        assert roll["bassline_rolling"] > 0.5
+        assert roll["bassline_rolling"] > offbeat["bassline_rolling"]
+
+    def test_short_separated_notes_score_staccato(self):
+        t = _sub_time()
+        stab = _bassline_profile(2.5 * _bass_notes(t, [0.25, 0.5, 0.75], 0.05, tau=0.01), t)
+        roll = _bassline_profile(_bass_notes(t, [0.25, 0.5, 0.75], 0.22), t)
+        assert stab["bassline_staccato"] > 0.5
+        assert stab["bassline_staccato"] > roll["bassline_staccato"]
+
+    def test_held_note_scores_drone_not_staccato(self):
+        t = _sub_time()
+        held = _bassline_profile(0.8 * np.sin(2 * np.pi * BASS_NOTE_HZ * t), t)
+        stab = _bassline_profile(2.5 * _bass_notes(t, [0.25, 0.5, 0.75], 0.05, tau=0.01), t)
+        assert held["bassline_drone"] > 0.5
+        assert held["bassline_drone"] > stab["bassline_drone"]
+        assert held["bassline_staccato"] < 0.3
+
+    def test_low_tonal_sub_beats_bass_body_for_deep_sub(self):
+        t = _sub_time()
+        deep = _bassline_profile(1.5 * np.sin(2 * np.pi * 45.0 * t), t)
+        body = _bassline_profile(1.5 * np.sin(2 * np.pi * 160.0 * t), t)
+        assert deep["bassline_deep_sub"] > 0.5
+        assert deep["bassline_deep_sub"] > body["bassline_deep_sub"]
+
+    def test_sub_profile_label_nudges_offbeat(self):
+        t = _sub_time()
+        bass = _bass_notes(t, [0.5], 0.25)
+        plain = _bassline_profile(bass, t)
+        agreed = _bassline_profile(bass, t, sub_profile={"sub_character": "offbeat"})
+        contradicted = _bassline_profile(bass, t, sub_profile={"sub_character": "pumped"})
+        assert agreed["bassline_offbeat"] >= plain["bassline_offbeat"] >= contradicted["bassline_offbeat"]
+
+    def test_tags_list_archetypes_above_threshold_strongest_first(self):
+        profile = {k: None for k in BASSLINE_KEYS}
+        profile.update(bassline_rolling=0.7, bassline_deep_sub=0.9, bassline_drone=0.2)
+        assert bassline_tags(profile) == ["deep-sub-bass", "rolling-bass"]
+        assert bassline_tags({k: None for k in BASSLINE_KEYS}) == []
 
 
 if __name__ == "__main__":

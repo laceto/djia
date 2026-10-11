@@ -57,6 +57,21 @@ python -m src.cli cluster-library [--n-clusters N | --distance-threshold D] [--d
 #   (default 0.25 when neither flag is given); prints a labeled per-cluster summary
 #   (size, BPM mean/spread, modal key, dominant mood, mean sub_ratio/vocal_presence)
 
+# bassline — score bassline types for tracks already in the DB (no full re-analysis)
+python -m src.cli bassline [--track-id ID [ID ...]] [--only-missing] [--workers N] [--db PATH]
+#   writes bassline_rolling/deep_sub/offbeat/staccato/drone onto the features row. ~15 s/track,
+#   each worker loads a full track — keep --workers low (default 1). New `analyze` runs score it automatically.
+#   <=25 tracks prints a per-track table with tags (score >= 0.5); more prints a count per type.
+
+# dj-set (alias: aperitivo) - build a ~2 h set with two energy peaks, export an Excel tracklist
+python -m src.cli dj-set [--profile aperitivo|latenight] [--minutes 120] [--max-rms X] [--min-rms X] [--vocal-weight W] [--beam 40] [--out results/<profile>_set.xlsx] [--db PATH]
+#   aperitivo: rms_mean <= 0.15, BPM 108-126, soft peaks, vocals favoured, BPM step <= 4.
+#   latenight: rms_mean >= 0.20, BPM 120-132, hotter curve, vocals penalised, dark/hypnotic/industrial
+#              rewarded, one tempo jump (<= 6.5 BPM) allowed, tight energy fit.
+#   Pool also needs >= 4 min and drops duplicate artist+title. Beam search over energy-vs-curve, Camelot
+#   key moves, BPM step, bassline variety, vocal/mood terms. 32-beat blends. Profiles: src/ai/aperitivo_set.py
+#   (needs bassline scores in the DB - run `bassline` first). `aperitivo` with no flags = the aperitivo profile.
+
 # export-traktor (output nml_path positional, default djia_export.nml)
 python -m src.cli export-traktor [out.nml] [--traktor-input Collection.nml] [--db PATH]
 #   --traktor-input: existing Traktor Collection.nml to source hot cues from

@@ -72,6 +72,11 @@ CREATE TABLE IF NOT EXISTS features (
     sub_peak_phase REAL,
     sub_gap_ratio REAL,
     sub_character TEXT,
+    bassline_rolling REAL,
+    bassline_deep_sub REAL,
+    bassline_offbeat REAL,
+    bassline_staccato REAL,
+    bassline_drone REAL,
     mfcc_vector TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -184,6 +189,11 @@ def init_db(db_path: str = "db/djia.db") -> sqlite3.Connection:
             "sub_peak_phase": "REAL",
             "sub_gap_ratio": "REAL",
             "sub_character": "TEXT",
+            "bassline_rolling": "REAL",
+            "bassline_deep_sub": "REAL",
+            "bassline_offbeat": "REAL",
+            "bassline_staccato": "REAL",
+            "bassline_drone": "REAL",
         })
         _add_missing_columns(conn, "segments", {
             "method": "TEXT NOT NULL DEFAULT 'spectral'",

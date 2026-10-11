@@ -79,6 +79,12 @@ Default DB: `db/djia.db`. Foreign keys ON; `ON DELETE CASCADE` from `tracks`.
   peaks/bottoms out, phase 0 = kick) and `sub_character` (TEXT: `none`/`rumble`/`pumped` = ducks
   at the kick/`onbeat` = loudest on the kick, sub and kick fused into one element/`offbeat`/
   `syncopated`/`sustained` = barely moves across the beat).
+  Bassline-type scores, each 0-1 and multi-label (`src/dsp/bassline_engine.py`, from the mix, no stems):
+  `bassline_rolling` (continuous 16th-note motion between kicks), `bassline_deep_sub` (clean low sub
+  dominating the 75-250 Hz body), `bassline_offbeat` (quiet after the kick, energy late in the beat),
+  `bassline_staccato` (short notes separated by silence), `bassline_drone` (held, barely articulated).
+  There is no acid/303 score: mid-band descriptors did not separate known acid tracks from the rest.
+  Heuristic anchors — compare tracks against each other, don't read 0.5 as a hard threshold.
   These later columns are NULL on tracks analyzed before a given feature shipped — see
   `debugging-rules.md`.
 - **`mood`** — `track_id` UNIQUE FK + 6 mood dimensions: `dark`, `hypnotic`, `euphoric`,
