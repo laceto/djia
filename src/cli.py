@@ -459,6 +459,78 @@ def cmd_export_traktor(args):
         return 1
 
 
+def cmd_bassline(args):
+    """Score bassline types for tracks already in the DB (no re-analysis)."""
+    from .dsp.bassline_backfill import backfill_bassline
+    from .dsp.bassline_engine import BASSLINE_KEYS, bassline_tags
+
+    print_section("Bassline Types")
+    db_path = args.db or "db/djia.db"
+    result = backfill_bassline(
+        db_path, track_ids=args.track_id, only_missing=args.only_missing,
+        workers=max(1, args.workers),
+    )
+    print(f"Scored: {result['scored']}  Skipped: {result['skipped']}  Errors: {result['errors']}")
+
+    profiles = result['results']
+    if not profiles:
+        return 1 if result['errors'] else 0
+
+    store = TrackStore(db_path)
+    names = {t['id']: t['file_name'] for t in store.get_all_tracks()}
+    short = [k.replace('bassline_', '') for k in BASSLINE_KEYS]
+    if len(profiles) <= 25:
+        rows = [
+            [tid, names.get(tid, '')[:44]]
+            + ['-' if p.get(k) is None else f"{p[k]:.2f}" for k in BASSLINE_KEYS]
+            + [', '.join(bassline_tags(p))]
+            for tid, p in sorted(profiles.items())
+        ]
+        print(tabulate(rows, headers=['ID', 'File'] + short + ['Tags'], tablefmt='grid'))
+    else:
+        counts = [
+            sum(1 for p in profiles.values() if (p.get(k) or 0) >= 0.6) for k in BASSLINE_KEYS
+        ]
+        print("\nTracks scoring >= 0.6 per type:")
+        print(tabulate([counts], headers=short, tablefmt='grid'))
+    return 1 if result['errors'] and not result['scored'] else 0
+
+
+def cmd_dj_set(args):
+    """Build a two-peak DJ set from the library (profiles: aperitivo, latenight)."""
+    from dataclasses import replace
+    from .ai.aperitivo_set import PROFILES, export_set_xlsx, make_set
+
+    profile = PROFILES[args.profile]
+    if args.max_rms is not None:
+        profile = replace(profile, max_rms=args.max_rms)
+    if args.min_rms is not None:
+        profile = replace(profile, min_rms=args.min_rms)
+    out = args.out or f"results/{profile.name}_set.xlsx"
+
+    print_section(profile.title)
+    db_path = args.db or "db/djia.db"
+    rows = make_set(db_path, profile, minutes=args.minutes,
+                    vocal_weight=args.vocal_weight, beam_width=args.beam)
+    if not rows:
+        print("No tracks matched the pool filters.")
+        return 1
+
+    def clock(s):
+        return f"{int(s) // 3600}:{(int(s) % 3600) // 60:02d}"
+
+    table = [[r['position'], clock(r['start']), r['id'],
+              ((r.get('artist') or '') + ' - ' + (r.get('title') or r['file_name']))[:52],
+              f"{r['bpm']:.1f}", r['camelot_key'], f"{r['energy']:.2f}", f"{r['target']:.2f}",
+              f"{r['vocal']:.2f}", r['bassline']] for r in rows]
+    print(tabulate(table, headers=['#', 'Start', 'ID', 'Track', 'BPM', 'Key', 'Energy',
+                                   'Target', 'Vocal', 'Bassline'], tablefmt='grid'))
+    print(f"{len(rows)} tracks, {clock(rows[-1]['end'])} total")
+    export_set_xlsx(rows, out, args.minutes, profile)
+    print(f"Saved: {out}")
+    return 0
+
+
 def cmd_cluster_library(args):
     """Group similar tracks via hierarchical clustering over the feature vector."""
     print_section("Track Clustering")
@@ -580,6 +652,38 @@ Examples:
     spectrogram_parser.add_argument('--spectrogram-dir', default=DEFAULT_SPECTROGRAM_DIR,
                                     help=f'Output directory (default: {DEFAULT_SPECTROGRAM_DIR})')
     spectrogram_parser.set_defaults(func=cmd_spectrogram)
+
+    # Bassline types command
+    bassline_parser = subparsers.add_parser(
+        'bassline', help='Score bassline types (rolling/deep-sub/offbeat/acid/staccato/drone) '
+                         'for tracks already in the DB')
+    bassline_parser.add_argument('--db', help='Database path (default: db/djia.db)')
+    bassline_parser.add_argument('--track-id', type=int, nargs='+',
+                                 help='Only these track ids (default: every analyzed track)')
+    bassline_parser.add_argument('--only-missing', action='store_true',
+                                 help='Skip tracks that already have all six scores')
+    bassline_parser.add_argument('--workers', type=int, default=1,
+                                 help='Worker processes (default: 1; each loads a full track)')
+    bassline_parser.set_defaults(func=cmd_bassline)
+
+    # DJ set command (profiles)
+    djset_parser = subparsers.add_parser(
+        'dj-set', aliases=['aperitivo'],
+        help='Build a two-peak DJ set (profiles: aperitivo, latenight) and export an Excel tracklist')
+    djset_parser.add_argument('--profile', choices=['aperitivo', 'latenight'], default='aperitivo',
+                              help='Set style (default: aperitivo)')
+    djset_parser.add_argument('--db', help='Database path (default: db/djia.db)')
+    djset_parser.add_argument('--minutes', type=float, default=120.0, help='Set length (default: 120)')
+    djset_parser.add_argument('--max-rms', type=float, default=None,
+                              help='Override the profile loudness ceiling for the pool')
+    djset_parser.add_argument('--min-rms', type=float, default=None,
+                              help='Override the profile loudness floor for the pool')
+    djset_parser.add_argument('--vocal-weight', type=float, default=None,
+                              help='Override vocal bonus (>0 favours vocals, <0 avoids them)')
+    djset_parser.add_argument('--beam', type=int, default=40, help='Beam width (default: 40)')
+    djset_parser.add_argument('--out', default=None,
+                              help='Excel output path (default: results/<profile>_set.xlsx)')
+    djset_parser.set_defaults(func=cmd_dj_set)
 
     # Cluster library command
     cluster_parser = subparsers.add_parser(

@@ -110,8 +110,10 @@ class TrackStore:
                  sub_presence, sub_f0_hz, sub_note, sub_f0_jitter_cents,
                  sub_flatness, sub_peak_share, sub_peak_crest_db, rumble_score,
                  pump_depth, pump_phase, sub_peak_phase, sub_gap_ratio, sub_character,
+                 bassline_rolling, bassline_deep_sub, bassline_offbeat,
+                 bassline_staccato, bassline_drone,
                  mfcc_vector)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 track_id,
                 features.get('tempo'),
@@ -159,6 +161,11 @@ class TrackStore:
                 features.get('sub_peak_phase'),
                 features.get('sub_gap_ratio'),
                 features.get('sub_character'),
+                features.get('bassline_rolling'),
+                features.get('bassline_deep_sub'),
+                features.get('bassline_offbeat'),
+                features.get('bassline_staccato'),
+                features.get('bassline_drone'),
                 mfcc_vector,
             ))
 
@@ -547,6 +554,37 @@ class TrackStore:
         except Exception as e:
             logger.error(f"Error getting segments by type: {e}")
             return None
+        finally:
+            conn.close()
+
+    def update_bassline(self, track_id: int, profile: Dict[str, Any]) -> bool:
+        """
+        Write the six bassline-type scores onto an existing features row.
+
+        Lets the `bassline` CLI backfill a library without re-running the whole analysis.
+
+        Args:
+            track_id: ID of the track
+            profile: Dict with the `bassline_*` keys (missing keys are stored as NULL)
+
+        Returns:
+            True if a features row was updated, False if the track has none
+        """
+        keys = ("bassline_rolling", "bassline_deep_sub", "bassline_offbeat",
+                "bassline_staccato", "bassline_drone")
+        try:
+            conn = get_connection(self.db_path)
+            cursor = conn.cursor()
+            cursor.execute(
+                f"UPDATE features SET {', '.join(k + ' = ?' for k in keys)}, "
+                "updated_at = CURRENT_TIMESTAMP WHERE track_id = ?",
+                [profile.get(k) for k in keys] + [track_id],
+            )
+            conn.commit()
+            return cursor.rowcount > 0
+        except Exception as e:
+            logger.error(f"Error updating bassline scores for track {track_id}: {e}")
+            raise
         finally:
             conn.close()
 
