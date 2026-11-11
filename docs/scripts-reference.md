@@ -74,6 +74,10 @@ python -m src.cli dj-set [--profile aperitivo|latenight] [--minutes 120] [--max-
 
 # export-traktor (output nml_path positional, default djia_export.nml)
 python -m src.cli export-traktor [out.nml] [--traktor-input Collection.nml] [--db PATH]
+
+# export-rekordbox (standalone Rekordbox XML: BPM, key, hot cues A/B/D = drop/breakdown/outro,
+# memory cues for every segment; default results/djia_rekordbox.xml)
+python -m src.cli export-rekordbox [out.xml] [--db PATH] [--playlist NAME]
 #   --traktor-input: existing Traktor Collection.nml to source hot cues from
 
 # spectrogram (track_id positional) — regenerate the .npy spectrogram for an already-analyzed track

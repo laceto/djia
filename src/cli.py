@@ -459,6 +459,26 @@ def cmd_export_traktor(args):
         return 1
 
 
+def cmd_export_rekordbox(args):
+    """Export to Rekordbox XML (BPM, key, hot/memory cues)."""
+    from .rekordbox.exporter import export_rekordbox_xml
+
+    print_section("Rekordbox Export")
+    db_path = args.db or "db/djia.db"
+    if not TrackStore(db_path).get_all_tracks():
+        print("No tracks in database to export.")
+        return 1
+    try:
+        result = export_rekordbox_xml(db_path, args.xml_path, args.playlist)
+    except Exception as e:
+        print(f"Export failed: {e}")
+        return 1
+    print(f"Exported to: {result}")
+    print("  Rekordbox: Preferences > Advanced > Database > 'rekordbox xml' -> select this file,")
+    print("  then drag tracks from the 'rekordbox xml' tree into your Collection.")
+    return 0
+
+
 def cmd_bassline(args):
     """Score bassline types for tracks already in the DB (no re-analysis)."""
     from .dsp.bassline_backfill import backfill_bassline
@@ -705,6 +725,14 @@ Examples:
     traktor_parser.add_argument('--traktor-input', default='Collection.nml',
                                 help='Path to Traktor Collection.nml (optional, for hot cues)')
     traktor_parser.set_defaults(func=cmd_export_traktor)
+
+    # Export Rekordbox command
+    rb_parser = subparsers.add_parser('export-rekordbox', help='Export to Rekordbox XML')
+    rb_parser.add_argument('xml_path', nargs='?', default='results/djia_rekordbox.xml',
+                           help='Output XML path (default: results/djia_rekordbox.xml)')
+    rb_parser.add_argument('--db', help='Database path (default: db/djia.db)')
+    rb_parser.add_argument('--playlist', default='DJIA', help='Playlist name (default: DJIA)')
+    rb_parser.set_defaults(func=cmd_export_rekordbox)
 
     # DJUCED key cross-check command
     crosscheck_parser = subparsers.add_parser(
